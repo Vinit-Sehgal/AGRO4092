@@ -3,14 +3,13 @@ title-block-banner: true
 ---
 # Plotting with base R
 
-If you need to quickly visualize your data, base R has some functions that will help you do this in a pinch. In this section we'll look at some basics of visualizing univariate and multivariate data.
+If you need to quickly visualize your data, base `R` has some functions that will help you do this in a pinch. In this section we'll look at some basics of visualizing univariate and multivariate data.
 
 ## Overview
 
 ```{r data frame and list, message = FALSE, warning = FALSE}
-
 # Create 50 random numbers between 0 and 100  
-data=runif(50, 0, 100) 
+data=runif(50, 0, 100)   #runif stands for random numbers from a uniform distribution
 
 # Overplotting means adding layers to a plot.
 plot(data)            # The "plot" function initializes the plot.
@@ -31,10 +30,10 @@ plot(density(data))  # Plot with density distribution
 Let's dig deeper into the plot function. Here, we will look at how to adjust the colors, shapes, and sizes for markers, axis labels and titles, and the plot title.
 
 ```{r Univariate data, message = FALSE, warning = FALSE}
-
-# Part 2.2.1. Line plots
+# Line plots
 plot(data,type="o", col="red",
-     xlab="x-axis title",ylab ="y-axis title", main="My plot", # Name of axis labels and title
+     xlab="x-axis title",ylab ="y-axis title", 
+     main="My plot", # Name of axis labels and title
      cex.axis=2, cex.main=2,cex.lab=2,            # Size of axes, title and label
      pch=23,       # Change marker style
      bg="red",     # Change color of markers
@@ -45,7 +44,7 @@ plot(data,type="o", col="red",
 legend(1, 100, legend=c("Data 1"),
        col=c("red"), lty=2, cex=1.2)
 
-# Part 2.2.2. Histograms
+# Histograms
 hist(data,col="red",
      xlab="Number",ylab ="Value", main="My plot", # Name of axis labels and title
      border="blue"
@@ -65,11 +64,13 @@ hist(data,col="red",
 
 ## Plotting multivariate data
 
-Here, we introduce you to data frames: equivalent of tables in R. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.
+Here, we introduce you to data frames: equivalent of tables in `R`. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column. 
 
 ```{r Multivariate data frame, message = FALSE, warning = FALSE}
 
-plot_data=data.frame(x=runif(50,0,10), y=runif(50,20,30), z=runif(50,30,40)) 
+plot_data=data.frame(x=runif(50,0,10), 
+                     y=runif(50,20,30), 
+                     z=runif(50,30,40)) 
 
 plot(plot_data$x, plot_data$y) # Scatter plot of x and y data
 
@@ -189,4 +190,3 @@ If you want to plot something a certain way and don't know how to do it, the cha
 
 4.  Histogram: <https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/>
 
-5.  Line plots: <https://www.statmethods.net/graphs/line.html>

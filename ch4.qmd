@@ -1,8 +1,12 @@
 ---
 title-block-banner: true
 ---
-## EXCERCISE 1
-Retrieving data from USCRN: Extract sample data from a climate reference site in Lafayette, LA, USA for 2021.
+
+## Excercise 1
+
+The U.S. Climate Reference Network (USCRN) is a systematic and sustained network of climate monitoring stations. USCRN has sites across Contiguous U.S. along with some in Alaska, and Hawaii. These stations are instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil mosture across multile depths at sub-hourly, daily and monthly time scales. Users can access daily dataset from all station suing the following link: [Index of /pub/data/uscrn/products/daily01 (noaa.gov)](https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/)
+
+Let us extract sample data from a USCRN site in Lafayette, LA, USA for 2021.
 
 ```{r}
 #| label: import data
@@ -24,11 +28,13 @@ CRNdat[CRNdat == 999]=NA
 
 # View data sample
 library(kableExtra)
-dataTable = kbl(head(CRNdat,3),full_width = F)
+dataTable = kbl(head(CRNdat,6),full_width = F)
 kable_styling(dataTable,bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 
 ```
+
+Notice the variables provided in the dataset. As an example, we can plots soil moisture data from a depth of 20 cm for this station for our reference:
 
 ```{r}
 #| label: fig-density
@@ -47,3 +53,9 @@ plot(x, type="l", ylab="Soil moisture (v/v)",
 plot(density(na.omit(x)), main=" ", xlab="", 
      col="cyan4", lwd=3)
 ```
+
+Excercise:
+
+1.  Taking examples of any two USCRN stations across contrasting hydroclimates, compare and contrast any two recorded variables using time series plots, probability density distribution histograms and scatter plots. Select any year of your liking for the analysis.
+
+2.  Select two seasons for each elected variable and demonstrate the seasonal variability in the records for summer (MAMJJA) and winter (SONDJF) seasons using any two types of multivariate plots.

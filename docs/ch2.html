@@ -207,12 +207,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>If you need to quickly visualize your data, base R has some functions that will help you do this in a pinch. In this section we’ll look at some basics of visualizing univariate and multivariate data.</p>
+<p>If you need to quickly visualize your data, base <code>R</code> has some functions that will help you do this in a pinch. In this section we’ll look at some basics of visualizing univariate and multivariate data.</p>
 <section id="overview" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">3.1</span> Overview</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 50 random numbers between 0 and 100  </span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">0</span>, <span class="dv">100</span>) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data<span class="ot">=</span><span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">0</span>, <span class="dv">100</span>)   <span class="co">#runif stands for random numbers from a uniform distribution</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Overplotting means adding layers to a plot.</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(data)            <span class="co"># The "plot" function initializes the plot.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -248,22 +248,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="3.2" class="anchored" data-anchor-id="plotting-univariate-data"><span class="header-section-number">3.2</span> Plotting univariate data</h2>
 <p>Let’s dig deeper into the plot function. Here, we will look at how to adjust the colors, shapes, and sizes for markers, axis labels and titles, and the plot title.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Part 2.2.1. Line plots</span></span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Line plots</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(data,<span class="at">type=</span><span class="st">"o"</span>, <span class="at">col=</span><span class="st">"red"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"x-axis title"</span>,<span class="at">ylab =</span><span class="st">"y-axis title"</span>, <span class="at">main=</span><span class="st">"My plot"</span>, <span class="co"># Name of axis labels and title</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex.axis=</span><span class="dv">2</span>, <span class="at">cex.main=</span><span class="dv">2</span>,<span class="at">cex.lab=</span><span class="dv">2</span>,            <span class="co"># Size of axes, title and label</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch=</span><span class="dv">23</span>,       <span class="co"># Change marker style</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">bg=</span><span class="st">"red"</span>,     <span class="co"># Change color of markers</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">lty=</span><span class="dv">5</span>,        <span class="co"># Change line style</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd=</span><span class="dv">2</span>         <span class="co"># Selecting line width</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>) </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding legend</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="dv">1</span>, <span class="dv">100</span>, <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Data 1"</span>),</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="fu">c</span>(<span class="st">"red"</span>), <span class="at">lty=</span><span class="dv">2</span>, <span class="at">cex=</span><span class="fl">1.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"x-axis title"</span>,<span class="at">ylab =</span><span class="st">"y-axis title"</span>, </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"My plot"</span>, <span class="co"># Name of axis labels and title</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex.axis=</span><span class="dv">2</span>, <span class="at">cex.main=</span><span class="dv">2</span>,<span class="at">cex.lab=</span><span class="dv">2</span>,            <span class="co"># Size of axes, title and label</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch=</span><span class="dv">23</span>,       <span class="co"># Change marker style</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">bg=</span><span class="st">"red"</span>,     <span class="co"># Change color of markers</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">lty=</span><span class="dv">5</span>,        <span class="co"># Change line style</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd=</span><span class="dv">2</span>         <span class="co"># Selecting line width</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding legend</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="dv">1</span>, <span class="dv">100</span>, <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Data 1"</span>),</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="fu">c</span>(<span class="st">"red"</span>), <span class="at">lty=</span><span class="dv">2</span>, <span class="at">cex=</span><span class="fl">1.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch2_files/figure-html/Univariate data-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Part 2.2.2. Histograms</span></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograms</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data,<span class="at">col=</span><span class="st">"red"</span>,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Number"</span>,<span class="at">ylab =</span><span class="st">"Value"</span>, <span class="at">main=</span><span class="st">"My plot"</span>, <span class="co"># Name of axis labels and title</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">border=</span><span class="st">"blue"</span></span>
@@ -284,11 +285,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="plotting-multivariate-data" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="plotting-multivariate-data"><span class="header-section-number">3.3</span> Plotting multivariate data</h2>
-<p>Here, we introduce you to data frames: equivalent of tables in R. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.</p>
+<p>Here, we introduce you to data frames: equivalent of tables in <code>R</code>. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plot_data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">runif</span>(<span class="dv">50</span>,<span class="dv">0</span>,<span class="dv">10</span>), <span class="at">y=</span><span class="fu">runif</span>(<span class="dv">50</span>,<span class="dv">20</span>,<span class="dv">30</span>), <span class="at">z=</span><span class="fu">runif</span>(<span class="dv">50</span>,<span class="dv">30</span>,<span class="dv">40</span>)) </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(plot_data<span class="sc">$</span>x, plot_data<span class="sc">$</span>y) <span class="co"># Scatter plot of x and y data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plot_data<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">runif</span>(<span class="dv">50</span>,<span class="dv">0</span>,<span class="dv">10</span>), </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y=</span><span class="fu">runif</span>(<span class="dv">50</span>,<span class="dv">20</span>,<span class="dv">30</span>), </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">z=</span><span class="fu">runif</span>(<span class="dv">50</span>,<span class="dv">30</span>,<span class="dv">40</span>)) </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(plot_data<span class="sc">$</span>x, plot_data<span class="sc">$</span>y) <span class="co"># Scatter plot of x and y data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch2_files/figure-html/Multivariate data frame-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -419,7 +422,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Graphical parameters: <a href="https://www.statmethods.net/advgraphs/parameters.html" class="uri">https://www.statmethods.net/advgraphs/parameters.html</a></p></li>
 <li><p>Plotting in R: <a href="https://www.harding.edu/fmccown/r/" class="uri">https://www.harding.edu/fmccown/r/</a></p></li>
 <li><p>Histogram: <a href="https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/" class="uri">https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/</a></p></li>
-<li><p>Line plots: <a href="https://www.statmethods.net/graphs/line.html" class="uri">https://www.statmethods.net/graphs/line.html</a></p></li>
 </ol>
 
 

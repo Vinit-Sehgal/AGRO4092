@@ -90,9 +90,7 @@ data[3]                       # Note how output is in quotes i.e. "10"
 
 ```
 
-
 > *For help with a function in R, just type ? followed by the function to display information in the help menu. Try pasting `?sd` in the console.*
-
 
 ## Data types
 
@@ -139,3 +137,5 @@ out=data.frame(x=data1, y=data2)
 plot(out$x, out$y)
 plot(out[,1])
 ```
+
+> For a data frame, the dollar "\$" sign invokes the variable selection. Imagine how one would receive merchandise in a store if you give \$ to the cashier. Data frame will list out the variable names for you of you when you show it some \$.

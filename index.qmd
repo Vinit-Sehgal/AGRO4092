@@ -29,6 +29,8 @@ We will first start with a refresher of basic `R` programming in Module 1. In Mo
 
 This resource will serve as a dynamic class note, where students can access detailed concepts, codes and exercises related to this class. Notes will be updated regularly as the class progresses with up-to-date material and upcoming assignments.
 
+<br>
+
 ------------------------------------------------------------------------
 
 <center>![](./images/LSUlogo.jpg){width="20%"}</center>

@@ -466,13 +466,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 28.34714 24.03893 25.27016 28.50131 26.92418 24.76562 28.66065 24.97841
- [9] 21.33156 29.48136 21.12305 20.40033 21.04676 23.24618 27.54372 23.32016
-[17] 24.53060 24.02730 21.23530 28.38015 26.40878 23.80671 20.35272 22.46980
-[25] 29.98454 28.60850 27.55342 20.99101 21.44317 26.25662 27.08155 26.43608
-[33] 26.62455 29.25826 20.16301 20.10540 25.31357 23.97656 25.03606 24.28318
-[41] 29.43316 21.52698 26.19697 28.76450 26.13140 21.36515 25.30972 21.78500
-[49] 28.58891 22.52059</code></pre>
+<pre><code> [1] 22.83629 29.63688 26.87471 22.64446 25.02540 25.78104 26.24037 29.33779
+ [9] 20.91190 25.09933 28.89077 25.76184 29.99936 24.09678 23.52595 26.12693
+[17] 23.31340 26.31204 20.10702 28.56669 25.01989 26.47461 23.32573 22.48242
+[25] 27.43653 20.72526 23.57441 21.99809 29.85000 23.18219 28.20805 21.65385
+[33] 26.47249 26.57404 29.82039 22.53035 25.93869 25.94142 20.85624 21.70899
+[41] 29.03622 23.92624 26.74536 23.13307 29.64177 20.58186 28.99069 25.30215
+[49] 22.47081 23.52362</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -487,6 +487,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="ch1_files/figure-html/Data types-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<blockquote class="blockquote">
+<p>For a data frame, the dollar “$” sign invokes the variable selection. Imagine how one would receive merchandise in a store if you give $ to the cashier. Data frame will list out the variable names for you of you when you show it some $.</p>
+</blockquote>
 
 
 </section>
