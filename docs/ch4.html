@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>R for Spatial Analysis &amp; Visualization - 5&nbsp; EXCERCISE 1</title>
+<title>R for Spatial Analysis &amp; Visualization - 5&nbsp; Excercise 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -110,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch4.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch4.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Excercise 1</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -123,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></h1>
+      <h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Excercise 1</span></h1>
                       </div>
   </div>
     
@@ -181,7 +181,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch4.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Excercise 1</span></span></a>
   </div>
 </li>
     </ul>
@@ -198,7 +198,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>Retrieving data from USCRN: Extract sample data from a climate reference site in Lafayette, LA, USA for 2021.</p>
+<p>The U.S. Climate Reference Network (USCRN) is a systematic and sustained network of climate monitoring stations. USCRN has sites across Contiguous U.S. along with some in Alaska, and Hawaii. These stations are instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil mosture across multile depths at sub-hourly, daily and monthly time scales. Users can access daily dataset from all station suing the following link: <a href="https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/">Index of /pub/data/uscrn/products/daily01 (noaa.gov)</a></p>
+<p>Let us extract sample data from a USCRN site in Lafayette, LA, USA for 2021.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Yearly data from the sample station</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>CRNdat <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="fu">url</span>(<span class="st">"https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-LA_Lafayette_13_SE.txt"</span>), <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
@@ -216,7 +217,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># View data sample</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>dataTable <span class="ot">=</span> <span class="fu">kbl</span>(<span class="fu">head</span>(CRNdat,<span class="dv">3</span>),<span class="at">full_width =</span> F)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>dataTable <span class="ot">=</span> <span class="fu">kbl</span>(<span class="fu">head</span>(CRNdat,<span class="dv">6</span>),<span class="at">full_width =</span> F)</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable_styling</span>(dataTable,<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="table-responsive">
@@ -264,7 +265,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">5.2</td>
 <td style="text-align: right;">9.6</td>
 <td style="text-align: right;">11.0</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
 <td style="text-align: right;">12.16</td>
 <td style="text-align: left;">C</td>
 <td style="text-align: right;">18.7</td>
@@ -294,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1.9</td>
 <td style="text-align: right;">6.1</td>
 <td style="text-align: right;">6.5</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
 <td style="text-align: right;">8.95</td>
 <td style="text-align: left;">C</td>
 <td style="text-align: right;">15.3</td>
@@ -324,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">-0.1</td>
 <td style="text-align: right;">8.1</td>
 <td style="text-align: right;">7.9</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0</td>
 <td style="text-align: right;">13.93</td>
 <td style="text-align: left;">C</td>
 <td style="text-align: right;">24.3</td>
@@ -344,6 +345,96 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">14.4</td>
 <td style="text-align: right;">14.2</td>
 </tr>
+<tr class="even">
+<td style="text-align: right;">53960</td>
+<td style="text-align: right;">20210104</td>
+<td style="text-align: right;">2.622</td>
+<td style="text-align: right;">-91.87</td>
+<td style="text-align: right;">30.09</td>
+<td style="text-align: right;">22.2</td>
+<td style="text-align: right;">3.7</td>
+<td style="text-align: right;">12.9</td>
+<td style="text-align: right;">12.5</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">11.56</td>
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">26.4</td>
+<td style="text-align: right;">2.6</td>
+<td style="text-align: right;">13.2</td>
+<td style="text-align: right;">98.9</td>
+<td style="text-align: right;">47.7</td>
+<td style="text-align: right;">80.2</td>
+<td style="text-align: right;">0.389</td>
+<td style="text-align: right;">0.366</td>
+<td style="text-align: right;">0.370</td>
+<td style="text-align: right;">0.400</td>
+<td style="text-align: right;">0.372</td>
+<td style="text-align: right;">13.0</td>
+<td style="text-align: right;">12.2</td>
+<td style="text-align: right;">12.7</td>
+<td style="text-align: right;">14.0</td>
+<td style="text-align: right;">14.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">53960</td>
+<td style="text-align: right;">20210105</td>
+<td style="text-align: right;">2.622</td>
+<td style="text-align: right;">-91.87</td>
+<td style="text-align: right;">30.09</td>
+<td style="text-align: right;">20.7</td>
+<td style="text-align: right;">4.5</td>
+<td style="text-align: right;">12.6</td>
+<td style="text-align: right;">11.4</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">14.37</td>
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">28.9</td>
+<td style="text-align: right;">3.1</td>
+<td style="text-align: right;">13.3</td>
+<td style="text-align: right;">100.0</td>
+<td style="text-align: right;">27.7</td>
+<td style="text-align: right;">71.0</td>
+<td style="text-align: right;">0.388</td>
+<td style="text-align: right;">0.364</td>
+<td style="text-align: right;">0.368</td>
+<td style="text-align: right;">0.399</td>
+<td style="text-align: right;">0.369</td>
+<td style="text-align: right;">13.0</td>
+<td style="text-align: right;">12.1</td>
+<td style="text-align: right;">12.7</td>
+<td style="text-align: right;">13.9</td>
+<td style="text-align: right;">14.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">53960</td>
+<td style="text-align: right;">20210106</td>
+<td style="text-align: right;">2.622</td>
+<td style="text-align: right;">-91.87</td>
+<td style="text-align: right;">30.09</td>
+<td style="text-align: right;">19.4</td>
+<td style="text-align: right;">4.9</td>
+<td style="text-align: right;">12.2</td>
+<td style="text-align: right;">12.6</td>
+<td style="text-align: right;">20.7</td>
+<td style="text-align: right;">9.79</td>
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">23.1</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">12.8</td>
+<td style="text-align: right;">98.5</td>
+<td style="text-align: right;">54.7</td>
+<td style="text-align: right;">78.9</td>
+<td style="text-align: right;">0.390</td>
+<td style="text-align: right;">0.363</td>
+<td style="text-align: right;">0.369</td>
+<td style="text-align: right;">0.399</td>
+<td style="text-align: right;">0.370</td>
+<td style="text-align: right;">12.8</td>
+<td style="text-align: right;">12.1</td>
+<td style="text-align: right;">12.5</td>
+<td style="text-align: right;">13.7</td>
+<td style="text-align: right;">13.7</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -351,6 +442,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </div>
 </div>
+<p>Notice the variables provided in the dataset. As an example, we can plots soil moisture data from a depth of 20 cm for this station for our reference:</p>
 <div>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample plot for soil moisture</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span>CRNdat<span class="sc">$</span>SOIL_MOISTURE_20_DAILY</span>
@@ -384,6 +476,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </div>
+<p>Excercise:</p>
+<ol type="1">
+<li><p>Taking examples of any two USCRN stations across contrasting hydroclimates, compare and contrast any two recorded variables using time series plots, probability density distribution histograms and scatter plots. Select any year of your liking for the analysis.</p></li>
+<li><p>Select two seasons for each elected variable and demonstrate the seasonal variability in the records for summer (MAMJJA) and winter (SONDJF) seasons using any two types of multivariate plots.</p></li>
+</ol>
 
 
 

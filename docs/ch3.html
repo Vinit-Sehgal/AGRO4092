@@ -179,7 +179,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Excercise 1</span></span></a>
   </div>
 </li>
     </ul>
@@ -195,6 +195,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#import-libraries-and-create-sample-dataset" id="toc-import-libraries-and-create-sample-dataset" class="nav-link active" data-scroll-target="#import-libraries-and-create-sample-dataset"><span class="header-section-number">4.1</span> Import libraries and create sample dataset</a></li>
   <li><a href="#basics-of-ggplot" id="toc-basics-of-ggplot" class="nav-link" data-scroll-target="#basics-of-ggplot"><span class="header-section-number">4.2</span> Basics of ggplot</a></li>
   <li><a href="#multivariate-plots" id="toc-multivariate-plots" class="nav-link" data-scroll-target="#multivariate-plots"><span class="header-section-number">4.3</span> Multivariate plots</a></li>
+  <li><a href="#using-pathwork-for-combining-ggplots" id="toc-using-pathwork-for-combining-ggplots" class="nav-link" data-scroll-target="#using-pathwork-for-combining-ggplots"><span class="header-section-number">5</span> Using pathwork for combining ggplots</a></li>
   </ul>
 </nav>
     </div>
@@ -294,26 +295,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># There are two generally data formats: wide (horizontal) and long (vertical). In the horizontal format, every column represents a category of the data. In the vertical format, every row represents an observation for a particular category (think of each row as a data point). Both formats have their comparative advantages. We will now convert the data frame we randomly generated in the previous section to the long format. Here are several ways to do this:</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the gather function</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the gather function (the operator %&gt;% is called pipe operator)</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">=</span> dat <span class="sc">%&gt;%</span> <span class="fu">gather</span>(Month, Value, <span class="sc">-</span>Year)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Using pivot_longer and selecting all of the columns we want. This function is the best!</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">=</span> dat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Jan, Feb, Mar), <span class="at">names_to =</span> <span class="st">"Month"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>) </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This is equivalent to: </span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">=</span> <span class="fu">gather</span>(<span class="at">data=</span>dat, Month, Value, <span class="sc">-</span>Year)</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Or we can choose to exclude the columns we don't want</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">=</span> dat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(Year,January), <span class="at">names_to =</span> <span class="st">"Month"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>) </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Using pivot_longer and selecting all of the columns we want. This function is the best!</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">=</span> dat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Jan, Feb, Mar), <span class="at">names_to =</span> <span class="st">"Month"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>) </span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat2) <span class="co"># The data is now shaped in the long format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Or we can choose to exclude the columns we don't want</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">=</span> dat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(Year,January), <span class="at">names_to =</span> <span class="st">"Month"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>) </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat2) <span class="co"># The data is now shaped in the long format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913    67.3 Jan   -11.7 
-2  1913    67.3 Feb    -9.85
-3  1913    67.3 Mar    -9.91
-4  1914    65.2 Jan   -11.2 
-5  1914    65.2 Feb   -18.0 
-6  1914    65.2 Mar   -13.8 </code></pre>
+1  1913    81.1 Jan    -5.29
+2  1913    81.1 Feb   -17.7 
+3  1913    81.1 Mar    -8.55
+4  1914    34.8 Jan    -5.86
+5  1914    34.8 Feb   -19.1 
+6  1914    34.8 Mar    -6.50</code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>
@@ -379,14 +383,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">units =</span> <span class="fu">c</span>(<span class="st">"in"</span>), </span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">dpi =</span> <span class="dv">600</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="using-pathwork-for-combining-ggplots" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Using pathwork for combining ggplots</h1>
+<p>Pathwork works with simple operators to combine plots. The operator <code>|</code> arranges plots in a row. The plus sign <code>+</code> does the same but it will try to wrap the plots symetrically as a square whenever possible. The division i.e.&nbsp;<code>/</code>operator layes a plot on top of another.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("patchwork")</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'patchwork' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'patchwork'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:cowplot':
+
+    align_plots</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>l<span class="sc">+</span>d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch3_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>l<span class="sc">/</span> (h<span class="sc">+</span>d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="ch3_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Try: l/d/h or (l+d)/h </span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Make your own design for arranging plots (the # sign means empty space): </span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>design <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="st">  111</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="st">  2#3</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>l <span class="sc">+</span> d <span class="sc">+</span> h <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">design =</span> design)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="ch3_files/figure-html/unnamed-chunk-1-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 <p><br></p>
 <p><strong>Some useful resources</strong></p>
 <p>The links below offer a treasure trove of examples and sample code to get you started.</p>
 <ul>
 <li><p>The R Graph Gallery: <a href="https://www.r-graph-gallery.com/" class="uri">https://www.r-graph-gallery.com/</a></p></li>
-<li><p>Line plots in ggplot2: <a href="http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization" class="uri">http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization</a></p></li>
-<li><p>Top 50 visualizations with ggplot2: <a href="http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html" class="uri">http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html</a></p></li>
-<li><p>Practical guide in ggplot2: <a href="http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization" class="uri">http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization</a></p></li>
+<li><p>R charts: <a href="https://r-charts.com/" class="uri">https://r-charts.com/</a></p></li>
+<li><p>Excellent resource for combining multiple ggplots: <a href="https://r-charts.com/ggplot2/combining-plots/" class="uri">https://r-charts.com/ggplot2/combining-plots/</a></p></li>
 </ul>
 
 
@@ -634,7 +682,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./ch4.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Excercise 1</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
