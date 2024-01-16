@@ -5,7 +5,7 @@
 In this section, we will learn about some basic R operators that are used to perform operations on values and variables. Some most commonly used operators are shown in the table below. 
 
 <center>
-![](C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/Teaching/DataVisWorkshop/DataVisWorkshop2020/SampleData-master/images/Basic_operators.png){width=70%}
+![](C:/Users/VSehgal/OneDrive - LSU AgCenter/LSU/02_Teaching/AGRO 4092/AGRO4092/images/Basic_operators.png){width=70%}
 </center>
 
 ```{r Chapter 1, message = FALSE, warning = FALSE}
@@ -86,7 +86,7 @@ data[3]                    # Note how output is in quotes i.e. "10"
 In R, data is stored as an "array", which can be 1-dimensional or 2-dimensional. A 1-D array is called a "vector" and a 2-D array is a "matrix". A table in R is called a "data frame" and a "list" is a container to hold a variety of data types. In this section, we will learn how to create matrices, lists and data frames in R. 
 
 <center>
-![](C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/Teaching/DataVisWorkshop/DataVisWorkshop2020/SampleData-master/images/list_visual.png){width=80%}
+![](C:/Users/VSehgal/OneDrive - LSU AgCenter/LSU/02_Teaching/AGRO 4092/AGRO4092/images/list_visual.png){width=80%}
 </center>
 
 
