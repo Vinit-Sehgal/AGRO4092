@@ -1,5 +1,497 @@
-# Data
+# Operators and data types
+***
+## Basic operators
+***
+In this section, we will learn about some basic R operators that are used to perform operations on values and variables. Some most commonly used operators are shown in the table below. 
 
-## Description
+<center>
+![](C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/Teaching/DataVisWorkshop/DataVisWorkshop2020/SampleData-master/images/Basic_operators.png){width=70%}
+</center>
 
-## Missing value analysis
+```{r Chapter 1, message = FALSE, warning = FALSE}
+2+4+7 # Sum 
+
+# Order of operation
+1/2*3+4-5
+1/2*(3+4-5)
+1/(2*(3+4-5))
+1/(2*3+4-5) 
+## Notice how output changes with the placement of operators
+
+# Other operators:
+2^3
+log(10)
+sqrt(4)
+pi
+
+# Clear the Environment
+rm(list=ls())
+```
+
+## 1.2. Basic data operations
+In this section, we will create some vector data and apply built-in operations to examine the properties of a dataset. 
+
+```{r Basic data operation, message = FALSE, warning = FALSE}
+# The "is equal to" or "assignment operator in R is "<-" or "=" 
+
+# Generate sample data
+data<-c(1,4,2,3,9)
+
+# rbind combines data by rows, and hence "r"bind
+# cbind combines data by columns, and hence "c"bind
+
+# Checking the properties of a dataset. Note: the na.rm argument ignores NA values in the dataset.
+data=rbind(1,4,2,3,9) 
+dim(data)           # [5,1]: 5 rows, 1 column
+data[2,1]           # Show the value in row 2, column 1
+data[c(2:5),1]      # Show a range of values in column 1
+mean(data, na.rm=T) # Mean
+max(data)           # Maximum
+min(data)           # Minimum
+sd(data)            # Standard deviation
+var(data)           # Variance
+
+summary(data) 
+str(data)        # Prints structure of data
+head(data)       # Returns the 1st 6 items in the object
+head(data, 2)    # Print first 2
+tail(data, 2)    # Print last 2
+
+# Do the same, but with "c()" instead of "rbind"
+data=c(1,4,2,3,9) 
+dim(data)        # Note: dim is NULL
+length(data)     # Length of a dataset is the number of variables (columns)
+
+data[2]          # This should give you 4 
+
+# Other operators work in the same way
+mean(data)       # Mean
+max(data)        # Maximum
+min(data)        # Minimum
+sd(data)         # Standard deviation
+var(data)        # Variance
+
+# Text data
+data=c("TAMU","GEOS","BAEN","WMHS") 
+data             # View
+data[1]
+
+# Mixed data
+data=c(1,"GEOS",10,"WMHS") # All data is treated as text if one value is text
+data[3]                    # Note how output is in quotes i.e. "10"
+
+```
+
+## 1.3. Data types
+In R, data is stored as an "array", which can be 1-dimensional or 2-dimensional. A 1-D array is called a "vector" and a 2-D array is a "matrix". A table in R is called a "data frame" and a "list" is a container to hold a variety of data types. In this section, we will learn how to create matrices, lists and data frames in R. 
+
+<center>
+![](C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/Teaching/DataVisWorkshop/DataVisWorkshop2020/SampleData-master/images/list_visual.png){width=80%}
+</center>
+
+
+```{r Data types, message = FALSE, warning = FALSE}
+# Lets make a random matrix
+test_mat = matrix( c(2, 4, 3, 1, 5, 7), # The data elements 
+  nrow=2,         # Number of rows 
+  ncol=3,         # Number of columns 
+  byrow = TRUE)   # Fill matrix by rows 
+
+test_mat = matrix( c(2, 4, 3, 1, 5, 7),nrow=2,ncol=3,byrow = TRUE) # Same result 
+test_mat
+
+
+test_mat[,2]      # Display all rows, and second column
+test_mat[2,]      # Display second row, all columns
+
+# Types of datasets
+out = as.matrix(test_mat)
+out               # This is a matrix
+out = as.array(test_mat)
+out               # This is also a matrix
+out = as.vector(test_mat)
+out               # This is just a vector
+
+# Data frame and list
+data1=runif(50,20,30) # Create 50 random numbers between 20 and 30  
+data2=runif(50,0,10)  # Create 50 random numbers between 0 and 10  
+
+# Lists
+out = list()        # Create and empty list
+out[[1]] = data1    # Notice the brackets "[[ ]]" instead of "[ ]"
+out[[2]] = data2
+out[[1]]          # Contains data1 at this location
+
+# Data frame
+out=data.frame(x=data1, y=data2)
+
+# Let's see how it looks!
+plot(out$x, out$y)
+plot(out[,1])
+```
+
+***
+# CHAPTER 2. Plotting with base R
+***
+If you need to quickly visualize your data, base R has some functions that will help you do this in a pinch. In this section we'll look at some basics of visualizing univariate and multivariate data.
+
+## 2.1. Overview
+```{r data frame and list, message = FALSE, warning = FALSE}
+
+# Create 50 random numbers between 0 and 100  
+data=runif(50, 0, 100) 
+
+# Overplotting means adding layers to a plot.
+plot(data)            # The "plot" function initializes the plot.
+plot(data, type="l")  # The "type" argument changes the plot type. "l" calls up a line plot
+plot(data, type="b")  # Buffered points joined by lines
+
+# Try options type = "o" and type = "c" as well.
+
+# We can also quickly visualize boxplots, histograms, and density plots using the same procedure
+boxplot(data)        # Box-and-whisker plot
+hist(data)           # Histogram points
+plot(density(data))  # Plot with density distribution 
+
+```
+
+## 2.2. Plotting univariate data
+
+Let's dig deeper into the plot function. Here, we will look at how to adjust the colors, shapes, and sizes for markers, axis labels and titles, and the plot title.
+```{r Univariate data, message = FALSE, warning = FALSE}
+
+# Part 2.2.1. Line plots
+plot(data,type="o", col="red",
+     xlab="x-axis title",ylab ="y-axis title", main="My plot", # Name of axis labels and title
+     cex.axis=2, cex.main=2,cex.lab=2,            # Size of axes, title and label
+     pch=23,       # Change marker style
+     bg="red",     # Change color of markers
+     lty=5,        # Change line style
+     lwd=2         # Selecting line width
+) 
+# Adding legend
+legend(1, 100, legend=c("Data 1"),
+       col=c("red"), lty=2, cex=1.2)
+
+# Part 2.2.2. Histograms
+hist(data,col="red",
+     xlab="Number",ylab ="Value", main="My plot", # Name of axis labels and title
+     border="blue"
+) 
+
+# Try adjusting the parameters:
+# hist(data,col="red",
+#      xlab="Number",ylab ="Value", main="My plot", # Name of axis labels and title
+#      cex.axis=2, cex.main=2,cex.lab=2,            # Size of axes, title and label
+#      border="blue", 
+#      xlim=c(0,100), # Control the limits of the x-axis
+#      las=0,      # Try different values of las: 0,1,2,3 to rotate labels
+#      breaks=5    # Try using 5,20,50, 100
+# ) # Using more options and controls
+
+```
+
+## 2.3. Plotting multivariate data
+
+Here, we introduce you to data frames: equivalent of tables in R. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.
+
+```{r Multivariate data frame, message = FALSE, warning = FALSE}
+
+plot_data=data.frame(x=runif(50,0,10), y=runif(50,20,30), z=runif(50,30,40)) 
+
+plot(plot_data$x, plot_data$y) # Scatter plot of x and y data
+
+# Mandatory beautification
+plot(plot_data$x,plot_data$y, xlab="Data X", ylab="Data Y", main="X vs Y plot",
+     col="darkred",pch=20,cex=1.5) # Scatter plot of x and y data
+
+# Multiple lines on one axis
+matplot(plot_data, type = c("b"),pch=16,col = 1:4) 
+matplot(plot_data, type = c("b","l","o"),pch=16,col = 1:4) # Try this now. Any difference? 
+legend("topleft", legend = 1:4, col=1:4, pch=1)            # Add legend to a top left
+legend("top", legend = 1:4, col=1:4, pch=1)                # Add legend to at top center
+legend("bottomright", legend = 1:4, col=1:4, pch=1)        # Add legend at the bottom right
+
+```
+
+## 2.4. Time series data
+
+Working with time series data can be tricky at first, but here's a quick look at how to quickly generate a time series using the as.Date function.
+
+```{r time series, message = FALSE, warning = FALSE}
+
+
+date=seq(as.Date('2011-01-01'),as.Date('2011-01-31'),by = 1) # Generate a sequence 31 days
+data=runif(31,0,10)                 # Generate 31 random values between 0 and 10
+df=data.frame(Date=date,Value=data) # Combine the data in a data frame
+plot(df,type="o")
+
+```
+
+## 2.5. Combining plots
+
+You can built plots that contain subplots. Using base R, we call start by using the "par" function and then plot as we saw before.
+
+```{r using layout, message = FALSE, warning = FALSE}
+
+par(mfrow=c(2,2)) # Call a plot with 4 quadrants
+
+# Plot 1
+matplot(plot_data, type = c("b"),pch=16,col = 1:4) 
+
+# Plot 2
+plot(plot_data$x,plot_data$y) 
+
+# Plot 3
+hist(data,col="red",
+     xlab="Number",ylab ="Value", main="My plot", 
+     border="blue") 
+
+# Plot4
+plot(data,type="o", col="red",
+     xlab="Number",ylab ="Value", main="My plot",
+     cex.axis=2, cex.main=2,cex.lab=2, 
+     pch=23,   
+     bg="red", 
+     lty=5, 
+     lwd=2 
+) 
+
+# Alternatively, we can call up a plot using a matrix
+matrix(c(1,1,2,3), 2, 2, byrow = TRUE) # Plot 1 is plotted for first two spots, followed by plot 2 and 3 
+
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE)) # Fixes a layout of the plots we want to make
+
+ # Plot 1
+matplot(plot_data, type = c("b"),pch=16,col = 1:4)
+
+# Plot2
+plot(plot_data$x,plot_data$y) 
+
+# Plot 3
+hist(data,col="red",
+     xlab="Number",ylab ="Value", main="My plot",
+     border="blue"
+)
+```
+
+## 2.6. Saving figures to disk
+
+Plots can be saved as image files or a PDF. This is done by specifying the output file type, its size and resolution, then calling the plot.
+
+```{r code for exporting figures, message = FALSE, warning = FALSE}
+
+png("awesome_plot.png", width=4, height=4, units="in", res=400) 
+#Tells R we will plot image in png of given specification
+
+matplot(plot_data, type = c("b","l","o"),pch=16,col = 1:4)  
+legend("topleft", legend = 1:4, col=1:4, pch=1)
+
+dev.off() # Very important: this sends the image to disc
+# Keep pressing till you get the following: 
+# Error in dev.off() : cannot shut down device 1 (the null device) 
+# This ensures that we are no longer plotting.
+
+# It looks like what everything we just plotted was squeezed together to tightly. Let's change the size.
+png("awesome_plot.png", width=6, height=4, units="in", res=400)  #note change in dimension
+#Tells R we will plot image in png of given specification
+
+matplot(plot_data, type = c("b","l","o"),pch=16,col = 1:3)  
+legend("topleft", legend = 1:3, col=1:3, pch=16)
+
+dev.off() 
+
+```
+<br>
+
+**Some useful resources**
+
+If you want to plot something a certain way and don't know how to do it, the chances are that someone has asked that question before. Try a Google search for what your are trying to do and check out some of the forums. There is TONS of material online. Here are some additional resources:
+
+The R Graph Gallery: 
+https://www.r-graph-gallery.com/
+
+Graphical parameters:  
+https://www.statmethods.net/advgraphs/parameters.html
+
+Plotting in R: 
+https://www.harding.edu/fmccown/r/
+
+Histogram:  
+https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/
+
+Line plots: 
+https://www.statmethods.net/graphs/line.html
+
+
+
+***
+# CHAPTER 3: Plotting with ggplot2
+***
+## 3.1. Import libraries and create sample dataset
+
+For this section, we will use the `ggplot2`, `gridExtra`, `utils`, and `tidyr` packages. `gridExtra` and `cowplot` are used to combine ggplot objects into one plot and `utils` and `tidyr` are useful for manipulating and reshaping the data. We will also install some packages here that will be required for the later sections. You will find more information in the sections to follow.
+
+```{r Git data download, error=FALSE, warning=FALSE}
+###############################################################
+#~~~ Load required libraries
+lib_names=c("ggplot2","gridExtra","utils","tidyr","cowplot", "RColorBrewer")
+
+# If you see a prompt: Do you want to restart R prior to installing: Select **No**. 
+
+# Install all necessary packages (Run once)
+# invisible(suppressMessages
+#           (suppressWarnings
+#             (lapply
+#               (lib_names,install.packages,repos="http://cran.r-project.org",
+#                 character.only = T))))
+
+# Load necessary packages
+invisible(suppressMessages
+          (suppressWarnings
+            (lapply
+              (lib_names,library, character.only = T))))
+
+###############################################################
+#~~~ Generate a dataset containing random numbers within specified ranges
+Year = seq(1913,2001,1)
+Jan = runif(89, -18.4, -3.2)
+Feb = runif(89, -19.4, -1.2)
+Mar = runif(89, -14, -1.8)
+January = runif(89, 1, 86)
+dat = data.frame(Year, Jan, Feb, Mar, January)
+```
+
+## 3.2. Basics of ggplot
+Whereas base R has an "ink on paper" plotting paradigm, `ggplot` has a "grammar of graphics" paradigm that packages together a variety plotting functions. With `ggplot`, you assign the result of a function to an object name and then modify it by adding additional functions. Think of it as adding layers using pre-designed functions rather than having to build those functions yourself, as you would have to do with base R.
+
+```{r load packages and data for plots, message = FALSE, warning = FALSE}
+
+l1 = ggplot(data=dat, aes(x = Year, y = Jan, color = "blue")) + # Tell which data to plot
+  geom_line() +      # Add a line
+  geom_point() +     # Add a points
+  xlab("Year") +     # Add labels to the axes
+  ylab("Value")
+
+# Or, they can be specified for any individual geometry
+l1 + geom_line(linetype = "solid", color="Blue")  # Add a solid line
+l1 + geom_line(aes(x = Year, y = January)) # Add a different data set
+
+# There are tons of other built-in color scales and themes, such as scale_color_grey(), scale_color_brewer(), theme_classic(), theme_minimal(), and theme_dark()
+
+# OR, CREATE YOUR OWN THEME! You can group themes together in one list
+theme1 = theme(
+  legend.position = "none",
+  panel.background = element_blank(),
+  plot.title = element_text(hjust = 0.5),
+  axis.line = element_line(color = "black"),
+  axis.text.y   = element_text(size = 11),
+  axis.text.x   = element_text(size = 11),
+  axis.title.y  = element_text(size = 11),
+  axis.title.x  = element_text(size = 11),
+  panel.border = element_rect(
+    colour = "black",
+    fill = NA,
+    size = 0.5
+  )
+)
+```
+
+## 3.3. Multivariate plots
+
+For multivariate data, ggplot takes the data in the form of groups. This means that each data row should be identifiable to a group. To get the most out of ggplot, we will need to reshape our dataset.
+
+```{r reshaping data, message = FALSE, warning = FALSE}
+library(tidyr)
+
+# There are two generally data formats: wide (horizontal) and long (vertical). In the horizontal format, every column represents a category of the data. In the vertical format, every row represents an observation for a particular category (think of each row as a data point). Both formats have their comparative advantages. We will now convert the data frame we randomly generated in the previous section to the long format. Here are several ways to do this:
+
+# Using the gather function
+dat2 = dat %>% gather(Month, Value, -Year)
+
+# Using pivot_longer and selecting all of the columns we want. This function is the best!
+dat2 = dat %>% pivot_longer(cols = c(Jan, Feb, Mar), names_to = "Month", values_to = "Value") 
+
+# Or we can choose to exclude the columns we don't want
+dat2 = dat %>% pivot_longer(cols = -c(Year,January), names_to = "Month", values_to = "Value") 
+
+head(dat2) # The data is now shaped in the long format
+```
+
+**Line plot**
+
+```{r line plot, message = FALSE, warning = FALSE}
+# LINE PLOT
+l = ggplot(dat2, aes(x = Year, y = Value, group = Month)) +
+  geom_line(aes(color = Month)) +
+  geom_point(aes(color = Month))
+l
+```
+
+**Density plot**
+
+```{r density plot, message = FALSE, warning = FALSE}
+# DENSITY PLOT
+d = ggplot(dat2, aes(x = Value))
+d = d + geom_density(aes(color = Month, fill = Month), alpha=0.4) # Alpha specifies transparency
+d
+```
+
+**Histogram**
+
+```{r histogram, message = FALSE, warning = FALSE}
+# HISTOGRAM
+h = ggplot(dat2, aes(x = Value))
+h = h + geom_histogram(aes(color = Month, fill = Month), alpha=0.4,
+                 fill = "white",
+                 position = "dodge")
+h
+```
+
+**Grid plotting and saving files to disk**
+
+There are multiple ways to arrange multiple plots and save images. One method is using `grid.arrange()` which is found in the `gridExtra` package. You can then save the file using `ggsave`, which comes with the `ggplot2` library.
+
+```{r grid plotting and saving 1, message = FALSE, warning = FALSE}
+# The plots can be displayed together on one image using 
+# grid.arrange from the gridExtra package
+img = grid.arrange(l, d, h, nrow=3)
+
+# Finally, plots created using ggplot can be saved using ggsave
+ggsave("grid_plot_1.png", 
+       plot = img, 
+       device = "png", 
+       width = 6, 
+       height = 4, 
+       units = c("in"), 
+       dpi = 600)
+```
+
+Another approach is to use the `plot_grid` function, which is in the `cowplot` library. Notice how the axes are now beautifally aligned.
+
+```{r grid plotting and saving 2, message = FALSE, warning = FALSE}
+
+img2=cowplot::plot_grid(l, d, h, nrow = 3, align = "v") # "v" aligns vertical axes and "h" aligns horizontal axes
+
+ggsave("grid_plot_2.png", 
+       plot = img2, 
+       device = "png", 
+       width = 6, 
+       height = 4, 
+       units = c("in"), 
+       dpi = 600)
+```
+
+<br>
+**Some useful resources**
+
+The links below offer a treasure trove of examples and sample code to get you started.
+
+The R Graph Gallery:
+https://www.r-graph-gallery.com/
+
+Line plots in ggplot2: http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization
+
+Top 50 visualizations with ggplot2: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+
+Practical guide in ggplot2: http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization

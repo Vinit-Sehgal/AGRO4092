@@ -25,6 +25,11 @@ book:
 format:
   html:
     theme: yeti
-    code-fold: true
+    code-fold: false
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+    gallery: true
+    highlight: tango
 
 

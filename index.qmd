@@ -1,1 +1,2 @@
 # Introduction
+Statistical computing is essential for scientific inquiry, discovery, and `storytelling`. With `R`, there are endless possibilities for assembling, transforming, querying, analyzing, and ultimately visualizing data. In this workshop, we will give you the tools to get you started.
