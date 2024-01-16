@@ -38,7 +38,7 @@ Notice the variables provided in the dataset. As an example, we can plots soil m
 
 ```{r}
 #| label: fig-density
-#| fig-cap: "Soil moisture values at USCRN station in Texas"
+#| fig-cap: "Soil moisture values at the selected USCRN station"
 #| fig-subcap:
 #|   - "Time series of SM"
 #|   - "SM kernel density"
