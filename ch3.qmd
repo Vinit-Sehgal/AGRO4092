@@ -1,0 +1,170 @@
+***
+# CHAPTER 3: Plotting with ggplot2
+***
+## 3.1. Import libraries and create sample dataset
+
+For this section, we will use the `ggplot2`, `gridExtra`, `utils`, and `tidyr` packages. `gridExtra` and `cowplot` are used to combine ggplot objects into one plot and `utils` and `tidyr` are useful for manipulating and reshaping the data. We will also install some packages here that will be required for the later sections. You will find more information in the sections to follow.
+
+```{r Git data download, error=FALSE, warning=FALSE}
+###############################################################
+#~~~ Load required libraries
+lib_names=c("ggplot2","gridExtra","utils","tidyr","cowplot", "RColorBrewer")
+
+# If you see a prompt: Do you want to restart R prior to installing: Select **No**. 
+
+# Install all necessary packages (Run once)
+# invisible(suppressMessages
+#           (suppressWarnings
+#             (lapply
+#               (lib_names,install.packages,repos="http://cran.r-project.org",
+#                 character.only = T))))
+
+# Load necessary packages
+invisible(suppressMessages
+          (suppressWarnings
+            (lapply
+              (lib_names,library, character.only = T))))
+
+###############################################################
+#~~~ Generate a dataset containing random numbers within specified ranges
+Year = seq(1913,2001,1)
+Jan = runif(89, -18.4, -3.2)
+Feb = runif(89, -19.4, -1.2)
+Mar = runif(89, -14, -1.8)
+January = runif(89, 1, 86)
+dat = data.frame(Year, Jan, Feb, Mar, January)
+```
+
+## 3.2. Basics of ggplot
+Whereas base R has an "ink on paper" plotting paradigm, `ggplot` has a "grammar of graphics" paradigm that packages together a variety plotting functions. With `ggplot`, you assign the result of a function to an object name and then modify it by adding additional functions. Think of it as adding layers using pre-designed functions rather than having to build those functions yourself, as you would have to do with base R.
+
+```{r load packages and data for plots, message = FALSE, warning = FALSE}
+
+l1 = ggplot(data=dat, aes(x = Year, y = Jan, color = "blue")) + # Tell which data to plot
+  geom_line() +      # Add a line
+  geom_point() +     # Add a points
+  xlab("Year") +     # Add labels to the axes
+  ylab("Value")
+
+# Or, they can be specified for any individual geometry
+l1 + geom_line(linetype = "solid", color="Blue")  # Add a solid line
+l1 + geom_line(aes(x = Year, y = January)) # Add a different data set
+
+# There are tons of other built-in color scales and themes, such as scale_color_grey(), scale_color_brewer(), theme_classic(), theme_minimal(), and theme_dark()
+
+# OR, CREATE YOUR OWN THEME! You can group themes together in one list
+theme1 = theme(
+  legend.position = "none",
+  panel.background = element_blank(),
+  plot.title = element_text(hjust = 0.5),
+  axis.line = element_line(color = "black"),
+  axis.text.y   = element_text(size = 11),
+  axis.text.x   = element_text(size = 11),
+  axis.title.y  = element_text(size = 11),
+  axis.title.x  = element_text(size = 11),
+  panel.border = element_rect(
+    colour = "black",
+    fill = NA,
+    size = 0.5
+  )
+)
+```
+
+## 3.3. Multivariate plots
+
+For multivariate data, ggplot takes the data in the form of groups. This means that each data row should be identifiable to a group. To get the most out of ggplot, we will need to reshape our dataset.
+
+```{r reshaping data, message = FALSE, warning = FALSE}
+library(tidyr)
+
+# There are two generally data formats: wide (horizontal) and long (vertical). In the horizontal format, every column represents a category of the data. In the vertical format, every row represents an observation for a particular category (think of each row as a data point). Both formats have their comparative advantages. We will now convert the data frame we randomly generated in the previous section to the long format. Here are several ways to do this:
+
+# Using the gather function
+dat2 = dat %>% gather(Month, Value, -Year)
+
+# Using pivot_longer and selecting all of the columns we want. This function is the best!
+dat2 = dat %>% pivot_longer(cols = c(Jan, Feb, Mar), names_to = "Month", values_to = "Value") 
+
+# Or we can choose to exclude the columns we don't want
+dat2 = dat %>% pivot_longer(cols = -c(Year,January), names_to = "Month", values_to = "Value") 
+
+head(dat2) # The data is now shaped in the long format
+```
+
+**Line plot**
+
+```{r line plot, message = FALSE, warning = FALSE}
+# LINE PLOT
+l = ggplot(dat2, aes(x = Year, y = Value, group = Month)) +
+  geom_line(aes(color = Month)) +
+  geom_point(aes(color = Month))
+l
+```
+
+**Density plot**
+
+```{r density plot, message = FALSE, warning = FALSE}
+# DENSITY PLOT
+d = ggplot(dat2, aes(x = Value))
+d = d + geom_density(aes(color = Month, fill = Month), alpha=0.4) # Alpha specifies transparency
+d
+```
+
+**Histogram**
+
+```{r histogram, message = FALSE, warning = FALSE}
+# HISTOGRAM
+h = ggplot(dat2, aes(x = Value))
+h = h + geom_histogram(aes(color = Month, fill = Month), alpha=0.4,
+                 fill = "white",
+                 position = "dodge")
+h
+```
+
+**Grid plotting and saving files to disk**
+
+There are multiple ways to arrange multiple plots and save images. One method is using `grid.arrange()` which is found in the `gridExtra` package. You can then save the file using `ggsave`, which comes with the `ggplot2` library.
+
+```{r grid plotting and saving 1, message = FALSE, warning = FALSE}
+# The plots can be displayed together on one image using 
+# grid.arrange from the gridExtra package
+img = grid.arrange(l, d, h, nrow=3)
+
+# Finally, plots created using ggplot can be saved using ggsave
+ggsave("grid_plot_1.png", 
+       plot = img, 
+       device = "png", 
+       width = 6, 
+       height = 4, 
+       units = c("in"), 
+       dpi = 600)
+```
+
+Another approach is to use the `plot_grid` function, which is in the `cowplot` library. Notice how the axes are now beautifally aligned.
+
+```{r grid plotting and saving 2, message = FALSE, warning = FALSE}
+
+img2=cowplot::plot_grid(l, d, h, nrow = 3, align = "v") # "v" aligns vertical axes and "h" aligns horizontal axes
+
+ggsave("grid_plot_2.png", 
+       plot = img2, 
+       device = "png", 
+       width = 6, 
+       height = 4, 
+       units = c("in"), 
+       dpi = 600)
+```
+
+<br>
+**Some useful resources**
+
+The links below offer a treasure trove of examples and sample code to get you started.
+
+The R Graph Gallery:
+https://www.r-graph-gallery.com/
+
+Line plots in ggplot2: http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization
+
+Top 50 visualizations with ggplot2: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+
+Practical guide in ggplot2: http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization

@@ -17,14 +17,13 @@ book:
   repo-actions: [edit, issue]
   chapters:
     - index.qmd
-    - data.qmd
-    - results.qmd
-    - d3graph.qmd
-    - conclusion.qmd
+    - ch1.qmd
+    - ch2.qmd
+    - ch3.qmd
 
 format:
   html:
-    theme: yeti
+    theme: united
     rmdformats::readthedown:
     code-fold: false
     self_contained: true

@@ -1,0 +1,193 @@
+***
+# Plotting with base R
+***
+If you need to quickly visualize your data, base R has some functions that will help you do this in a pinch. In this section we'll look at some basics of visualizing univariate and multivariate data.
+
+## Overview
+```{r data frame and list, message = FALSE, warning = FALSE}
+
+# Create 50 random numbers between 0 and 100  
+data=runif(50, 0, 100) 
+
+# Overplotting means adding layers to a plot.
+plot(data)            # The "plot" function initializes the plot.
+plot(data, type="l")  # The "type" argument changes the plot type. "l" calls up a line plot
+plot(data, type="b")  # Buffered points joined by lines
+
+# Try options type = "o" and type = "c" as well.
+
+# We can also quickly visualize boxplots, histograms, and density plots using the same procedure
+boxplot(data)        # Box-and-whisker plot
+hist(data)           # Histogram points
+plot(density(data))  # Plot with density distribution 
+
+```
+
+## Plotting univariate data
+
+Let's dig deeper into the plot function. Here, we will look at how to adjust the colors, shapes, and sizes for markers, axis labels and titles, and the plot title.
+```{r Univariate data, message = FALSE, warning = FALSE}
+
+# Part 2.2.1. Line plots
+plot(data,type="o", col="red",
+     xlab="x-axis title",ylab ="y-axis title", main="My plot", # Name of axis labels and title
+     cex.axis=2, cex.main=2,cex.lab=2,            # Size of axes, title and label
+     pch=23,       # Change marker style
+     bg="red",     # Change color of markers
+     lty=5,        # Change line style
+     lwd=2         # Selecting line width
+) 
+# Adding legend
+legend(1, 100, legend=c("Data 1"),
+       col=c("red"), lty=2, cex=1.2)
+
+# Part 2.2.2. Histograms
+hist(data,col="red",
+     xlab="Number",ylab ="Value", main="My plot", # Name of axis labels and title
+     border="blue"
+) 
+
+# Try adjusting the parameters:
+# hist(data,col="red",
+#      xlab="Number",ylab ="Value", main="My plot", # Name of axis labels and title
+#      cex.axis=2, cex.main=2,cex.lab=2,            # Size of axes, title and label
+#      border="blue", 
+#      xlim=c(0,100), # Control the limits of the x-axis
+#      las=0,      # Try different values of las: 0,1,2,3 to rotate labels
+#      breaks=5    # Try using 5,20,50, 100
+# ) # Using more options and controls
+
+```
+
+## Plotting multivariate data
+
+Here, we introduce you to data frames: equivalent of tables in R. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.
+
+```{r Multivariate data frame, message = FALSE, warning = FALSE}
+
+plot_data=data.frame(x=runif(50,0,10), y=runif(50,20,30), z=runif(50,30,40)) 
+
+plot(plot_data$x, plot_data$y) # Scatter plot of x and y data
+
+# Mandatory beautification
+plot(plot_data$x,plot_data$y, xlab="Data X", ylab="Data Y", main="X vs Y plot",
+     col="darkred",pch=20,cex=1.5) # Scatter plot of x and y data
+
+# Multiple lines on one axis
+matplot(plot_data, type = c("b"),pch=16,col = 1:4) 
+matplot(plot_data, type = c("b","l","o"),pch=16,col = 1:4) # Try this now. Any difference? 
+legend("topleft", legend = 1:4, col=1:4, pch=1)            # Add legend to a top left
+legend("top", legend = 1:4, col=1:4, pch=1)                # Add legend to at top center
+legend("bottomright", legend = 1:4, col=1:4, pch=1)        # Add legend at the bottom right
+
+```
+
+## Time series data
+
+Working with time series data can be tricky at first, but here's a quick look at how to quickly generate a time series using the as.Date function.
+
+```{r time series, message = FALSE, warning = FALSE}
+
+
+date=seq(as.Date('2011-01-01'),as.Date('2011-01-31'),by = 1) # Generate a sequence 31 days
+data=runif(31,0,10)                 # Generate 31 random values between 0 and 10
+df=data.frame(Date=date,Value=data) # Combine the data in a data frame
+plot(df,type="o")
+
+```
+
+## Combining plots
+
+You can built plots that contain subplots. Using base R, we call start by using the "par" function and then plot as we saw before.
+
+```{r using layout, message = FALSE, warning = FALSE}
+
+par(mfrow=c(2,2)) # Call a plot with 4 quadrants
+
+# Plot 1
+matplot(plot_data, type = c("b"),pch=16,col = 1:4) 
+
+# Plot 2
+plot(plot_data$x,plot_data$y) 
+
+# Plot 3
+hist(data,col="red",
+     xlab="Number",ylab ="Value", main="My plot", 
+     border="blue") 
+
+# Plot4
+plot(data,type="o", col="red",
+     xlab="Number",ylab ="Value", main="My plot",
+     cex.axis=2, cex.main=2,cex.lab=2, 
+     pch=23,   
+     bg="red", 
+     lty=5, 
+     lwd=2 
+) 
+
+# Alternatively, we can call up a plot using a matrix
+matrix(c(1,1,2,3), 2, 2, byrow = TRUE) # Plot 1 is plotted for first two spots, followed by plot 2 and 3 
+
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE)) # Fixes a layout of the plots we want to make
+
+ # Plot 1
+matplot(plot_data, type = c("b"),pch=16,col = 1:4)
+
+# Plot2
+plot(plot_data$x,plot_data$y) 
+
+# Plot 3
+hist(data,col="red",
+     xlab="Number",ylab ="Value", main="My plot",
+     border="blue"
+)
+```
+
+## Saving figures to disk
+
+Plots can be saved as image files or a PDF. This is done by specifying the output file type, its size and resolution, then calling the plot.
+
+```{r code for exporting figures, message = FALSE, warning = FALSE}
+
+png("awesome_plot.png", width=4, height=4, units="in", res=400) 
+#Tells R we will plot image in png of given specification
+
+matplot(plot_data, type = c("b","l","o"),pch=16,col = 1:4)  
+legend("topleft", legend = 1:4, col=1:4, pch=1)
+
+dev.off() # Very important: this sends the image to disc
+# Keep pressing till you get the following: 
+# Error in dev.off() : cannot shut down device 1 (the null device) 
+# This ensures that we are no longer plotting.
+
+# It looks like what everything we just plotted was squeezed together to tightly. Let's change the size.
+png("awesome_plot.png", width=6, height=4, units="in", res=400)  #note change in dimension
+#Tells R we will plot image in png of given specification
+
+matplot(plot_data, type = c("b","l","o"),pch=16,col = 1:3)  
+legend("topleft", legend = 1:3, col=1:3, pch=16)
+
+dev.off() 
+
+```
+<br>
+
+**Some useful resources**
+
+If you want to plot something a certain way and don't know how to do it, the chances are that someone has asked that question before. Try a Google search for what your are trying to do and check out some of the forums. There is TONS of material online. Here are some additional resources:
+
+The R Graph Gallery: 
+https://www.r-graph-gallery.com/
+
+Graphical parameters:  
+https://www.statmethods.net/advgraphs/parameters.html
+
+Plotting in R: 
+https://www.harding.edu/fmccown/r/
+
+Histogram:  
+https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/
+
+Line plots: 
+https://www.statmethods.net/graphs/line.html
+
