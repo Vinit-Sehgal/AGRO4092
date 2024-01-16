@@ -6,11 +6,10 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "LSU-AGRO4092: R for Spatial Analysis & Visualization"
   author:
-    - AUTHOR1 (UNI1)
-    - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+    - Vinit Sehgal, Ph.D. (Louisiana State University)
+  repo-url: https://github.com/vinit-sehgal/AGRO4092
   date: today
   page-footer:
     right: |
