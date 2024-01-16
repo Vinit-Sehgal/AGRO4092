@@ -8,4 +8,4 @@ Statistical computing is essential for scientific inquiry, discovery, and `story
 
 ------------------------------------------------------------------------
 
-<center>![](./images/LSUlogo.jpg){width="15%"}</center>
+<center>![](./images/LSUlogo.jpg){width="10%"}</center>
