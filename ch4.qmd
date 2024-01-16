@@ -1,0 +1,49 @@
+---
+title-block-banner: true
+---
+## EXCERCISE 1
+Retrieving data from USCRN: Extract sample data from a climate reference site in Lafayette, LA, USA for 2021.
+
+```{r}
+#| label: import data
+#| warning: false
+
+# Yearly data from the sample station
+CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-LA_Lafayette_13_SE.txt"), header=FALSE,sep="")
+
+# Data headers
+headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")
+
+# Column names as headers from the text file
+colnames(CRNdat)=headers[2,1:ncol(CRNdat)]
+
+# Replace fill values with NA
+CRNdat[CRNdat == -9999]=NA
+CRNdat[CRNdat == -99]=NA
+CRNdat[CRNdat == 999]=NA
+
+# View data sample
+library(kableExtra)
+dataTable = kbl(head(CRNdat,3),full_width = F)
+kable_styling(dataTable,bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+
+```
+
+```{r}
+#| label: fig-density
+#| fig-cap: "Soil moisture values at USCRN station in Texas"
+#| fig-subcap:
+#|   - "Time series of SM"
+#|   - "SM kernel density"
+#| layout-ncol: 2
+
+# Sample plot for soil moisture
+x=CRNdat$SOIL_MOISTURE_20_DAILY
+
+# Plot time series and density distribution 
+plot(x, type="l", ylab="Soil moisture (v/v)", 
+     col="cyan4", lwd=3)
+plot(density(na.omit(x)), main=" ", xlab="", 
+     col="cyan4", lwd=3)
+```

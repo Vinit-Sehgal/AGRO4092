@@ -2,10 +2,33 @@
 title-block-banner: true
 author-title: Author
 ---
+
+<center>![](./images/cover_v2.png){width="100%"}</center>
+
 # Introduction
 
-Statistical computing is essential for scientific inquiry, discovery, and `storytelling`. With `R`, there are endless possibilities for assembling, transforming, querying, analyzing, and ultimately visualizing data. In this workshop, we will give you the tools to get you started.
+Statistical computing is essential for scientific inquiry, discovery, and storytelling. As the availability of dataset and access to computing has significantly increased over the recent years, the scope of scientific inquiry is restricted, only, by the imagination of the inquirer.
+
+> "*Scientific inquiry starts with observation. The more one can see, the more one can investigate”* — Martin Chalfie
+
+However, analysis of large-scale geospatial data (regional- to global scale at high spatial and temporal resolution) can be computationally expensive and time-consuming, especially when working with multiple formats and sources of data. `R`- a higher-level programming language, provides a powerful computational alternative to popular Geographic Information System (GIS) software to organize, analyze and visualize geospatial datasets. `R` enjoys a vast collection of open-source libraries for GIS-type operations and proven statistical analysis and data visualization capabilities.
+
+In this course, we equip ourselves with hands-on knowledge of accessing, analyzing, and visualizing open-source satellite remote-sensing and geospatial datasets for hydrological, agricultural, and climatological studies within the `R` environment. The objective of this course is to learn `R` for:
+
+-   Analyzing geospatial datasets (raster and vector),
+
+-   Performing statistical analysis for each feature/ layer, and,
+
+-   Mapping and visualizing spatial datasets.
+
+The course will include the latest `R` tools for working with global Earth-observation datasets, such as from NASA’s `MODIS` and `SMAP` satellites. Basic operations of geospatial analysis such as (re)projection, (re)sampling, summary statistics, merge/join, and (re)shape will be covered. The students will be introduced to structured/layered spatial datasets such as NetCDF and HDF formats used in climate modeling. Special emphasis will be placed on applying available out-of-the-box parallel computing techniques for geospatial analysis available in `R`.
+
+We will first start with a refresher of basic `R` programming in Module 1. In Module 2 and 3, we will explore spatial data visualization, before we learn about large-scale application of parallel computing for geospatial analysis.
+
+**Purpose of this document:**
+
+This resource will serve as a dynamic class note, where students can access detailed concepts, codes and exercises related to this class. Notes will be updated regularly as the class progresses with up-to-date material and upcoming assignments.
 
 ------------------------------------------------------------------------
 
-<center>![](./images/LSUlogo.jpg){width="10%"}</center>
+<center>![](./images/LSUlogo.jpg){width="20%"}</center>

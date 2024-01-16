@@ -1,6 +1,7 @@
 ---
 title-block-banner: true
 ---
+
 # Plotting with ggplot2
 
 ## Import libraries and create sample dataset

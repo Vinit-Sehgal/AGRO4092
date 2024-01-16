@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Vinit Sehgal, Ph.D.">
-<meta name="dcterms.date" content="2024-01-16">
 
-<title>R for Spatial Analysis &amp; Visualization</title>
+<title>R for Spatial Analysis &amp; Visualization - 5&nbsp; EXCERCISE 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -32,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./ch1.html" rel="next">
+<link href="./ch3.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -63,6 +95,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 </head>
 
@@ -75,7 +110,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch4.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -88,26 +123,14 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">R for Spatial Analysis &amp; Visualization</h1>
+      <h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></h1>
                       </div>
   </div>
     
   
   <div class="quarto-title-meta">
 
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Vinit Sehgal, Ph.D. </p>
-            </div>
-    </div>
       
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">January 16, 2024</p>
-      </div>
-    </div>
     
       
     </div>
@@ -133,7 +156,7 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
@@ -157,7 +180,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch4.html" class="sidebar-item-text sidebar-link">
+  <a href="./ch4.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">EXCERCISE 1</span></span></a>
   </div>
 </li>
@@ -167,13 +190,7 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -181,33 +198,194 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<center>
-<img src="./images/cover_v2.png" class="img-fluid" style="width:100.0%">
-</center>
-<section id="introduction" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
-<p>Statistical computing is essential for scientific inquiry, discovery, and storytelling. As the availability of dataset and access to computing has significantly increased over the recent years, the scope of scientific inquiry is restricted, only, by the imagination of the inquirer.</p>
-<blockquote class="blockquote">
-<p>“<em>Scientific inquiry starts with observation. The more one can see, the more one can investigate”</em> — Martin Chalfie</p>
-</blockquote>
-<p>However, analysis of large-scale geospatial data (regional- to global scale at high spatial and temporal resolution) can be computationally expensive and time-consuming, especially when working with multiple formats and sources of data. <code>R</code>- a higher-level programming language, provides a powerful computational alternative to popular Geographic Information System (GIS) software to organize, analyze and visualize geospatial datasets. <code>R</code> enjoys a vast collection of open-source libraries for GIS-type operations and proven statistical analysis and data visualization capabilities.</p>
-<p>In this course, we equip ourselves with hands-on knowledge of accessing, analyzing, and visualizing open-source satellite remote-sensing and geospatial datasets for hydrological, agricultural, and climatological studies within the <code>R</code> environment. The objective of this course is to learn <code>R</code> for:</p>
-<ul>
-<li><p>Analyzing geospatial datasets (raster and vector),</p></li>
-<li><p>Performing statistical analysis for each feature/ layer, and,</p></li>
-<li><p>Mapping and visualizing spatial datasets.</p></li>
-</ul>
-<p>The course will include the latest <code>R</code> tools for working with global Earth-observation datasets, such as from NASA’s <code>MODIS</code> and <code>SMAP</code> satellites. Basic operations of geospatial analysis such as (re)projection, (re)sampling, summary statistics, merge/join, and (re)shape will be covered. The students will be introduced to structured/layered spatial datasets such as NetCDF and HDF formats used in climate modeling. Special emphasis will be placed on applying available out-of-the-box parallel computing techniques for geospatial analysis available in <code>R</code>.</p>
-<p>We will first start with a refresher of basic <code>R</code> programming in Module 1. In Module 2 and 3, we will explore spatial data visualization, before we learn about large-scale application of parallel computing for geospatial analysis.</p>
-<p><strong>Purpose of this document:</strong></p>
-<p>This resource will serve as a dynamic class note, where students can access detailed concepts, codes and exercises related to this class. Notes will be updated regularly as the class progresses with up-to-date material and upcoming assignments.</p>
-<hr>
-<center>
-<img src="./images/LSUlogo.jpg" class="img-fluid" style="width:20.0%">
-</center>
+<p>Retrieving data from USCRN: Extract sample data from a climate reference site in Lafayette, LA, USA for 2021.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Yearly data from the sample station</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>CRNdat <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="fu">url</span>(<span class="st">"https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-LA_Lafayette_13_SE.txt"</span>), <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data headers</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>headers<span class="ot">=</span><span class="fu">read.csv</span>(<span class="fu">url</span>(<span class="st">"https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"</span>), <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Column names as headers from the text file</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(CRNdat)<span class="ot">=</span>headers[<span class="dv">2</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(CRNdat)]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace fill values with NA</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">99</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="dv">999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># View data sample</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>dataTable <span class="ot">=</span> <span class="fu">kbl</span>(<span class="fu">head</span>(CRNdat,<span class="dv">3</span>),<span class="at">full_width =</span> F)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable_styling</span>(dataTable,<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-condensed table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">WBANNO</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">LST_DATE</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">CRX_VN</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">LONGITUDE</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">LATITUDE</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">T_DAILY_MAX</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">T_DAILY_MIN</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">T_DAILY_MEAN</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">T_DAILY_AVG</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">P_DAILY_CALC</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOLARAD_DAILY</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">SUR_TEMP_DAILY_TYPE</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SUR_TEMP_DAILY_MAX</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SUR_TEMP_DAILY_MIN</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SUR_TEMP_DAILY_AVG</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">RH_DAILY_MAX</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">RH_DAILY_MIN</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">RH_DAILY_AVG</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_MOISTURE_5_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_MOISTURE_10_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_MOISTURE_20_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_MOISTURE_50_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_MOISTURE_100_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_TEMP_5_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_TEMP_10_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_TEMP_20_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_TEMP_50_DAILY</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SOIL_TEMP_100_DAILY</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">53960</td>
+<td style="text-align: right;">20210101</td>
+<td style="text-align: right;">2.622</td>
+<td style="text-align: right;">-91.87</td>
+<td style="text-align: right;">30.09</td>
+<td style="text-align: right;">14.0</td>
+<td style="text-align: right;">5.2</td>
+<td style="text-align: right;">9.6</td>
+<td style="text-align: right;">11.0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">12.16</td>
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">18.7</td>
+<td style="text-align: right;">4.6</td>
+<td style="text-align: right;">11.6</td>
+<td style="text-align: right;">92.8</td>
+<td style="text-align: right;">49.3</td>
+<td style="text-align: right;">72.0</td>
+<td style="text-align: right;">0.401</td>
+<td style="text-align: right;">0.372</td>
+<td style="text-align: right;">0.380</td>
+<td style="text-align: right;">0.405</td>
+<td style="text-align: right;">0.381</td>
+<td style="text-align: right;">16.2</td>
+<td style="text-align: right;">15.3</td>
+<td style="text-align: right;">15.5</td>
+<td style="text-align: right;">15.7</td>
+<td style="text-align: right;">15.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">53960</td>
+<td style="text-align: right;">20210102</td>
+<td style="text-align: right;">2.622</td>
+<td style="text-align: right;">-91.87</td>
+<td style="text-align: right;">30.09</td>
+<td style="text-align: right;">10.4</td>
+<td style="text-align: right;">1.9</td>
+<td style="text-align: right;">6.1</td>
+<td style="text-align: right;">6.5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8.95</td>
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">15.3</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">7.3</td>
+<td style="text-align: right;">98.6</td>
+<td style="text-align: right;">61.6</td>
+<td style="text-align: right;">78.4</td>
+<td style="text-align: right;">0.396</td>
+<td style="text-align: right;">0.370</td>
+<td style="text-align: right;">0.377</td>
+<td style="text-align: right;">0.406</td>
+<td style="text-align: right;">0.376</td>
+<td style="text-align: right;">14.4</td>
+<td style="text-align: right;">13.3</td>
+<td style="text-align: right;">14.1</td>
+<td style="text-align: right;">15.2</td>
+<td style="text-align: right;">15.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">53960</td>
+<td style="text-align: right;">20210103</td>
+<td style="text-align: right;">2.622</td>
+<td style="text-align: right;">-91.87</td>
+<td style="text-align: right;">30.09</td>
+<td style="text-align: right;">16.3</td>
+<td style="text-align: right;">-0.1</td>
+<td style="text-align: right;">8.1</td>
+<td style="text-align: right;">7.9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">13.93</td>
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">24.3</td>
+<td style="text-align: right;">-0.9</td>
+<td style="text-align: right;">9.5</td>
+<td style="text-align: right;">100.0</td>
+<td style="text-align: right;">42.1</td>
+<td style="text-align: right;">76.3</td>
+<td style="text-align: right;">0.392</td>
+<td style="text-align: right;">0.368</td>
+<td style="text-align: right;">0.374</td>
+<td style="text-align: right;">0.404</td>
+<td style="text-align: right;">0.373</td>
+<td style="text-align: right;">12.8</td>
+<td style="text-align: right;">11.8</td>
+<td style="text-align: right;">12.8</td>
+<td style="text-align: right;">14.4</td>
+<td style="text-align: right;">14.2</td>
+</tr>
+</tbody>
+</table>
+</div>
 
 
-</section>
+</div>
+</div>
+<div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample plot for soil moisture</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span>CRNdat<span class="sc">$</span>SOIL_MOISTURE_20_DAILY</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot time series and density distribution </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">ylab=</span><span class="st">"Soil moisture (v/v)"</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"cyan4"</span>, <span class="at">lwd=</span><span class="dv">3</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(<span class="fu">na.omit</span>(x)), <span class="at">main=</span><span class="st">" "</span>, <span class="at">xlab=</span><span class="st">""</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"cyan4"</span>, <span class="at">lwd=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-density" class="cell quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-density-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="ch4_files/figure-html/fig-density-1.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></p>
+<figcaption class="figure-caption">(a) Time series of SM</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-density-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="ch4_files/figure-html/fig-density-2.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></p>
+<figcaption class="figure-caption">(b) SM kernel density</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;5.1: Soil moisture values at USCRN station in Texas</figcaption><p></p>
+</figure>
+</div>
+</div>
+
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -445,11 +623,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./ch3.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plotting with ggplot2</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ch1.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators and data types</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

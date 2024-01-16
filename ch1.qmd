@@ -1,23 +1,29 @@
 ---
 title-block-banner: true
 ---
+
 # Operators and data types
 
 ## Basic operators
 
-In this section, we will learn about some basic R operators that are used to perform operations on values and variables. Some most commonly used operators are shown in the table below.
+In this section, we will learn about some basic R operators that are used to perform operations on variables. Some most commonly used operators are shown in the table below.
 
 <center>![](images/Basic_operators.png){width="70%"}</center>
 
+> R follows the conventional order (sequence) to solve mathematical operations, abbreviated as BODMAS: Brackets, Orders (exponents), Division, Multiplication, Addition, and Subtraction
+
 ```{r Chapter 1, message = FALSE, warning = FALSE}
-2+4+7 # Sum 
+2+4+7 # Sum
+4-5   # Subtraction
+2*3   # Multiplication
+1/2   # Division
 
 # Order of operation
 1/2*3+4-5
 1/2*(3+4-5)
 1/(2*(3+4-5))
 1/(2*3+4-5) 
-## Notice how output changes with the placement of operators
+# Notice how output changes with the placement of operators
 
 # Other operators:
 2^3
@@ -26,7 +32,7 @@ sqrt(4)
 pi
 
 # Clear the Environment
-rm(list=ls())
+rm(list=ls()) # rm is for remove,ls is short for list. The empty parenthesis i.e. () signifies all content. 
 ```
 
 ## Basic data operations
@@ -36,8 +42,8 @@ In this section, we will create some vector data and apply built-in operations t
 ```{r Basic data operation, message = FALSE, warning = FALSE}
 # The "is equal to" or "assignment operator in R is "<-" or "=" 
 
-# Generate sample data
-data<-c(1,4,2,3,9)
+# Generate sample data. Remember "c" comes from for "concatenate". 
+data<-c(1,4,2,3,9)    # Try data = c(1,4,2,3,9). Is there any difference in data in both cases?
 
 # rbind combines data by rows, and hence "r"bind
 # cbind combines data by columns, and hence "c"bind
@@ -74,15 +80,19 @@ sd(data)         # Standard deviation
 var(data)        # Variance
 
 # Text data
-data=c("TAMU","GEOS","BAEN","WMHS") 
+data=c("LSU","SPESS","AgCenter","Tigers") 
 data             # View
 data[1]
 
 # Mixed data
-data=c(1,"GEOS",10,"WMHS") # All data is treated as text if one value is text
-data[3]                    # Note how output is in quotes i.e. "10"
+data=c(1,"LSU",10,"AgCenter") # All data is treated as text if one value is text
+data[3]                       # Note how output is in quotes i.e. "10"
 
 ```
+
+
+> *For help with a function in R, just type ? followed by the function to display information in the help menu. Try pasting `?sd` in the console.*
+
 
 ## Data types
 
