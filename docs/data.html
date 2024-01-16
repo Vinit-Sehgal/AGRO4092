@@ -223,7 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <hr>
 <p>In this section, we will learn about some basic R operators that are used to perform operations on values and variables. Some most commonly used operators are shown in the table below.</p>
 <center>
-<img src="C:/Users/VSehgal/OneDrive%20-%20LSU%20AgCenter/TAMU/Teaching/DataVisWorkshop/DataVisWorkshop2020/SampleData-master/images/Basic_operators.png" class="img-fluid" style="width:70.0%">
+<img src="C:/Users/VSehgal/OneDrive%20-%20LSU%20AgCenter/LSU/02_Teaching/AGRO%204092/AGRO4092/images/Basic_operators.png" class="img-fluid" style="width:70.0%">
 </center>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">+</span><span class="dv">4</span><span class="sc">+</span><span class="dv">7</span> <span class="co"># Sum </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -409,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="2.3" class="anchored" data-anchor-id="data-types"><span class="header-section-number">2.3</span> 1.3. Data types</h2>
 <p>In R, data is stored as an “array”, which can be 1-dimensional or 2-dimensional. A 1-D array is called a “vector” and a 2-D array is a “matrix”. A table in R is called a “data frame” and a “list” is a container to hold a variety of data types. In this section, we will learn how to create matrices, lists and data frames in R.</p>
 <center>
-<img src="C:/Users/VSehgal/OneDrive%20-%20LSU%20AgCenter/TAMU/Teaching/DataVisWorkshop/DataVisWorkshop2020/SampleData-master/images/list_visual.png" class="img-fluid" style="width:80.0%">
+<img src="C:/Users/VSehgal/OneDrive%20-%20LSU%20AgCenter/LSU/02_Teaching/AGRO%204092/AGRO4092/images/list_visual.png" class="img-fluid" style="width:80.0%">
 </center>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets make a random matrix</span></span>
@@ -463,13 +463,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 26.41363 21.32451 22.19748 23.77007 24.88129 29.36403 20.45459 27.92240
- [9] 29.15744 20.54412 26.97326 20.69808 26.64123 25.78460 22.86230 29.99233
-[17] 25.92558 23.92407 23.43130 25.40376 21.56601 20.01961 27.14761 26.85204
-[25] 26.20645 23.10430 20.55348 24.87707 27.09192 23.27355 29.59677 27.81175
-[33] 20.27653 28.39099 27.71647 20.75456 29.16680 20.67626 22.26686 25.25857
-[41] 21.36531 23.70305 22.53641 29.99708 21.61258 23.50977 23.68980 29.66676
-[49] 29.05393 21.88943</code></pre>
+<pre><code> [1] 28.67726 25.03160 27.86445 20.98036 24.60530 27.37740 28.29206 27.40080
+ [9] 28.94446 25.41546 26.06877 27.64949 25.43673 27.32287 22.85244 22.34016
+[17] 27.10802 24.28308 25.17288 26.37545 21.65051 29.28946 22.18756 28.73152
+[25] 25.71382 24.33592 29.77967 23.55662 29.37977 25.30416 20.24493 20.80997
+[33] 21.12646 23.22161 29.22977 23.78019 23.63356 20.26902 24.92533 23.60659
+[41] 26.81600 23.99879 24.83909 20.60728 21.39296 20.47559 23.29264 21.31763
+[49] 29.55323 21.27144</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -801,14 +801,14 @@ https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/</p>
 <span id="cb110-14"><a href="#cb110-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat2) <span class="co"># The data is now shaped in the long format</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
-   Year January Month  Value
-  &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913   45.7  Jan    -3.69
-2  1913   45.7  Feb   -10.7 
-3  1913   45.7  Mar   -10.3 
-4  1914    1.96 Jan   -10.4 
-5  1914    1.96 Feb    -3.75
-6  1914    1.96 Mar    -9.17</code></pre>
+   Year January Month Value
+  &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+1  1913    85.0 Jan   -5.09
+2  1913    85.0 Feb   -5.55
+3  1913    85.0 Mar   -9.18
+4  1914    39.2 Jan   -3.99
+5  1914    39.2 Feb   -7.88
+6  1914    39.2 Mar   -5.31</code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>

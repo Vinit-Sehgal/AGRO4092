@@ -25,6 +25,7 @@ book:
 format:
   html:
     theme: yeti
+    rmdformats::readthedown:
     code-fold: false
     self_contained: true
     thumbnails: false
