@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>LSU-AGRO4092: R for Spatial Analysis &amp; Visualization - 2&nbsp; Operators and data types</title>
+<title>R for Spatial Analysis &amp; Visualization - 2&nbsp; Operators and data types</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -118,12 +118,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators and data types</span></h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">LSU-AGRO4092: R for Spatial Analysis &amp; Visualization</a> 
+      <a href="./">R for Spatial Analysis &amp; Visualization</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/vinit-sehgal/AGRO4092" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -151,13 +167,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Results</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Plotting with base R</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CHAPTER 3: Plotting with ggplot2</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plotting with ggplot2</span></span></a>
   </div>
 </li>
     </ul>
@@ -174,32 +190,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#basic-data-operations" id="toc-basic-data-operations" class="nav-link" data-scroll-target="#basic-data-operations"><span class="header-section-number">2.2</span> Basic data operations</a></li>
   <li><a href="#data-types" id="toc-data-types" class="nav-link" data-scroll-target="#data-types"><span class="header-section-number">2.3</span> Data types</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/vinit-sehgal/AGRO4092/edit/main/ch1.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/vinit-sehgal/AGRO4092/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators and data types</span></h1>
-</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-</header>
-
-<hr>
 <section id="basic-operators" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="basic-operators"><span class="header-section-number">2.1</span> Basic operators</h2>
-<hr>
 <p>In this section, we will learn about some basic R operators that are used to perform operations on values and variables. Some most commonly used operators are shown in the table below.</p>
 <center>
 <img src="images/Basic_operators.png" class="img-fluid" style="width:70.0%">
@@ -442,13 +442,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 23.92879 20.27655 20.08903 28.99277 22.40190 28.13256 22.79980 22.49045
- [9] 27.10685 20.60193 27.09295 23.56246 21.43017 25.50094 21.75777 29.98146
-[17] 27.61809 22.81721 26.63849 26.29429 24.87977 22.74066 21.33579 20.41753
-[25] 28.84117 26.97879 27.79489 20.71154 24.31149 24.82420 29.59699 23.14143
-[33] 29.73469 24.37005 26.18946 26.40678 24.62890 20.13036 21.68015 22.85684
-[41] 26.57953 24.83836 25.58737 27.31570 29.91400 21.00915 25.10576 24.18496
-[49] 23.27430 20.72667</code></pre>
+<pre><code> [1] 29.32660 28.00734 20.65916 28.09457 28.69884 20.50126 21.02799 21.49797
+ [9] 26.26684 25.27062 29.83497 27.98597 29.65168 26.87764 26.68097 27.21222
+[17] 20.28942 26.20614 27.55100 27.81581 21.94926 25.84155 27.33514 26.08941
+[25] 22.73765 24.69059 23.78062 22.28293 29.19094 24.08998 23.56741 20.30362
+[33] 23.20885 22.09940 27.96115 23.42111 29.96588 20.03256 22.90212 20.15789
+[41] 28.84083 22.13102 22.25191 27.80785 24.16297 24.93997 28.94315 26.60714
+[49] 23.18928 28.27072</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -709,7 +709,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./ch2.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Results</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Plotting with base R</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -722,7 +722,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">This book was built with <a href="https://quarto.org/">Quarto</a>.</div>
+    <div class="nav-footer-right">Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a></div>
   </div>
 </footer>
 

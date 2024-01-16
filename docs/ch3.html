@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>LSU-AGRO4092: R for Spatial Analysis &amp; Visualization - 4&nbsp; CHAPTER 3: Plotting with ggplot2</title>
+<title>R for Spatial Analysis &amp; Visualization - 4&nbsp; Plotting with ggplot2</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch3.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CHAPTER 3: Plotting with ggplot2</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch3.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plotting with ggplot2</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -117,12 +117,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plotting with ggplot2</span></h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">LSU-AGRO4092: R for Spatial Analysis &amp; Visualization</a> 
+      <a href="./">R for Spatial Analysis &amp; Visualization</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/vinit-sehgal/AGRO4092" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -150,13 +166,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Results</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Plotting with base R</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch3.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CHAPTER 3: Plotting with ggplot2</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Plotting with ggplot2</span></span></a>
   </div>
 </li>
     </ul>
@@ -169,36 +185,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#import-libraries-and-create-sample-dataset" id="toc-import-libraries-and-create-sample-dataset" class="nav-link active" data-scroll-target="#import-libraries-and-create-sample-dataset"><span class="header-section-number">4.1</span> 3.1. Import libraries and create sample dataset</a></li>
-  <li><a href="#basics-of-ggplot" id="toc-basics-of-ggplot" class="nav-link" data-scroll-target="#basics-of-ggplot"><span class="header-section-number">4.2</span> 3.2. Basics of ggplot</a></li>
-  <li><a href="#multivariate-plots" id="toc-multivariate-plots" class="nav-link" data-scroll-target="#multivariate-plots"><span class="header-section-number">4.3</span> 3.3. Multivariate plots</a></li>
+  <li><a href="#import-libraries-and-create-sample-dataset" id="toc-import-libraries-and-create-sample-dataset" class="nav-link active" data-scroll-target="#import-libraries-and-create-sample-dataset"><span class="header-section-number">4.1</span> Import libraries and create sample dataset</a></li>
+  <li><a href="#basics-of-ggplot" id="toc-basics-of-ggplot" class="nav-link" data-scroll-target="#basics-of-ggplot"><span class="header-section-number">4.2</span> Basics of ggplot</a></li>
+  <li><a href="#multivariate-plots" id="toc-multivariate-plots" class="nav-link" data-scroll-target="#multivariate-plots"><span class="header-section-number">4.3</span> Multivariate plots</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/vinit-sehgal/AGRO4092/edit/main/ch3.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/vinit-sehgal/AGRO4092/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">CHAPTER 3: Plotting with ggplot2</span></h1>
-</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-</header>
-
-<hr>
-<hr>
 <section id="import-libraries-and-create-sample-dataset" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="import-libraries-and-create-sample-dataset"><span class="header-section-number">4.1</span> 3.1. Import libraries and create sample dataset</h2>
+<h2 data-number="4.1" class="anchored" data-anchor-id="import-libraries-and-create-sample-dataset"><span class="header-section-number">4.1</span> Import libraries and create sample dataset</h2>
 <p>For this section, we will use the <code>ggplot2</code>, <code>gridExtra</code>, <code>utils</code>, and <code>tidyr</code> packages. <code>gridExtra</code> and <code>cowplot</code> are used to combine ggplot objects into one plot and <code>utils</code> and <code>tidyr</code> are useful for manipulating and reshaping the data. We will also install some packages here that will be required for the later sections. You will find more information in the sections to follow.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################</span></span>
@@ -231,7 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="basics-of-ggplot" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="basics-of-ggplot"><span class="header-section-number">4.2</span> 3.2. Basics of ggplot</h2>
+<h2 data-number="4.2" class="anchored" data-anchor-id="basics-of-ggplot"><span class="header-section-number">4.2</span> Basics of ggplot</h2>
 <p>Whereas base R has an “ink on paper” plotting paradigm, <code>ggplot</code> has a “grammar of graphics” paradigm that packages together a variety plotting functions. With <code>ggplot</code>, you assign the result of a function to an object name and then modify it by adding additional functions. Think of it as adding layers using pre-designed functions rather than having to build those functions yourself, as you would have to do with base R.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>l1 <span class="ot">=</span> <span class="fu">ggplot</span>(<span class="at">data=</span>dat, <span class="fu">aes</span>(<span class="at">x =</span> Year, <span class="at">y =</span> Jan, <span class="at">color =</span> <span class="st">"blue"</span>)) <span class="sc">+</span> <span class="co"># Tell which data to plot</span></span>
@@ -270,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="multivariate-plots" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="multivariate-plots"><span class="header-section-number">4.3</span> 3.3. Multivariate plots</h2>
+<h2 data-number="4.3" class="anchored" data-anchor-id="multivariate-plots"><span class="header-section-number">4.3</span> Multivariate plots</h2>
 <p>For multivariate data, ggplot takes the data in the form of groups. This means that each data row should be identifiable to a group. To get the most out of ggplot, we will need to reshape our dataset.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
@@ -291,12 +291,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913   81.8  Jan    -8.80
-2  1913   81.8  Feb    -3.25
-3  1913   81.8  Mar    -4.01
-4  1914    8.00 Jan   -18.2 
-5  1914    8.00 Feb    -5.80
-6  1914    8.00 Mar    -5.27</code></pre>
+1  1913    79.4 Jan    -8.59
+2  1913    79.4 Feb    -7.94
+3  1913    79.4 Mar    -7.35
+4  1914    62.0 Jan    -4.93
+5  1914    62.0 Feb    -7.10
+6  1914    62.0 Mar   -13.1 </code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>
@@ -364,10 +364,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><br> <strong>Some useful resources</strong></p>
 <p>The links below offer a treasure trove of examples and sample code to get you started.</p>
-<p>The R Graph Gallery: https://www.r-graph-gallery.com/</p>
-<p>Line plots in ggplot2: http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization</p>
-<p>Top 50 visualizations with ggplot2: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html</p>
-<p>Practical guide in ggplot2: http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization</p>
+<ul>
+<li><p>The R Graph Gallery: <a href="https://www.r-graph-gallery.com/" class="uri">https://www.r-graph-gallery.com/</a></p></li>
+<li><p>Line plots in ggplot2: <a href="http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization" class="uri">http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization</a></p></li>
+<li><p>Top 50 visualizations with ggplot2: <a href="http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html" class="uri">http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html</a></p></li>
+<li><p>Practical guide in ggplot2: <a href="http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization" class="uri">http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization</a></p></li>
+</ul>
 
 
 </section>
@@ -609,7 +611,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./ch2.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Results</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Plotting with base R</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -624,7 +626,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">This book was built with <a href="https://quarto.org/">Quarto</a>.</div>
+    <div class="nav-footer-right">Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a></div>
   </div>
 </footer>
 

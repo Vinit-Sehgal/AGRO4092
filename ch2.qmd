@@ -1,9 +1,12 @@
-***
+---
+title-block-banner: true
+---
 # Plotting with base R
-***
+
 If you need to quickly visualize your data, base R has some functions that will help you do this in a pinch. In this section we'll look at some basics of visualizing univariate and multivariate data.
 
 ## Overview
+
 ```{r data frame and list, message = FALSE, warning = FALSE}
 
 # Create 50 random numbers between 0 and 100  
@@ -26,6 +29,7 @@ plot(density(data))  # Plot with density distribution
 ## Plotting univariate data
 
 Let's dig deeper into the plot function. Here, we will look at how to adjust the colors, shapes, and sizes for markers, axis labels and titles, and the plot title.
+
 ```{r Univariate data, message = FALSE, warning = FALSE}
 
 # Part 2.2.1. Line plots
@@ -170,24 +174,19 @@ legend("topleft", legend = 1:3, col=1:3, pch=16)
 dev.off() 
 
 ```
+
 <br>
 
 **Some useful resources**
 
 If you want to plot something a certain way and don't know how to do it, the chances are that someone has asked that question before. Try a Google search for what your are trying to do and check out some of the forums. There is TONS of material online. Here are some additional resources:
 
-The R Graph Gallery: 
-https://www.r-graph-gallery.com/
+1.  The R Graph Gallery: <https://www.r-graph-gallery.com/>
 
-Graphical parameters:  
-https://www.statmethods.net/advgraphs/parameters.html
+2.  Graphical parameters: <https://www.statmethods.net/advgraphs/parameters.html>
 
-Plotting in R: 
-https://www.harding.edu/fmccown/r/
+3.  Plotting in R: <https://www.harding.edu/fmccown/r/>
 
-Histogram:  
-https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/
+4.  Histogram: <https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/>
 
-Line plots: 
-https://www.statmethods.net/graphs/line.html
-
+5.  Line plots: <https://www.statmethods.net/graphs/line.html>

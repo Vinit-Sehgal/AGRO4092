@@ -6,15 +6,15 @@ execute:
   echo: true
 
 book:
-  title: "LSU-AGRO4092: R for Spatial Analysis & Visualization"
+  title: "R for Spatial Analysis & Visualization"
   author:
-    - Vinit Sehgal, Ph.D. (Louisiana State University)
+    - Vinit Sehgal, Ph.D.
   repo-url: https://github.com/vinit-sehgal/AGRO4092
-  date: today
+  date: "Jan-16-2024"
   page-footer:
     right: |
-      This book was built with <a href="https://quarto.org/">Quarto</a>.
-  repo-actions: [edit, issue]
+      Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a>
+  #repo-actions: [edit, issue]
   chapters:
     - index.qmd
     - ch1.qmd
@@ -23,11 +23,12 @@ book:
 
 format:
   html:
-    theme: united
+    theme: flatly
     rmdformats::readthedown:
     code-fold: false
     self_contained: true
-    thumbnails: false
+    toc: true
+    thumbnails: true
     lightbox: true
     gallery: true
     highlight: tango

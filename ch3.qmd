@@ -1,7 +1,9 @@
-***
-# CHAPTER 3: Plotting with ggplot2
-***
-## 3.1. Import libraries and create sample dataset
+---
+title-block-banner: true
+---
+# Plotting with ggplot2
+
+## Import libraries and create sample dataset
 
 For this section, we will use the `ggplot2`, `gridExtra`, `utils`, and `tidyr` packages. `gridExtra` and `cowplot` are used to combine ggplot objects into one plot and `utils` and `tidyr` are useful for manipulating and reshaping the data. We will also install some packages here that will be required for the later sections. You will find more information in the sections to follow.
 
@@ -35,7 +37,8 @@ January = runif(89, 1, 86)
 dat = data.frame(Year, Jan, Feb, Mar, January)
 ```
 
-## 3.2. Basics of ggplot
+## Basics of ggplot
+
 Whereas base R has an "ink on paper" plotting paradigm, `ggplot` has a "grammar of graphics" paradigm that packages together a variety plotting functions. With `ggplot`, you assign the result of a function to an object name and then modify it by adding additional functions. Think of it as adding layers using pre-designed functions rather than having to build those functions yourself, as you would have to do with base R.
 
 ```{r load packages and data for plots, message = FALSE, warning = FALSE}
@@ -70,7 +73,7 @@ theme1 = theme(
 )
 ```
 
-## 3.3. Multivariate plots
+## Multivariate plots
 
 For multivariate data, ggplot takes the data in the form of groups. This means that each data row should be identifiable to a group. To get the most out of ggplot, we will need to reshape our dataset.
 
@@ -155,16 +158,14 @@ ggsave("grid_plot_2.png",
        dpi = 600)
 ```
 
-<br>
-**Some useful resources**
+<br> **Some useful resources**
 
 The links below offer a treasure trove of examples and sample code to get you started.
 
-The R Graph Gallery:
-https://www.r-graph-gallery.com/
+-   The R Graph Gallery: <https://www.r-graph-gallery.com/>
 
-Line plots in ggplot2: http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization
+-   Line plots in ggplot2: <http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization>
 
-Top 50 visualizations with ggplot2: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+-   Top 50 visualizations with ggplot2: <http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html>
 
-Practical guide in ggplot2: http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization
+-   Practical guide in ggplot2: <http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization>

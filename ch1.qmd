@@ -1,12 +1,13 @@
+---
+title-block-banner: true
+---
 # Operators and data types
-***
-## Basic operators
-***
-In this section, we will learn about some basic R operators that are used to perform operations on values and variables. Some most commonly used operators are shown in the table below. 
 
-<center>
-![](images/Basic_operators.png){width=70%}
-</center>
+## Basic operators
+
+In this section, we will learn about some basic R operators that are used to perform operations on values and variables. Some most commonly used operators are shown in the table below.
+
+<center>![](images/Basic_operators.png){width="70%"}</center>
 
 ```{r Chapter 1, message = FALSE, warning = FALSE}
 2+4+7 # Sum 
@@ -29,7 +30,8 @@ rm(list=ls())
 ```
 
 ## Basic data operations
-In this section, we will create some vector data and apply built-in operations to examine the properties of a dataset. 
+
+In this section, we will create some vector data and apply built-in operations to examine the properties of a dataset.
 
 ```{r Basic data operation, message = FALSE, warning = FALSE}
 # The "is equal to" or "assignment operator in R is "<-" or "=" 
@@ -83,12 +85,10 @@ data[3]                    # Note how output is in quotes i.e. "10"
 ```
 
 ## Data types
-In R, data is stored as an "array", which can be 1-dimensional or 2-dimensional. A 1-D array is called a "vector" and a 2-D array is a "matrix". A table in R is called a "data frame" and a "list" is a container to hold a variety of data types. In this section, we will learn how to create matrices, lists and data frames in R. 
 
-<center>
-![](images/list_visual.png){width=80%}
-</center>
+In R, data is stored as an "array", which can be 1-dimensional or 2-dimensional. A 1-D array is called a "vector" and a 2-D array is a "matrix". A table in R is called a "data frame" and a "list" is a container to hold a variety of data types. In this section, we will learn how to create matrices, lists and data frames in R.
 
+<center>![](images/list_visual.png){width="80%"}</center>
 
 ```{r Data types, message = FALSE, warning = FALSE}
 # Lets make a random matrix
