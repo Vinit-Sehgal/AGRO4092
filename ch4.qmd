@@ -2,7 +2,7 @@
 title-block-banner: true
 ---
 
-## Excercise 1
+## Exercise 1
 
 The U.S. Climate Reference Network (USCRN) is a systematic and sustained network of climate monitoring stations. USCRN has sites across Contiguous U.S. along with some in Alaska, and Hawaii. These stations are instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil mosture across multile depths at sub-hourly, daily and monthly time scales. Users can access daily dataset from all station suing the following link: [Index of /pub/data/uscrn/products/daily01 (noaa.gov)](https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/)
 
@@ -54,7 +54,7 @@ plot(density(na.omit(x)), main=" ", xlab="",
      col="cyan4", lwd=3)
 ```
 
-Excercise:
+Exercise:
 
 1.  Taking examples of any two USCRN stations across contrasting hydroclimates, compare and contrast any two recorded variables using time series plots, probability density distribution histograms and scatter plots. Select any year of your liking for the analysis.
 
