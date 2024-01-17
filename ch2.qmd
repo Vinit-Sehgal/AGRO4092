@@ -11,7 +11,7 @@ If you need to quickly visualize your data, base `R` has some functions that wil
 # Create 50 random numbers between 0 and 100  
 data=runif(50, 0, 100)   #runif stands for random numbers from a uniform distribution
 
-# Overplotting means adding layers to a plot.
+# Let's plot the data
 plot(data)            # The "plot" function initializes the plot.
 plot(data, type="l")  # The "type" argument changes the plot type. "l" calls up a line plot
 plot(data, type="b")  # Buffered points joined by lines
