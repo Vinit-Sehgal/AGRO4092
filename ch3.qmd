@@ -31,17 +31,19 @@ invisible(suppressMessages
 
 In more day-to-day use, you will see yourself using a simpler version of these commands, such as, if you were to install the "ggplot2","gridExtra" libraries, you will type:
 
-> `To install the package. Need to install only once`
+> `# To install the package. Install only once`
 >
 > `install.packages("ggplot2")`
 >
-> `To initialize the package. Needs to be invoked every time a new session begins.`
+> `# To initialize the package. Invoke every time a new session begins.`
 >
 > `library(ggplot2)`
 
-Similarly, again for `gridExtra,`
+Similarly, again for `gridExtra` ,
 
-> ``` install.packages("gridExtra")library(``gridExtra``) ```
+> `install.packages("gridExtra")`
+>
+> `library(gridExtra)`
 
 For this exercise, let us generate a sample dataset.
 
