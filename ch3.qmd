@@ -29,21 +29,19 @@ invisible(suppressMessages
               (lib_names,library, character.only = T))))
 ```
 
-In more day-to-day use, you will see youself using a simpler version of these commands, such as, if you were to install the "ggplot2","gridExtra" libraries, you will type:
+In more day-to-day use, you will see yourself using a simpler version of these commands, such as, if you were to install the "ggplot2","gridExtra" libraries, you will type:
 
-`# To install the package. Need to install only once.`
-
-`install.packages("ggplot2")`
-
-`# To initialize the package. Needs to be invoked every time a new session begins.`
-
-`library(ggplot2)`
+> `To install the package. Need to install only once`
+>
+> `install.packages("ggplot2")`
+>
+> `To initialize the package. Needs to be invoked every time a new session begins.`
+>
+> `library(ggplot2)`
 
 Similarly, again for `gridExtra,`
 
-`install.packages("gridExtra")`
-
-`library(``gridExtra``)`
+> ``` install.packages("gridExtra")library(``gridExtra``) ```
 
 For this exercise, let us generate a sample dataset.
 
@@ -185,7 +183,7 @@ ggsave("grid_plot_2.png",
 
 # Using pathwork for combining ggplots
 
-Pathwork works with simple operators to combine plots. The operator `|` arranges plots in a row. The plus sign `+` does the same but it will try to wrap the plots symetrically as a square whenever possible. The division  i.e. `/`operator layes a plot on top of another.
+Pathwork works with simple operators to combine plots. The operator `|` arranges plots in a row. The plus sign `+` does the same but it will try to wrap the plots symetrically as a square whenever possible. The division i.e. `/`operator layes a plot on top of another.
 
 ```{r}
 #install.packages("patchwork")
@@ -204,6 +202,7 @@ l + d + h + plot_layout(design = design)
 
 
 ```
+
 <br>
 
 **Some useful resources**

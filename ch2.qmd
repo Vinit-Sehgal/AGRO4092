@@ -1,6 +1,7 @@
 ---
 title-block-banner: true
 ---
+
 # Plotting with base R
 
 If you need to quickly visualize your data, base `R` has some functions that will help you do this in a pinch. In this section we'll look at some basics of visualizing univariate and multivariate data.
@@ -64,7 +65,7 @@ hist(data,col="red",
 
 ## Plotting multivariate data
 
-Here, we introduce you to data frames: equivalent of tables in `R`. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column. 
+Here, we introduce you to data frames: equivalent of tables in `R`. A data frame is a table with a two-dimensional array-like structure in which each column contains values of one variable and each row contains one set of values from each column.
 
 ```{r Multivariate data frame, message = FALSE, warning = FALSE}
 
@@ -189,4 +190,3 @@ If you want to plot something a certain way and don't know how to do it, the cha
 3.  Plotting in R: <https://www.harding.edu/fmccown/r/>
 
 4.  Histogram: <https://www.r-bloggers.com/how-to-make-a-histogram-with-basic-r/>
-

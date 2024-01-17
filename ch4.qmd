@@ -4,7 +4,7 @@ title-block-banner: true
 
 ## Exercise #1
 
-The U.S. Climate Reference Network (USCRN) is a systematic and sustained network of climate monitoring stations. USCRN has sites across Contiguous U.S. along with some in Alaska, and Hawaii. These stations are instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil moisture across multiple depths at sub-hourly, daily and monthly time scales. Users can access daily data set from all station suing the following link: [Index of /pub/data/uscrn/products/daily01 (noaa.gov)](https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/)
+The U.S. Climate Reference Network (USCRN) is a systematic and sustained network of climate monitoring stations. USCRN has sites across Contiguous U.S. along with some in Alaska, and Hawaii. These stations are instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil moisture at uniform depths (5, 10, 20, 50, 100 cm) at sub-hourly, daily and monthly time scales. Users can access daily data set from all station suing the following link: [Index of /pub/data/uscrn/products/daily01 (noaa.gov)](https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/)
 
 Let us extract sample data from a USCRN site in Lafayette, LA, USA for 2021.
 
