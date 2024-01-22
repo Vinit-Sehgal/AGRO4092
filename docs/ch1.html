@@ -472,13 +472,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 22.38551 24.93971 29.15338 26.53533 26.24764 29.15248 23.72007 28.29892
- [9] 23.29838 29.08426 22.02442 29.26941 27.68071 28.98836 28.34313 24.94511
-[17] 29.83468 26.48164 20.77258 29.79567 21.95838 27.25046 23.91091 20.62865
-[25] 22.87702 28.63880 29.07499 28.89268 21.30982 22.38500 26.12874 27.12475
-[33] 27.51490 22.06456 29.66929 23.34676 23.31295 26.03315 28.73698 21.87959
-[41] 23.33600 28.43788 28.80145 26.51936 22.79800 22.74102 24.00127 28.94563
-[49] 21.23255 25.34127</code></pre>
+<pre><code> [1] 27.54519 28.15198 26.94921 27.09713 24.83331 28.36166 29.98894 26.06856
+ [9] 27.07806 25.31515 24.46197 22.17432 29.66485 27.97959 29.03084 20.52997
+[17] 27.96831 28.90613 24.82964 25.20565 26.47424 20.04347 28.65534 21.74832
+[25] 21.55563 22.52076 23.84974 28.61952 26.31761 24.93412 25.72561 22.36199
+[33] 23.89496 28.57787 22.92200 26.27299 28.13778 25.86501 28.39688 22.37600
+[41] 26.70197 24.08437 28.94931 26.62575 26.85836 24.59127 29.43989 20.09708
+[49] 22.73285 24.40913</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -831,12 +831,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913    50.7 Jan   -13.6 
-2  1913    50.7 Feb    -8.48
-3  1913    50.7 Mar   -11.4 
-4  1914    49.6 Jan   -17.4 
-5  1914    49.6 Feb   -14.5 
-6  1914    49.6 Mar   -13.2 </code></pre>
+1  1913    38.6 Jan   -13.4 
+2  1913    38.6 Feb    -2.79
+3  1913    38.6 Mar    -2.06
+4  1914    14.5 Jan   -11.0 
+5  1914    14.5 Feb    -7.28
+6  1914    14.5 Mar   -10.9 </code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>
@@ -1224,6 +1224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li><p>Taking examples of any two USCRN stations across contrasting hydroclimates, compare and contrast any two recorded variables using time series plots, probability density distribution histograms and scatter plots. Select any year of your liking for the analysis.</p></li>
 <li><p>Select two seasons for each elected variable and demonstrate the seasonal variability in the records for summer (MAMJJA) and winter (SONDJF) seasons using any two types of multivariate plots.</p></li>
+<li><p>[EXTRA]: For any chosen station, plot a time-series of soil moisture from all available layers with precipitation added as an inverted secondary axis. For inspiration, see Figure 4 in C<em>heng, et al.&nbsp;2021. On change of soil moisture distribution with vegetation reconstruction in Mu Us sandy land of China, with newly designed lysimeter. Frontiers in Plant Science, 12, p.60952</em> at https://www.frontiersin.org/articles/10.3389/fpls.2021.609529/full</p></li>
 </ol>
 
 

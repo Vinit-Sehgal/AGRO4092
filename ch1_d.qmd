@@ -59,3 +59,5 @@ Exercise:
 1.  Taking examples of any two USCRN stations across contrasting hydroclimates, compare and contrast any two recorded variables using time series plots, probability density distribution histograms and scatter plots. Select any year of your liking for the analysis.
 
 2.  Select two seasons for each elected variable and demonstrate the seasonal variability in the records for summer (MAMJJA) and winter (SONDJF) seasons using any two types of multivariate plots.
+
+3.  \[EXTRA\]: For any chosen station, plot a time-series of soil moisture from all available layers with precipitation added as an inverted secondary axis. For inspiration, see Figure 4 in C*heng, et al. 2021. On change of soil moisture distribution with vegetation reconstruction in Mu Us sandy land of China, with newly designed lysimeter. Frontiers in Plant Science, 12, p.60952* at https://www.frontiersin.org/articles/10.3389/fpls.2021.609529/full
