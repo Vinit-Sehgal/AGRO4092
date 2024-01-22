@@ -1,0 +1,141 @@
+---
+title-block-banner: true
+---
+
+## Operators and data types
+
+### Basic operators
+
+In this section, we will learn about some basic R operators that are used to perform operations on variables. Some most commonly used operators are shown in the table below.
+
+<center>![](images/Basic_operators.png){width="70%"}</center>
+
+> R follows the conventional order (sequence) to solve mathematical operations, abbreviated as BODMAS: Brackets, Orders (exponents), Division, Multiplication, Addition, and Subtraction
+
+```{r Chapter 1, message = FALSE, warning = FALSE}
+2+4+7 # Sum
+4-5   # Subtraction
+2*3   # Multiplication
+1/2   # Division
+
+# Order of operation
+1/2*3+4-5
+1/2*(3+4-5)
+1/(2*(3+4-5))
+1/(2*3+4-5) 
+# Notice how output changes with the placement of operators
+
+# Other operators:
+2^3
+log(10)
+sqrt(4)
+pi
+
+# Clear the Environment
+rm(list=ls()) # rm is for remove,ls is short for list. The empty parenthesis i.e. () signifies all content. 
+```
+
+### Basic data operations
+
+In this section, we will create some vector data and apply built-in operations to examine the properties of a dataset.
+
+```{r Basic data operation, message = FALSE, warning = FALSE}
+# The "is equal to" or "assignment operator in R is "<-" or "=" 
+
+# Generate sample data. Remember "c" comes from for "concatenate". 
+data<-c(1,4,2,3,9)    # Try data = c(1,4,2,3,9). Is there any difference in data in both cases?
+
+# rbind combines data by rows, and hence "r"bind
+# cbind combines data by columns, and hence "c"bind
+
+# Checking the properties of a dataset. Note: the na.rm argument ignores NA values in the dataset.
+data=rbind(1,4,2,3,9) 
+dim(data)           # [5,1]: 5 rows, 1 column
+data[2,1]           # Show the value in row 2, column 1
+data[c(2:5),1]      # Show a range of values in column 1
+mean(data, na.rm=T) # Mean
+max(data)           # Maximum
+min(data)           # Minimum
+sd(data)            # Standard deviation
+var(data)           # Variance
+
+summary(data) 
+str(data)        # Prints structure of data
+head(data)       # Returns the 1st 6 items in the object
+head(data, 2)    # Print first 2
+tail(data, 2)    # Print last 2
+
+# Do the same, but with "c()" instead of "rbind"
+data=c(1,4,2,3,9) 
+dim(data)        # Note: dim is NULL
+length(data)     # Length of a dataset is the number of variables (columns)
+
+data[2]          # This should give you 4 
+
+# Other operators work in the same way
+mean(data)       # Mean
+max(data)        # Maximum
+min(data)        # Minimum
+sd(data)         # Standard deviation
+var(data)        # Variance
+
+# Text data
+data=c("LSU","SPESS","AgCenter","Tigers") 
+data             # View
+data[1]
+
+# Mixed data
+data=c(1,"LSU",10,"AgCenter") # All data is treated as text if one value is text
+data[3]                       # Note how output is in quotes i.e. "10"
+
+```
+
+> *For help with a function in R, just type ? followed by the function to display information in the help menu. Try pasting `?sd` in the console.*
+
+### Data types
+
+In R, data is stored as an "array", which can be 1-dimensional or 2-dimensional. A 1-D array is called a "vector" and a 2-D array is a "matrix". A table in R is called a "data frame" and a "list" is a container to hold a variety of data types. In this section, we will learn how to create matrices, lists and data frames in R.
+
+<center>![](images/list_visual.png){width="80%"}</center>
+
+```{r Data types, message = FALSE, warning = FALSE}
+# Lets make a random matrix
+test_mat = matrix( c(2, 4, 3, 1, 5, 7), # The data elements 
+  nrow=2,         # Number of rows 
+  ncol=3,         # Number of columns 
+  byrow = TRUE)   # Fill matrix by rows 
+
+test_mat = matrix( c(2, 4, 3, 1, 5, 7),nrow=2,ncol=3,byrow = TRUE) # Same result 
+test_mat
+
+
+test_mat[,2]      # Display all rows, and second column
+test_mat[2,]      # Display second row, all columns
+
+# Types of datasets
+out = as.matrix(test_mat)
+out               # This is a matrix
+out = as.array(test_mat)
+out               # This is also a matrix
+out = as.vector(test_mat)
+out               # This is just a vector
+
+# Data frame and list
+data1=runif(50,20,30) # Create 50 random numbers between 20 and 30  
+data2=runif(50,0,10)  # Create 50 random numbers between 0 and 10  
+
+# Lists
+out = list()        # Create and empty list
+out[[1]] = data1    # Notice the brackets "[[ ]]" instead of "[ ]"
+out[[2]] = data2
+out[[1]]          # Contains data1 at this location
+
+# Data frame
+out=data.frame(x=data1, y=data2)
+
+# Let's see how it looks!
+plot(out$x, out$y)
+plot(out[,1])
+```
+
+> For a data frame, the dollar "\$" sign invokes the variable selection. Imagine how one would receive merchandise in a store if you give \$ to the cashier. Data frame will list out the variable names for you of you when you show it some \$.
