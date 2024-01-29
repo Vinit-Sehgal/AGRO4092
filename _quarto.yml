@@ -18,6 +18,8 @@ book:
   chapters:
     - index.qmd
     - ch1.qmd
+    - ch2.qmd
+    - chN.qmd
 
 format:
   html:

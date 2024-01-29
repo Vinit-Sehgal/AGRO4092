@@ -64,6 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./ch2.html" rel="next">
 <link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -164,6 +165,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./ch1.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basics of R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Mapping in R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chN.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -472,13 +485,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 27.54519 28.15198 26.94921 27.09713 24.83331 28.36166 29.98894 26.06856
- [9] 27.07806 25.31515 24.46197 22.17432 29.66485 27.97959 29.03084 20.52997
-[17] 27.96831 28.90613 24.82964 25.20565 26.47424 20.04347 28.65534 21.74832
-[25] 21.55563 22.52076 23.84974 28.61952 26.31761 24.93412 25.72561 22.36199
-[33] 23.89496 28.57787 22.92200 26.27299 28.13778 25.86501 28.39688 22.37600
-[41] 26.70197 24.08437 28.94931 26.62575 26.85836 24.59127 29.43989 20.09708
-[49] 22.73285 24.40913</code></pre>
+<pre><code> [1] 28.64537 25.72854 26.40734 28.58172 29.76374 20.85026 26.36933 20.74820
+ [9] 25.89007 24.67047 23.67482 24.93350 25.81726 22.02903 20.88031 28.07916
+[17] 24.92968 28.93314 28.12485 29.91537 25.73241 24.22310 22.43000 29.82392
+[25] 21.11135 26.08349 26.81197 20.98303 20.72340 22.07618 25.09631 20.59044
+[33] 21.39970 26.92108 20.91009 28.13618 26.31502 27.30386 26.41957 26.94713
+[41] 28.91431 24.58794 22.28979 20.55603 27.37446 25.03268 26.75551 27.18269
+[49] 22.70198 29.03120</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -831,12 +844,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913    38.6 Jan   -13.4 
-2  1913    38.6 Feb    -2.79
-3  1913    38.6 Mar    -2.06
-4  1914    14.5 Jan   -11.0 
-5  1914    14.5 Feb    -7.28
-6  1914    14.5 Mar   -10.9 </code></pre>
+1  1913    21.7 Jan   -17.2 
+2  1913    21.7 Feb    -9.26
+3  1913    21.7 Mar   -10.9 
+4  1914    23.9 Jan   -10.7 
+5  1914    23.9 Feb   -12.9 
+6  1914    23.9 Mar    -3.93</code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>
@@ -1471,6 +1484,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./ch2.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Mapping in R</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

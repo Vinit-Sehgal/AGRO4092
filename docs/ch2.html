@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R for Spatial Analysis &amp; Visualization - 3&nbsp; Spatial Mapping in R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./chN.html" rel="next">
+<link href="./ch1.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-binding-2.2.1/leaflet.js"></script>
+<script src="site_libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+<script src="site_libs/leaflet-providers-plugin-2.2.1/leaflet-providers-plugin.js"></script>
+<script src="site_libs/brick(sm)_17d538-1/data_stars_bricksm4c5108.txt"></script>
+<script src="site_libs/joda-0.0.1/joda.js"></script>
+<script src="site_libs/joda-0.0.1/addImageQuery-bindings.js"></script>
+<script src="site_libs/clipboard-0.0.1/setClipboardText.js"></script>
+<link href="site_libs/HomeButton-0.0.1/home-button.css" rel="stylesheet">
+<script src="site_libs/HomeButton-0.0.1/home-button.js"></script>
+<script src="site_libs/HomeButton-0.0.1/easy-button-src.min.js"></script>
+<link href="site_libs/mapviewCSS-0.0.1/mapview-popup.css" rel="stylesheet">
+<link href="site_libs/mapviewCSS-0.0.1/mapview.css" rel="stylesheet">
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch2.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Mapping in R</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Mapping in R</span></h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R for Spatial Analysis &amp; Visualization</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/vinit-sehgal/AGRO4092" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basics of R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch2.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Mapping in R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chN.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">References</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#spatial-mapping-in-r" id="toc-spatial-mapping-in-r" class="nav-link active" data-scroll-target="#spatial-mapping-in-r"><span class="header-section-number">4</span> Spatial Mapping in R</a>
+  <ul class="collapse">
+  <li><a href="#import-libraries-and-sample-dataset" id="toc-import-libraries-and-sample-dataset" class="nav-link" data-scroll-target="#import-libraries-and-sample-dataset"><span class="header-section-number">4.1</span> Import libraries and sample dataset</a></li>
+  <li><a href="#raster-and-shapefile-visualization" id="toc-raster-and-shapefile-visualization" class="nav-link" data-scroll-target="#raster-and-shapefile-visualization"><span class="header-section-number">4.2</span> Raster and shapefile visualization</a>
+  <ul class="collapse">
+  <li><a href="#plotting-raster-data" id="toc-plotting-raster-data" class="nav-link" data-scroll-target="#plotting-raster-data"><span class="header-section-number">4.2.1</span> Plotting raster data</a></li>
+  </ul></li>
+  <li><a href="#customizing-terra-plot-options" id="toc-customizing-terra-plot-options" class="nav-link" data-scroll-target="#customizing-terra-plot-options"><span class="header-section-number">4.3</span> Customizing <code>terra</code> plot options</a>
+  <ul class="collapse">
+  <li><a href="#scientific-color-palettes" id="toc-scientific-color-palettes" class="nav-link" data-scroll-target="#scientific-color-palettes"><span class="header-section-number">4.3.1</span> Scientific Color palettes</a></li>
+  <li><a href="#customize-terra-plots" id="toc-customize-terra-plots" class="nav-link" data-scroll-target="#customize-terra-plots"><span class="header-section-number">4.3.2</span> Customize <code>terra</code> plots</a></li>
+  </ul></li>
+  <li><a href="#plotting-raster-data-using-tidyterra" id="toc-plotting-raster-data-using-tidyterra" class="nav-link" data-scroll-target="#plotting-raster-data-using-tidyterra"><span class="header-section-number">4.4</span> Plotting raster data using <code>tidyterra</code></a></li>
+  <li><a href="#plotting-vector-data" id="toc-plotting-vector-data" class="nav-link" data-scroll-target="#plotting-vector-data"><span class="header-section-number">4.5</span> Plotting vector data</a></li>
+  <li><a href="#reprojection-of-rasters-using-terraproject" id="toc-reprojection-of-rasters-using-terraproject" class="nav-link" data-scroll-target="#reprojection-of-rasters-using-terraproject"><span class="header-section-number">4.6</span> Reprojection of rasters using <code>terra::project</code></a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="spatial-mapping-in-r" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Spatial Mapping in R</h1>
+<section id="import-libraries-and-sample-dataset" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="import-libraries-and-sample-dataset"><span class="header-section-number">4.1</span> Import libraries and sample dataset</h2>
+<p>We will begin by loading necessary libraries. The sample dataset for this exercise can be downloaded manually from <code>GitHub</code> by accessing <code>https://github.com/Vinit-Sehgal/SampleData</code> <br></p>
+<center>
+<img src=".\images/git_repo.png" class="img-fluid" style="width:60.0%">
+</center>
+<p><br></p>
+<p>Alternatively, use the following code to download and extract the sample data from <code>GitHub</code> repository.</p>
+<p>Install all necessary packages (Run once).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Load required libraries</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>lib_names<span class="ot">=</span><span class="fu">c</span>(<span class="st">"terra"</span>, <span class="st">"tidyterra"</span>, <span class="st">"cetcolor"</span>, <span class="st">"scico"</span>, <span class="st">"tmap"</span>,    </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">"gifski"</span>, <span class="st">"lubridate"</span>,<span class="st">"Rcpp"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"raster"</span>,<span class="st">"ggplot2"</span>,<span class="st">"unikn"</span>,<span class="st">"mapview"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">"gridExtra"</span>,<span class="st">"rgdal"</span>,<span class="st">"fields"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">"RColorBrewer"</span>,<span class="st">"ncdf4"</span>,<span class="st">"rasterVis"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"rcartocolor"</span>,<span class="st">"pacman"</span>,<span class="st">"purrr"</span>,<span class="st">"moments"</span>,<span class="st">"tictoc"</span>, </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"sf"</span>, <span class="st">"sp"</span>, <span class="st">"exactextractr"</span>,<span class="st">"readxl"</span>, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">"snow"</span>,<span class="st">"future.apply"</span>,<span class="st">"parallel"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(suppressMessages</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>          (suppressWarnings</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>            (lapply</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>              (lib_names, require, <span class="at">character.only =</span> T))))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># An easy way to load multiple packages is through pacman::p_load</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># pacman::p_load("raster","ggplot2","unikn","mapview",</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#             "gridExtra","rgdal","fields",</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#             "RColorBrewer","ncdf4","rasterVis", "moments", "tictoc", "tibble")</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Update packages if they are already installed</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># update.package(ask = FALSE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><em>Note</em>: The legacy R spatial infrastructure packages - <code>maptools</code>, <code>rgdal</code> and <code>rgeos</code> have been archived by CRAN from October 16, 2023; these retired packages will continue to be available as source packages on <a href="https://cran.r-project.org/src/contrib/Archive" class="uri">https://cran.r-project.org/src/contrib/Archive</a> but won’t undergo any further development. <br> We will now download the workshop repository, which contains all data we will use for this exercise.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Import sample data from GitHub repository</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> <span class="st">"https://github.com/Vinit-Sehgal/SampleData/archive/master.zip"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">destfile =</span> <span class="st">"SampleData-master.zip"</span>)    <span class="co"># Download ".Zip"</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Unzip the downloaded .zip file</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="at">zipfile =</span> <span class="st">"SampleData-master.zip"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># getwd()                           # Current working directory</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(<span class="st">"./SampleData-master"</span>)   <span class="co"># List folder contents</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "CMIP_land"                               
+ [2] "functions"                               
+ [3] "images"                                  
+ [4] "Largescale_geospatial_analysis_2022.html"
+ [5] "Largescale_geospatial_analysis_2023.html"
+ [6] "location_points.xlsx"                    
+ [7] "ne_10m_coastline"                        
+ [8] "raster_files"                            
+ [9] "README.md"                               
+[10] "sample_pdfs"                             
+[11] "SMAP_L3_USA.nc"                          
+[12] "SMAPL4_H5"                               
+[13] "SMOS_nc"                                 
+[14] "USA_states"                              
+[15] "Workbook_DVGAR21-Part1.html"             
+[16] "Workbook_DVGAR21-Part2.html"             </code></pre>
+</div>
+</div>
+</section>
+<section id="raster-and-shapefile-visualization" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="raster-and-shapefile-visualization"><span class="header-section-number">4.2</span> Raster and shapefile visualization</h2>
+<p>A <code>geographic information system</code>, or <code>GIS</code> refers to a platform which can map, analyzes and manipulate <strong>geographically referenced</strong> dataset. A geographically referenced data (or geo-referenced data) is a spatial dataset which can be related to a point on Earth with the help of geographic coordinates. Types of geo-referenced spatial data include: rasters (grids of regularly sized pixels) and vectors (polygons, lines, points).</p>
+<p><br></p>
+<center>
+<img src="images/SpatialDataIntro.png" class="img-fluid">
+</center>
+<p><br></p>
+<p>A quick and helpful review of spatial data can be found here: <a href="https://spatialvision.com.au/blog-raster-and-vector-data-in-gis/" class="uri">https://spatialvision.com.au/blog-raster-and-vector-data-in-gis/</a></p>
+<section id="plotting-raster-data" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="plotting-raster-data"><span class="header-section-number">4.2.1</span> Plotting raster data</h3>
+<p>In this section, we will plot global raster data of surface (~5 cm) soil moisture from SMAP. In this process we will explore functions from <code>terra</code>, and <code>tidyterra</code> packages.</p>
+<p>Let’s start by importing the necessary packages.</p>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For raster operations</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># For plotting operations</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra) </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mapview)  </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># For Perceptually Uniform Colour palettes</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cetcolor)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scico)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture raster from the downloaded folder</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Once we have imported the Spatraster using rast() function from terra package, let’s now check its attributes. Notice the <code>dimensions</code>, <code>resolution</code>, <code>extent</code>, <code>crs</code> i.e.&nbsp;coordinate reference system and <code>values</code>. Note that the cell of one raster layer can only hold a single value. The value might be numeric or categorical!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 456, 964, 1  (nrow, ncol, nlyr)
+resolution  : 0.373444, 0.373444  (x, y)
+extent      : -180, 180, -85.24595, 85.0445  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source      : SMAP_SM.tif 
+name        :    SMAP_SM 
+min value   : 0.01999998 
+max value   : 0.87667608 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Try:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dim(sm)   # Dimension (nrow, ncol, nlyr) of the raster</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># terra::res(sm)   # X-Y resolution of the raster</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># terra::ext(sm)   # Spatial extent of the raster</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># terra::crs(sm)   # Coordinate reference system</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s plot the raster using <code>terra::plot</code>. Interactive plots can be made by using <code>mapview</code> function.</p>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic Raster plot</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(sm, <span class="at">main =</span> <span class="st">"Soil Moisture"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="ch2_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<p>What are the different <code>features</code> of the above plot?</p>
+<p><em>Expert Note</em>: terra’s functionality is largely the same as the more mature <code>raster</code> package (created by the same developer, Robert Hijmans), but are usually more computationally efficient than raster equivalents. However, one can seamlessly translate between the two types of object to ensure backwards compatibility with older scripts and packages, for example, with the functions raster(), stack(), and brick() in the <code>raster</code> package.</p>
+</section>
+</section>
+<section id="customizing-terra-plot-options" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="customizing-terra-plot-options"><span class="header-section-number">4.3</span> Customizing <code>terra</code> plot options</h2>
+<section id="scientific-color-palettes" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="scientific-color-palettes"><span class="header-section-number">4.3.1</span> Scientific Color palettes</h3>
+<p>We will generate custom color palettes for better visualization. We will demonstrate the usage of <code>cetcolor</code> and <code>scico</code> package which provide access to the perceptually uniform and colour-blindness friendly palettes.</p>
+<p><br></p>
+<ol type="1">
+<li>You can select CET colormaps from: <a href="https://cran.r-project.org/web/packages/cetcolor/vignettes/cet_color_schemes.html" class="uri">https://cran.r-project.org/web/packages/cetcolor/vignettes/cet_color_schemes.html</a></li>
+<li>You can select scico colormaps from: <a href="https://github.com/thomasp85/scico" class="uri">https://github.com/thomasp85/scico</a></li>
+<li>R Color Brewer is also a great resource for popular colormaps: <a href="https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3" class="uri">https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3</a></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make custom color palette</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(unikn) </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ A) User defined color palette using scico library</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>mypal1 <span class="ot">=</span> <span class="fu">scico</span>(<span class="dv">20</span>, <span class="at">alpha =</span> <span class="fl">1.0</span>, <span class="at">direction =</span>  <span class="sc">-</span><span class="dv">1</span>, <span class="at">palette =</span> <span class="st">"vik"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>unikn<span class="sc">::</span><span class="fu">seecol</span>(mypal1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Check: scico_palette_names() for available palettes!</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Try combinations of alpha=0.5, direction =1, and various different color palette</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ B) User defined color palette using cetcolor library</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>mypal2 <span class="ot">=</span> cetcolor<span class="sc">::</span><span class="fu">cet_pal</span>(<span class="dv">20</span>, <span class="at">name =</span> <span class="st">"r2"</span>)  </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>unikn<span class="sc">::</span><span class="fu">seecol</span>(mypal2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or reverse color pal</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mypal2 <span class="ot">=</span> <span class="fu">rev</span>(cetcolor<span class="sc">::</span><span class="fu">cet_pal</span>(<span class="dv">20</span>, <span class="at">name =</span> <span class="st">"r2"</span>) ) </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>unikn<span class="sc">::</span><span class="fu">seecol</span>(mypal2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="customize-terra-plots" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="customize-terra-plots"><span class="header-section-number">4.3.2</span> Customize <code>terra</code> plots</h3>
+<p>There is a long list of customizable operations available while plotting rasters in R. Let’s play with some of these options. We will start with basic plot from terra, and then venture into more powerful tmap and tidyterra packages. Try <code>horizontal=TRUE</code>, <code>interpolate=FALSE</code>, change <code>xlim=c(-180, 180)</code> with <code>asp=1</code>, or try <code>legend.shrink=0.4</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>) <span class="co"># SMAP soil moisture data</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(sm,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">main =</span> <span class="st">"Scientific Plot of Raster"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            <span class="co">#Color options</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">col =</span> mypal2,                    <span class="co"># User Defined Color Palette</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by=</span><span class="fl">0.1</span>),      <span class="co"># Sequence from 0-1 with 0.1 increment</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">colNA =</span> <span class="st">"lightgray"</span>,             <span class="co"># Color of cells with NA values</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Axis options      </span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">axes=</span><span class="cn">TRUE</span>,                       <span class="co"># Plot axes: TRUE/ FALSE</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>),               <span class="co"># X-axis limit</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">90</span>, <span class="dv">90</span>),                 <span class="co"># Y-axis limit</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">xlab=</span><span class="st">"Longitude"</span>,                <span class="co"># X-axis label</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">ylab=</span><span class="st">"Latitue"</span>,                  <span class="co"># Y-axis label</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Legend options      </span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend=</span><span class="cn">TRUE</span>,                     <span class="co"># Plot legend: TRUE/ FALSE</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Miscellaneous</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">3.1</span>, <span class="fl">3.1</span>, <span class="fl">2.1</span>, <span class="fl">7.1</span>),     <span class="co">#Margins</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid =</span> <span class="cn">FALSE</span>                     <span class="co">#Add grid lines</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Plotting through tmap:</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)  <span class="co">#Setting tmap mode: Static plots by "plot", Interactive plots by"view"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>tmap_SM <span class="ot">=</span> <span class="fu">tm_shape</span>(sm)<span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>)<span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">palette =</span> mypal2, </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">style =</span> <span class="st">"pretty"</span>, <span class="at">title =</span> <span class="st">"Volumetric Soil Moisture"</span>)<span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>))<span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_xlab</span>(<span class="st">"Longitude"</span>)<span class="sc">+</span> <span class="fu">tm_ylab</span>(<span class="st">"Latitude"</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>tmap_SM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>To convert the static plot into an interactive map we will use <code>mapview</code> package which which is compatible with <code>rasterbrick</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Interactive plot</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mapview)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mapview</span>(<span class="fu">brick</span>(sm),            <span class="co"># Convert SpatRaster to RasterBrick</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">col.regions =</span> mypal2, <span class="co"># Color palette </span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">at=</span><span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.8</span>, <span class="fl">0.1</span>)   <span class="co"># Breaks</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-4379b462b45b93680791" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-4379b462b45b93680791">{"x":{"options":{"minZoom":1,"maxZoom":52,"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"preferCanvas":false,"bounceAtZoomLimits":false,"maxBounds":[[[-90,-370]],[[90,370]]]},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron","CartoDB.Positron","CartoDB.Positron",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["CartoDB.DarkMatter","CartoDB.DarkMatter","CartoDB.DarkMatter",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenStreetMap","OpenStreetMap","OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["Esri.WorldImagery","Esri.WorldImagery","Esri.WorldImagery",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenTopoMap","OpenTopoMap","OpenTopoMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addRasterImage","args":["data:image/png;base64,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",[[79.10440718638944,-179.6265560261691],[-56.0100523892356,179.999990773]],0.8,null,"brick(sm)","brick(sm)"]},{"method":"removeLayersControl","args":[]},{"method":"addLayersControl","args":[["CartoDB.Positron","CartoDB.DarkMatter","OpenStreetMap","Esri.WorldImagery","OpenTopoMap"],"brick(sm)",{"collapsed":true,"autoZIndex":true,"position":"topleft"}]},{"method":"addControl","args":["","topright","imageValues-brick(sm)","info legend "]},{"method":"addImageQuery","args":["brick(sm)",[-179.6265560261691,-56.01005238923563,179.999990773,79.10440718638944],"mousemove",7,"Layer"]},{"method":"addLegend","args":[{"colors":["#FD3000","#FF7C0D","#FCB021","#D8C726","#88B717","#4B9C42","#247594","#0034F5"],"labels":["0.0 &ndash; 0.1","0.1 &ndash; 0.2","0.2 &ndash; 0.3","0.3 &ndash; 0.4","0.4 &ndash; 0.5","0.5 &ndash; 0.6","0.6 &ndash; 0.7","0.7 &ndash; 0.8"],"na_color":"#BEBEBE","na_label":"NA","opacity":1,"position":"topright","type":"bin","title":"brick(sm)","extra":null,"layerId":null,"className":"info legend","group":"brick(sm)"}]},{"method":"addScaleBar","args":[{"maxWidth":100,"metric":true,"imperial":true,"updateWhenIdle":true,"position":"bottomleft"}]},{"method":"addHomeButton","args":[-180,-85.24594980899998,179.999990773,85.04450225799999,true,"brick(sm)","Zoom to brick(sm)","<strong> brick(sm) <\/strong>","bottomright"]}],"limits":{"lat":[-56.0100523892356,79.10440718638944],"lng":[-179.6265560261691,179.999990773]}},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n      function(el, x, data) {\n      // get the leaflet map\n      var map = this; //HTMLWidgets.find('#' + el.id);\n      // we need a new div element because we have to handle\n      // the mouseover output separately\n      // debugger;\n      function addElement () {\n      // generate new div Element\n      var newDiv = $(document.createElement('div'));\n      // append at end of leaflet htmlwidget container\n      $(el).append(newDiv);\n      //provide ID and style\n      newDiv.addClass('lnlt');\n      newDiv.css({\n      'position': 'relative',\n      'bottomleft':  '0px',\n      'background-color': 'rgba(255, 255, 255, 0.7)',\n      'box-shadow': '0 0 2px #bbb',\n      'background-clip': 'padding-box',\n      'margin': '0',\n      'padding-left': '5px',\n      'color': '#333',\n      'font': '9px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif',\n      'z-index': '700',\n      });\n      return newDiv;\n      }\n\n\n      // check for already existing lnlt class to not duplicate\n      var lnlt = $(el).find('.lnlt');\n\n      if(!lnlt.length) {\n      lnlt = addElement();\n\n      // grab the special div we generated in the beginning\n      // and put the mousmove output there\n\n      map.on('mousemove', function (e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                           ' lon: ' + (e.latlng.lng).toFixed(5) +\n                           ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                           ' | zoom: ' + map.getZoom() +\n                           ' | x: ' + L.CRS.EPSG3857.project(e.latlng).x.toFixed(0) +\n                           ' | y: ' + L.CRS.EPSG3857.project(e.latlng).y.toFixed(0) +\n                           ' | epsg: 3857 ' +\n                           ' | proj4: +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs ');\n      } else {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      }\n      });\n\n      // remove the lnlt div when mouse leaves map\n      map.on('mouseout', function (e) {\n      var strip = document.querySelector('.lnlt');\n      if( strip !==null) strip.remove();\n      });\n\n      };\n\n      //$(el).keypress(67, function(e) {\n      map.on('preclick', function(e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      var txt = document.querySelector('.lnlt').textContent;\n      console.log(txt);\n      //txt.innerText.focus();\n      //txt.select();\n      setClipboardText('\"' + txt + '\"');\n      }\n      });\n\n      }\n      ).call(this.getMap(), el, x, data);\n}","data":null},{"code":"function(el, x, data) {\n  return (function(el,x,data){\n           var map = this;\n\n           map.on('keypress', function(e) {\n               console.log(e.originalEvent.code);\n               var key = e.originalEvent.code;\n               if (key === 'KeyE') {\n                   var bb = this.getBounds();\n                   var txt = JSON.stringify(bb);\n                   console.log(txt);\n\n                   setClipboardText('\\'' + txt + '\\'');\n               }\n           })\n        }).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
+</div>
+</div>
+</section>
+</section>
+<section id="plotting-raster-data-using-tidyterra" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="plotting-raster-data-using-tidyterra"><span class="header-section-number">4.4</span> Plotting raster data using <code>tidyterra</code></h2>
+<p><code>tidyterra</code> is a package that add common methods from the tidyverse for SpatRaster and SpatVectors objects created with the {<code>terra</code>} package. It also adds specific <code>geom_spat*()</code> functions for plotting these kind of objects with {ggplot2}.</p>
+<p>Note on Performance: <code>tidyterra</code> is conceived as a user-friendly wrapper of {terra} using the {tidyverse} methods and verbs. This approach therefore has a cost in terms of performance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> sm) <span class="sc">+</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(<span class="at">colors=</span>mypal2,                               <span class="co"># Use user-defined colormap</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">name =</span> <span class="st">"SM"</span>,                                 <span class="co"># Name of the colorbar</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">na.value =</span> <span class="st">"transparent"</span>,                    <span class="co"># transparent NA cells</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels=</span>(<span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"0.2"</span>, <span class="st">"0.4"</span>, <span class="st">"0.6"</span>, <span class="st">"0.8"</span>)), <span class="co"># Labels of colorbar</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="fl">0.8</span>,<span class="at">by=</span><span class="fl">0.2</span>),                    <span class="co"># Set breaks of colorbar</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.8</span>))<span class="sc">+</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()  <span class="co"># Try different themes: theme_bw(), theme_gray(), theme_minimal()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>What if we are interested in a particular region and not the entire globe? We can plot the map for a specific extent (CONUS, in this case) by changing the range of <code>coord_sf</code>option. We will also use a different theme: <code>theme_bw</code>. Try <code>xlim = c(114,153)</code> and <code>ylim = c(-43,-11)</code>!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sm_conus<span class="ot">=</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> sm) <span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(<span class="at">colors=</span>mypal2,                               <span class="co"># Use user-defined colormap</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">name =</span> <span class="st">"SM"</span>,                                 <span class="co"># Name of the colorbar</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">na.value =</span> <span class="st">"transparent"</span>,                    <span class="co"># transparent NA cells</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels=</span>(<span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"0.2"</span>, <span class="st">"0.4"</span>, <span class="st">"0.6"</span>, <span class="st">"0.8"</span>)), <span class="co"># Labels of colorbar</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="fl">0.8</span>,<span class="at">by=</span><span class="fl">0.2</span>),                    <span class="co"># Set breaks of colorbar</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.8</span>)) <span class="sc">+</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">125</span>,<span class="sc">-</span><span class="dv">67</span>),                                      <span class="co"># Add extent for CONUS</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">24</span>,<span class="dv">50</span>))<span class="sc">+</span>               </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()                                                        <span class="co"># Try black-and-white theme. </span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sm_conus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><code>tmap</code> provides the easiest way of manipulating the legends from continuous to discrete by just adding the <code>style</code> of color scale desired by the user.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#We will manipulate the existing tmap_SM plot by adding style parameter:</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>tmap_SM <span class="ot">=</span> <span class="fu">tm_shape</span>(sm)<span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>)<span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">style =</span> <span class="st">"pretty"</span>, </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">palette =</span> mypal2,  <span class="at">title =</span> <span class="st">"Volumetric Soil Moisture"</span>) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"left"</span>,<span class="st">"bottom"</span>), <span class="at">inner.margins =</span> <span class="dv">0</span>)<span class="sc">+</span>           <span class="co">#Adjust the legend position</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">tm_xlab</span>(<span class="st">"Longitude"</span>)<span class="sc">+</span> <span class="fu">tm_ylab</span>(<span class="st">"Latitude"</span>)  </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>tmap_SM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Using breaks would give more control on scale discretization</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(sm)<span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_grid</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>)<span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="fl">0.00</span>, <span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">1.00</span>), </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">palette =</span> mypal2,  <span class="at">title =</span> <span class="st">"Volumetric Soil Moisture"</span>) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>,<span class="st">"top"</span>),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">inner.margins =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_xlab</span>(<span class="st">"Longitude"</span>)<span class="sc">+</span> <span class="fu">tm_ylab</span>(<span class="st">"Latitude"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Saving the plot to disk:</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_save</span>(tmap_SM,                    <span class="co"># tmap object</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">filename =</span> <span class="st">"sm_world.png"</span>,  <span class="co"># filename including extension</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">dpi =</span> <span class="dv">300</span>,                  <span class="co"># dots per inch</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">height =</span> <span class="dv">5</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">width =</span> <span class="dv">5</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">units =</span> <span class="st">"in"</span>)               <span class="co">#units for width and height</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plotting-vector-data" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="plotting-vector-data"><span class="header-section-number">4.5</span> Plotting vector data</h2>
+<p>Importing and plotting shapefiles is equally easy in R. We will import the shapefile of the updated global <code>IPCC climate reference regions</code> (<a href="https://doi.org/10.5194/essd-12-2959-2020" class="uri">https://doi.org/10.5194/essd-12-2959-2020</a>) as Simple Feature (<code>sf</code>) Object. We will also use global <code>coastline</code> shapefile from the web for plotting.</p>
+<p>Note: Even though terra provides vect() function to handle vector data, sf package is most suitable and powerful for manipulating and plotting purposes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ PART 1.4.1: Importing and visualizing shapefiles</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)  </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the shapefile of global IPCC climate reference regions (only for land) </span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>IPCC_shp <span class="ot">=</span> <span class="fu">read_sf</span>(<span class="st">"./SampleData-master/CMIP_land/CMIP_land.shp"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># View attribute table of the shapefile</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>IPCC_shp <span class="co"># Notice the attributes look like a data frame</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 41 features and 4 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: -168 ymin: -56 xmax: 180 ymax: 85
+Geodetic CRS:  WGS 84
+# A tibble: 41 × 5
+   V1              V2                V3       V4                        geometry
+   &lt;chr&gt;           &lt;chr&gt;             &lt;chr&gt; &lt;dbl&gt;                   &lt;POLYGON [°]&gt;
+ 1 ARCTIC          Greenland/Iceland GIC       1 ((-10 58, -10.43956 58, -10.87…
+ 2 NORTH-AMERICA   N.E.Canada        NEC       2 ((-55 50, -55.4386 50, -55.877…
+ 3 NORTH-AMERICA   C.North-America   CNA       3 ((-90 50, -90 49.5614, -90 49.…
+ 4 NORTH-AMERICA   E.North-America   ENA       4 ((-70 25, -70.43478 25, -70.86…
+ 5 NORTH-AMERICA   N.W.North-America NWN       5 ((-105 50, -105.4386 50, -105.…
+ 6 NORTH-AMERICA   W.North-America   WNA       6 ((-130 50, -129.5614 50, -129.…
+ 7 CENTRAL-AMERICA N.Central-America NCA       7 ((-90 25, -90.37179 24.76923, …
+ 8 CENTRAL-AMERICA S.Central-America SCA       8 ((-75 12, -75.28 11.67333, -75…
+ 9 CENTRAL-AMERICA Caribbean         CAR       9 ((-75 12, -75.32609 12.28261, …
+10 SOUTH-AMERICA   N.W.South-America NWS      10 ((-75 12, -74.57143 12, -74.14…
+# ℹ 31 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load global coastline shapefile </span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>coastlines <span class="ot">=</span> <span class="fu">read_sf</span>(<span class="st">"./SampleData-master/ne_10m_coastline/ne_10m_coastline.shp"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, download global coastlines from the web </span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: May not work if the online server is down</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># download.file("https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_coastline.zip?version=4.0.1",destfile = 'ne_110m_coastline.zip')</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># # Unzip the downloaded file</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># unzip(zipfile = "ne_110m_coastline.zip",exdir = 'ne-coastlines-110m')</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot both sf objects using tmap:</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(IPCC_shp)<span class="sc">+</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>()<span class="sc">+</span>            <span class="co"># Add IPCC land regions in blue color</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(coastlines)<span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_sf</span>()                  <span class="co"># Add global coastline</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/overlay-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Subset shapefile for Eastern North-America</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(IPCC_shp[<span class="dv">4</span>,][<span class="dv">1</span>], <span class="at">main=</span><span class="st">"Polygon for Eastern North-America"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/overlay-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine terra plots with overlaying shapefiles</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>tmap_SM <span class="sc">+</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(IPCC_shp)<span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>()<span class="sc">+</span>            </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(coastlines)<span class="sc">+</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_sf</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/overlay-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ PART 1.4.2: Add spatial point to shapefile/ raster</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Create a spatial point for College Station, Texas</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>college_station <span class="ot">=</span> <span class="fu">st_sfc</span>(</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">st_point</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">96.33</span>, <span class="fl">30.62</span>), <span class="at">dim =</span> <span class="st">"XY"</span>), <span class="co"># Lat-long as spatial points </span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">crs =</span> <span class="st">"EPSG:4326"</span>)  <span class="co"># Coordinate system: More details in the next part</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Create map by adding all the layers</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(IPCC_shp[<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">7</span>),])<span class="sc">+</span>                       <span class="co"># Selected regions from 'IPCC_shp'</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">col =</span> <span class="st">"black"</span>,<span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="st">"solid"</span>)<span class="sc">+</span>    <span class="co"># Border color</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"lightgrey"</span>)<span class="sc">+</span>                          <span class="co"># Fill color</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(coastlines)<span class="sc">+</span>                                <span class="co"># Add coastline</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_sf</span>(<span class="at">col =</span> <span class="st">"maroon"</span>)<span class="sc">+</span>                               <span class="co"># Change color of coastline</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(college_station)<span class="sc">+</span>                           <span class="co"># Add spatial point to the map</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"blue"</span>)                      <span class="co"># Customize point</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/overlay-4.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Note: Each layer (here 3) needs to be added as with tm_shape()!</p>
+</section>
+<section id="reprojection-of-rasters-using-terraproject" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="reprojection-of-rasters-using-terraproject"><span class="header-section-number">4.6</span> Reprojection of rasters using <code>terra::project</code></h2>
+<p>A coordinate reference system (CRS) is used to relate locations on Earth (which is a 3-D spheroid) to a 2-D projected map using coordinates (for example latitude and longitude). Projected CRSs are usually expressed in Easting and Northing (x and y) values corresponding to long-lat values in Geographic CRS. A good description of coordinate reference systems and their importance can be found here: <a href="https://docs.qgis.org/3.4/en/docs/gentle_gis_introduction/coordinate_reference_systems.html" class="uri">https://docs.qgis.org/3.4/en/docs/gentle_gis_introduction/coordinate_reference_systems.html</a> <a href="https://datacarpentry.org/organization-geospatial/03-crs/" class="uri">https://datacarpentry.org/organization-geospatial/03-crs/</a></p>
+<p><br></p>
+<center>
+<img src=".\images/projection_families.png" class="img-fluid" style="width:60.0%">
+</center>
+<p><br></p>
+<p>In R, the coordinate reference systems or <code>CRS</code> are commonly specified in <code>EPSG</code> (European Petroleum Survey Group) or PROJ4 format (See: <a href="https://epsg.io/" class="uri">https://epsg.io/</a>). <br> The Spatraster reprojection process is done with <code>project()</code> from the terra package.</p>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importing SMAP soil moisture data</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>) </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Projection 1: NAD83 (EPSG: 4269)</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>sm_proj1 <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">project</span>(sm, <span class="st">"epsg:4269"</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(sm_proj1, </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">main =</span> <span class="st">"NAD83"</span>,    <span class="co"># Title of the plot</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">col =</span> mypal2,      <span class="co"># Colormap for the plot</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">axes =</span> <span class="cn">FALSE</span>,      <span class="co"># Disable axes</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">box =</span> <span class="cn">FALSE</span>,       <span class="co"># Disable box around the plots</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">asp =</span> <span class="cn">NA</span>,          <span class="co"># No fixed aspect ratio; asp=NA fills plot to window</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend=</span><span class="cn">FALSE</span>)      <span class="co"># Disable legend</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="ch2_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Projection 2: World Robinson projection (ESRI:54030)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>sm_proj2 <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">project</span>(sm, <span class="st">"ESRI:54030"</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(sm_proj2, </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">main =</span> <span class="st">"Robinson"</span>, <span class="co"># Title of the plot</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">col =</span> mypal2,      <span class="co"># Colormap for the plot</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">axes =</span> <span class="cn">FALSE</span>,      <span class="co"># Disable axes</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">box =</span> <span class="cn">FALSE</span>,       <span class="co"># Disable box around the plots</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">asp =</span> <span class="cn">NA</span>,          <span class="co"># No fixed aspect ratio; asp=NA fills plot to window</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend=</span><span class="cn">FALSE</span>)      <span class="co"># Disable legend</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="ch2_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid" width="672"></p>
+<p>Other than the projections demonstrated, try the following:</p>
+<pre><code>"+init=epsg:3857" For Mercator (EPSG: 3857): Used in Google Maps, Open Street Maps, etc.
+"+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" for World Robinson Projection
+"+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" for World Mercator projection</code></pre>
+<p>We will use a custom function provided with the material to plot the global raster in Robinson projection.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~Projection 2: Robinson projection</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>WorldSHP<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">vect</span>(spData<span class="sc">::</span>world)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>RobinsonPlot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> sm)<span class="sc">+</span>                   <span class="co"># Plot SpatRaster layer               </span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatvector</span>(<span class="at">data =</span> WorldSHP, </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">fill =</span> <span class="st">"transparent"</span>) <span class="sc">+</span>       <span class="co"># Add world political map</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Robinson Projection"</span>) <span class="sc">+</span>              <span class="co"># Add title</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(<span class="at">colors=</span>mypal2,           <span class="co"># Use user-defined colormap</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">name =</span> <span class="st">"Soil Moisture"</span>,  <span class="co"># Name of the colorbar</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">na.value =</span> <span class="st">"transparent"</span>,<span class="co"># Set color for NA values</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>                       <span class="at">lim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.8</span>))<span class="sc">+</span>           <span class="co"># Z axis limit</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span>                              <span class="co"># Select theme. Try 'theme_void'</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span><span class="fl">0.5</span>),  <span class="co"># Place title in the middle of the plot</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>))<span class="sc">+</span>        <span class="co"># Adjust plot text size for visibility</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="st">"ESRI:54030"</span>,                  <span class="co"># Reproject to World Robinson</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">152</span>,<span class="dv">152</span>)<span class="sc">*</span><span class="dv">100000</span>,    </span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>           <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">55</span>,<span class="dv">90</span>)<span class="sc">*</span><span class="dv">100000</span>)</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(RobinsonPlot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Now let’s plot the <code>robison</code> plot using <code>tmap</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>WorldSHP <span class="ot">=</span> <span class="fu">st_as_sf</span>(WorldSHP)           <span class="co"># Convert 'WorldSHP' to simple feature</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(WorldSHP,                      <span class="co"># Initiate shapefile       </span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">projection =</span> <span class="st">'ESRI:54030'</span>,     <span class="co"># Set projection: World Robinson</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">65</span>, <span class="dv">90</span>)<span class="sc">*</span><span class="dv">100000</span>,      <span class="co"># Set y-limit</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">152</span>,<span class="dv">152</span>)<span class="sc">*</span><span class="dv">100000</span>,     <span class="co"># Set x-limit</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">raster.warp =</span> <span class="cn">TRUE</span>)<span class="sc">+</span>              </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_sf</span>()<span class="sc">+</span>                              <span class="co"># Plot shapefile </span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(sm,                          <span class="co"># Add raster file</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">projection =</span> <span class="st">'ESRI:54030'</span>,   <span class="co"># Set projection </span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">raster.warp =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>( <span class="at">palette =</span> mypal2,          <span class="co"># Set color map for raster</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">title =</span> <span class="st">"Soil Moisture"</span>)<span class="sc">+</span>  <span class="co"># Add plot title</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Surface Soil Moisture"</span>,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.fontfamily =</span> <span class="st">"Times"</span>,               <span class="co"># Set text font</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.show =</span> T,                               <span class="co"># Show legend= T/F</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> T,                            </span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"top"</span>),   <span class="co"># Legend position</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">FALSE</span>,                                 <span class="co"># Add plot frame</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">earth.boundary.color =</span> <span class="st">"grey"</span>,                 <span class="co"># Boundary color</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">earth.boundary.lwd =</span> <span class="dv">2</span>,                        <span class="co"># Boundary linewidth</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">fontfamily =</span> <span class="st">"Times"</span>)<span class="sc">+</span>                         <span class="co"># Text font</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>,                               <span class="co"># Add lat-long graticules</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">labels.inside.frame =</span> <span class="cn">FALSE</span>,  </span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>                <span class="at">col =</span> <span class="st">"lightgrey"</span>, <span class="at">n.x =</span> <span class="dv">4</span>, <span class="at">n.y =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch2_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Useful references:</strong> More excellent examples on making maps in R can be found here: <a href="https://bookdown.org/nicohahn/making_maps_with_r5/docs/introduction.html" class="uri">https://bookdown.org/nicohahn/making_maps_with_r5/docs/introduction.html</a>. Quintessential resource for reference on charts and plots in R: <a href="https://www.r-graph-gallery.com/index.html" class="uri">https://www.r-graph-gallery.com/index.html</a>.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ch1.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basics of R</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./chN.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">References</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a></div>
+  </div>
+</footer>
+
+
+
+</body></html>

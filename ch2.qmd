@@ -1,0 +1,11 @@
+---
+title-block-banner: true
+---
+
+# Spatial Mapping in R
+
+```{r child="ch2_a.qmd", message = FALSE, warning = FALSE}
+
+
+```
+
