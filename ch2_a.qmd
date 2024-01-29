@@ -45,7 +45,7 @@ invisible(suppressMessages
 # update.package(ask = FALSE)
 ```
 
-*Note*: The legacy R spatial infrastructure packages - `maptools`, `rgdal` and `rgeos` have been archived by CRAN from October 16, 2023; these retired packages will continue to be available as source packages on <https://cran.r-project.org/src/contrib/Archive> but won't undergo any further development. <br> We will now download the workshop repository, which contains all data we will use for this exercise.
+> *Note*: The legacy R spatial infrastructure packages - `maptools`, `rgdal` and `rgeos` have been archived by CRAN from October 16, 2023; these retired packages will continue to be available as source packages on <https://cran.r-project.org/src/contrib/Archive> but won't undergo any further development. <br> We will now download the workshop repository, which contains all data we will use for this exercise.
 
 ```{r}
 ###############################################################
@@ -156,7 +156,7 @@ unikn::seecol(mypal2)
 
 ### Customize `terra` plots
 
-There is a long list of customizable operations available while plotting rasters in R. Let's play with some of these options. We will start with basic plot from terra, and then venture into more powerful tmap and tidyterra packages. Try `horizontal=TRUE`, `interpolate=FALSE`, change `xlim=c(-180, 180)` with `asp=1`, or try `legend.shrink=0.4`.
+There is a long list of customization operations available while plotting rasters in R. Let's play with some of these options. We will start with basic plot from terra, and then venture into more powerful tmap and tidyterra packages. Try `horizontal=TRUE`, `interpolate=FALSE`, change `xlim=c(-180, 180)` with `asp=1`, or try `legend.shrink=0.4`.
 
 ```{r, message = FALSE, warning = FALSE}
 sm=rast("./SampleData-master/raster_files/SMAP_SM.tif") # SMAP soil moisture data
