@@ -1,5 +1,6 @@
 ---
 title-block-banner: true
+bibliography: references.bib
 ---
 # Basics of R
 

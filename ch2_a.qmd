@@ -1,40 +1,69 @@
 ---
 title-block-banner: true
+bibliography: references.bib
 ---
 
 # Spatial Mapping in R
 
-## Import libraries and sample dataset
+## Import sample dataset
 
-We will begin by loading necessary libraries. The sample dataset for this exercise can be downloaded manually from `GitHub` by accessing `https://github.com/Vinit-Sehgal/SampleData` <br>
+The sample dataset for this resource is uploaded to `GitHub` for easy and open access.
 
-<center>![](/images/git_repo.png){width="60%"}</center>
+|                                                 1\) Global surface soil moisture                                                 |                                                                2\) Normalized Difference Vegetation Index (NDVI)                                                                |
+|:--------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| Global surface soil moisture: [NASA's Soil Moisture Active Passive (SMAP) satellite](https://smap.jpl.nasa.gov/)[@entekhabi2009] | [Moderate Resolution Imaging Spectroradiometer (MODIS)](https://modis.gsfc.nasa.gov/data/dataprod/mod13.php) instrument onboard the Terra and Aqua satellites [@huete1999modis] |
+|                                                ![](images/SMAP.jpg){width="304"}                                                 |                                                                       ![](images/modis.jpg){width="317"}                                                                        |
+
+|                                         3\) Global climate reference land regions                                          |
+|:--------------------------------------------------------------------------------------------------------------------------:|
+| [Coupled Model Intercomparison Project (CMIP) projec](https://essd.copernicus.org/articles/12/2959/2020/)t [@iturbide2020] |
+|                                                  ![](images/IPCC_CRR.png)                                                  |
+
+Download the sample data manually as a zip file from: `https://github.com/Vinit-Sehgal/SampleData` . Once downloaded, extracting the zip folder to the current working directory.
 
 <br>
 
-Alternatively, use the following code to download and extract the sample data from `GitHub` repository.
+Alternatively, use the following script to programmatically download and extract the sample data from the `GitHub` repository.
+
+```{r}
+###############################################################
+#~~~ Import sample data from GitHub repository
+download.file(url = "https://github.com/Vinit-Sehgal/SampleData/archive/master.zip",
+destfile = "SampleData-master.zip")    # Download ".Zip"
+
+# Unzip the downloaded .zip file
+unzip(zipfile = "SampleData-master.zip")
+# getwd()                           # Current working directory
+list.files("./SampleData-master")   # List folder contents. Do you see sample datasets?
+
+```
+
+Packages are the fundamental units of reproducible R code. They include reusable R functions, the documentation that describes how to use them, and sample data.
+
+We will begin by loading necessary libraries.
 
 Install all necessary packages (Run once).
 
 ```{r Git data download}
 ###############################################################
-#~~~ Load required libraries
-lib_names=c("terra", "tidyterra", "cetcolor", "scico", "tmap",    
-            "gifski", "lubridate","Rcpp",
-            "raster","ggplot2","unikn","mapview",
-            "gridExtra","rgdal","fields",
-            "RColorBrewer","ncdf4","rasterVis",
-            "rcartocolor","pacman","purrr","moments","tictoc", 
-            "sf", "sp", "exactextractr","readxl", 
-            "snow","future.apply","parallel")
+# #~~~ Load required libraries
+# lib_names=c("terra", "tidyterra", 
+#             "cetcolor", "scico", "tmap",    
+#             "gifski", "lubridate","Rcpp",
+#             "raster","ggplot2","unikn","mapview",
+#             "gridExtra","rgdal","fields",
+#             "RColorBrewer","ncdf4","rasterVis",
+#             "rcartocolor","pacman","purrr","moments","tictoc", 
+#             "sf", "sp", "exactextractr","readxl", 
+#             "snow","future.apply","parallel")
 ```
 
 ```{r}
 # Load necessary packages
-invisible(suppressMessages
-          (suppressWarnings
-            (lapply
-              (lib_names, require, character.only = T))))
+# invisible(suppressMessages
+#           (suppressWarnings
+#             (lapply
+#               (lib_names, require, character.only = T))))
 
 # An easy way to load multiple packages is through pacman::p_load
 # pacman::p_load("raster","ggplot2","unikn","mapview",
@@ -46,19 +75,6 @@ invisible(suppressMessages
 ```
 
 > *Note*: The legacy R spatial infrastructure packages - `maptools`, `rgdal` and `rgeos` have been archived by CRAN from October 16, 2023; these retired packages will continue to be available as source packages on <https://cran.r-project.org/src/contrib/Archive> but won't undergo any further development. <br> We will now download the workshop repository, which contains all data we will use for this exercise.
-
-```{r}
-###############################################################
-#~~~ Import sample data from GitHub repository
-download.file(url = "https://github.com/Vinit-Sehgal/SampleData/archive/master.zip",
-destfile = "SampleData-master.zip")    # Download ".Zip"
-
-# Unzip the downloaded .zip file
-unzip(zipfile = "SampleData-master.zip")
-# getwd()                           # Current working directory
-list.files("./SampleData-master")   # List folder contents
-
-```
 
 ## Raster and shapefile visualization
 

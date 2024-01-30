@@ -1,5 +1,13 @@
 ---
 title-block-banner: true
+bibliography: references.bib
 ---
 
-## References
+**References**
+
+------------------------------------------------------------------------
+
+### References
+
+::: {#refs}
+:::
