@@ -3,29 +3,37 @@ title-block-banner: true
 bibliography: references.bib
 ---
 
-# Spatial Mapping in R
+Spatial Mapping in R
 
-## Import sample dataset
+Import sample dataset 
 
-The sample dataset for this resource is uploaded to `GitHub` for easy and open access.
+The sample dataset for this resource is uploaded to GitHub for easy and open access.  
 
-|                                                 1\) Global surface soil moisture                                                 |                                                                2\) Normalized Difference Vegetation Index (NDVI)                                                                |
-|:-----------------------------:|:---------------------------------------:|
-| Global surface soil moisture: [NASA's Soil Moisture Active Passive (SMAP) satellite](https://smap.jpl.nasa.gov/)[@entekhabi2009] | [Moderate Resolution Imaging Spectroradiometer (MODIS)](https://modis.gsfc.nasa.gov/data/dataprod/mod13.php) instrument onboard the Terra and Aqua satellites [@huete1999modis] |
-|                                                ![](images/SMAP.jpg){width="304"}                                                 |                                                                       ![](images/modis.jpg){width="317"}                                                                        |
+1) Global surface soil moisture 
 
-|                                         3\) Global climate reference land regions                                          |
-|:----------------------------------------------------------------------:|
-| [Coupled Model Intercomparison Project (CMIP) projec](https://essd.copernicus.org/articles/12/2959/2020/)t [@iturbide2020] |
-|                                                  ![](images/IPCC_CRR.png)                                                  |
+2) Normalized Difference Vegetation Index (NDVI) 
 
-Download the sample data manually as a zip file from: `https://github.com/Vinit-Sehgal/SampleData` . Once downloaded, extracting the zip folder to the current working directory.
+Global surface soil moisture: NASA's Soil Moisture Active Passive (SMAP) satellite[@entekhabi2009]
+
+Moderate Resolution Imaging Spectroradiometer (MODIS) instrument onboard the Terra and Aqua satellites [@huete1999modis]
+
+
+
+
+
+3) Global climate reference land regions
+
+Coupled Model Intercomparison Project (CMIP) project [@iturbide2020]
+
+
+
+Download the sample data manually as a zip file from: https://github.com/Vinit-Sehgal/SampleData . Once downloaded, extracting the zip folder to the current working directory.
 
 <br>
 
-Alternatively, use the following script to programmatically download and extract the sample data from the `GitHub` repository.
+Alternatively, use the following script to programmatically download and extract the sample data from the GitHub repository.
 
-```{r}
+{r}
 ###############################################################
 #~~~ Import sample data from GitHub repository
 download.file(url = "https://github.com/Vinit-Sehgal/SampleData/archive/master.zip",
@@ -36,15 +44,14 @@ unzip(zipfile = "SampleData-master.zip")
 # getwd()                           # Current working directory
 list.files("./SampleData-master")   # List folder contents. Do you see sample datasets?
 
-```
 
 Packages are the fundamental units of reproducible R code. They include reusable R functions, the documentation that describes how to use them, and sample data.
 
-We will begin by loading necessary libraries.
+We will begin by loading necessary libraries. 
 
 Install all necessary packages (Run once).
 
-```{r Git data download}
+{r Git data download}
 ###############################################################
 # #~~~ Load required libraries
 # lib_names=c("terra", "tidyterra", 
@@ -56,9 +63,8 @@ Install all necessary packages (Run once).
 #             "rcartocolor","pacman","purrr","moments","tictoc", 
 #             "sf", "sp", "exactextractr","readxl", 
 #             "snow","future.apply","parallel")
-```
 
-```{r}
+{r}
 # Load necessary packages
 # invisible(suppressMessages
 #           (suppressWarnings
@@ -72,29 +78,28 @@ Install all necessary packages (Run once).
 
 # Update packages if they are already installed
 # update.package(ask = FALSE)
-```
 
-> *Note*: The legacy R spatial infrastructure packages - `maptools`, `rgdal` and `rgeos` have been archived by CRAN from October 16, 2023; these retired packages will continue to be available as source packages on <https://cran.r-project.org/src/contrib/Archive> but won't undergo any further development. <br> We will now download the workshop repository, which contains all data we will use for this exercise.
+Note: The legacy R spatial infrastructure packages - maptools, rgdal and rgeos have been archived by CRAN from October 16, 2023; these retired packages will continue to be available as source packages on https://cran.r-project.org/src/contrib/Archive but won't undergo any further development. <br> We will now download the workshop repository, which contains all data we will use for this exercise.
 
-## Raster and shapefile visualization
+Raster and shapefile visualization
 
-A `geographic information system`, or `GIS` refers to a platform which can map, analyzes and manipulate **geographically referenced** dataset. A geographically referenced data (or geo-referenced data) is a spatial dataset which can be related to a point on Earth with the help of geographic coordinates. Types of geo-referenced spatial data include: rasters (grids of regularly sized pixels) and vectors (polygons, lines, points).
-
-<br>
-
-<center>![](images/SpatialDataIntro.png)</center>
+A geographic information system, or GIS refers to a platform which can map, analyzes and manipulate geographically referenced dataset. A geographically referenced data (or geo-referenced data) is a spatial dataset which can be related to a point on Earth with the help of geographic coordinates. Types of geo-referenced spatial data include: rasters (grids of regularly sized pixels) and vectors (polygons, lines, points).
 
 <br>
 
-A quick and helpful review of spatial data can be found here: <https://spatialvision.com.au/blog-raster-and-vector-data-in-gis/>
+<center></center>
 
-### Plotting raster data
+<br>
 
-In this section, we will plot global raster data of surface (\~5 cm) soil moisture from SMAP. In this process we will explore functions from `terra`, and `tidyterra` packages.
+A quick and helpful review of spatial data can be found here: https://spatialvision.com.au/blog-raster-and-vector-data-in-gis/
+
+Plotting raster data
+
+In this section, we will plot global raster data of surface (~5 cm) soil moisture from SMAP. In this process we will explore functions from terra, and tidyterra packages.
 
 Let's start by importing the necessary packages.
 
-```{r colormap, message = FALSE, warning = FALSE,results='asis'}
+{r colormap, message = FALSE, warning = FALSE,results='asis'}
 # For raster operations
 library(terra)
 
@@ -110,11 +115,10 @@ library(scico)
  
 # Import SMAP soil moisture raster from the downloaded folder
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
-```
 
-Once we have imported the Spatraster using rast() function from terra package, let's now check its attributes. Notice the `dimensions`, `resolution`, `extent`, `crs` i.e. coordinate reference system and `values`. Note that the cell of one raster layer can only hold a single value. The value might be numeric or categorical!
+Once we have imported the Spatraster using rast() function from terra package, let's now check its attributes. Notice the dimensions, resolution, extent, crs i.e. coordinate reference system and values. Note that the cell of one raster layer can only hold a single value. The value might be numeric or categorical!
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 print(sm)
 # Try:
 # dim(sm)   # Dimension (nrow, ncol, nlyr) of the raster
@@ -122,33 +126,33 @@ print(sm)
 # terra::ext(sm)   # Spatial extent of the raster
 # terra::crs(sm)   # Coordinate reference system
 
-```
 
-Now let's plot the raster using `terra::plot`. Interactive plots can be made by using `mapview` function.
+Now let's plot the raster using terra::plot. Interactive plots can be made by using mapview function.
 
-```{r, message = FALSE, warning = FALSE,results='asis'}
+{r, message = FALSE, warning = FALSE,results='asis'}
 # Basic Raster plot
 terra::plot(sm, main = "Soil Moisture")
 
-```
 
-What are the different `features` of the above plot?
+What are the different features of the above plot?
 
-*Expert Note*: terra's functionality is largely the same as the more mature `raster` package (created by the same developer, Robert Hijmans), but are usually more computationally efficient than raster equivalents. However, one can seamlessly translate between the two types of object to ensure backwards compatibility with older scripts and packages, for example, with the functions raster(), stack(), and brick() in the `raster` package.
+Expert Note: terra's functionality is largely the same as the more mature raster package (created by the same developer, Robert Hijmans), but are usually more computationally efficient than raster equivalents. However, one can seamlessly translate between the two types of object to ensure backwards compatibility with older scripts and packages, for example, with the functions raster(), stack(), and brick() in the raster package.
 
-## Customizing `terra` plot options
+Customizing terra plot options
 
-### Scientific Color palettes
+Scientific Color palettes
 
-We will generate custom color palettes for better visualization. We will demonstrate the usage of `cetcolor` and `scico` package which provide access to the perceptually uniform and colour-blindness friendly palettes.
+We will generate custom color palettes for better visualization. We will demonstrate the usage of cetcolor and scico package which provide access to the perceptually uniform and colour-blindness friendly palettes.
 
 <br>
 
-1.  You can select CET colormaps from: <https://cran.r-project.org/web/packages/cetcolor/vignettes/cet_color_schemes.html>
-2.  You can select scico colormaps from: <https://github.com/thomasp85/scico>
-3.  R Color Brewer is also a great resource for popular colormaps: <https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3>
+You can select CET colormaps from: https://cran.r-project.org/web/packages/cetcolor/vignettes/cet_color_schemes.html
 
-```{r, message = FALSE, warning = FALSE}
+You can select scico colormaps from: https://github.com/thomasp85/scico
+
+R Color Brewer is also a great resource for popular colormaps: https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+
+{r, message = FALSE, warning = FALSE}
 # Make custom color palette
 library(unikn) 
 
@@ -168,13 +172,12 @@ unikn::seecol(mypal2)
 mypal2 = rev(cetcolor::cet_pal(20, name = "r2") ) 
 unikn::seecol(mypal2)
 
-```
 
-### Customize `terra` plots
+Customize terra plots
 
-There is a long list of customization operations available while plotting rasters in R. Let's play with some of these options. We will start with basic plot from terra, and then venture into more powerful tmap and tidyterra packages. Try `horizontal=TRUE`, `interpolate=FALSE`, change `xlim=c(-180, 180)` with `asp=1`, or try `legend.shrink=0.4`.
+There is a long list of customization operations available while plotting rasters in R. Let's play with some of these options. We will start with basic plot from terra, and then venture into more powerful tmap and tidyterra packages. Try horizontal=TRUE, interpolate=FALSE, change xlim=c(-180, 180) with asp=1, or try legend.shrink=0.4.
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 sm=rast("./SampleData-master/raster_files/SMAP_SM.tif") # SMAP soil moisture data
 
 terra::plot(sm,
@@ -212,11 +215,10 @@ tmap_SM = tm_shape(sm)+
 
 tmap_SM
 
-```
 
-To convert the static plot into an interactive map we will use `mapview` package which which is compatible with `rasterbrick`.
+To convert the static plot into an interactive map we will use mapview package which which is compatible with rasterbrick.
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 # Interactive plot
 library(mapview)
 library(raster)
@@ -227,15 +229,14 @@ mapview(brick(sm),            # Convert SpatRaster to RasterBrick
         )
 
 
-```
 
-## Plotting raster data using `tidyterra`
+Plotting raster data using tidyterra
 
-`tidyterra` is a package that add common methods from the tidyverse for SpatRaster and SpatVectors objects created with the {`terra`} package. It also adds specific `geom_spat*()` functions for plotting these kind of objects with {ggplot2}.
+tidyterra is a package that add common methods from the tidyverse for SpatRaster and SpatVectors objects created with the {terra} package. It also adds specific geom_spat*() functions for plotting these kind of objects with {ggplot2}.
 
-Note on Performance: `tidyterra` is conceived as a user-friendly wrapper of {terra} using the {tidyverse} methods and verbs. This approach therefore has a cost in terms of performance.
+Note on Performance: tidyterra is conceived as a user-friendly wrapper of {terra} using the {tidyverse} methods and verbs. This approach therefore has a cost in terms of performance.
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 library(tidyterra)
 library(ggplot2)
 
@@ -249,11 +250,10 @@ ggplot() +
                        limits=c(0,0.8))+
   theme_void()  # Try different themes: theme_bw(), theme_gray(), theme_minimal()
 
-```
 
-What if we are interested in a particular region and not the entire globe? We can plot the map for a specific extent (CONUS, in this case) by changing the range of `coord_sf`option. We will also use a different theme: `theme_bw`. Try `xlim = c(114,153)` and `ylim = c(-43,-11)`!
+What if we are interested in a particular region and not the entire globe? We can plot the map for a specific extent (CONUS, in this case) by changing the range of coord_sfoption. We will also use a different theme: theme_bw. Try xlim = c(114,153) and ylim = c(-43,-11)!
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 sm_conus= ggplot() +
   geom_spatraster(data = sm) +
   scale_fill_gradientn(colors=mypal2,                               # Use user-defined colormap
@@ -268,11 +268,10 @@ sm_conus= ggplot() +
 
 print(sm_conus)
 
-```
 
-`tmap` provides the easiest way of manipulating the legends from continuous to discrete by just adding the `style` of color scale desired by the user.
+tmap provides the easiest way of manipulating the legends from continuous to discrete by just adding the style of color scale desired by the user.
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 
 #We will manipulate the existing tmap_SM plot by adding style parameter:
 tmap_SM = tm_shape(sm)+
@@ -302,15 +301,14 @@ tmap_save(tmap_SM,                    #	tmap object
           width = 5,
           units = "in")               #units for width and height
   
-```
 
-## Plotting vector data
+Plotting vector data
 
-Importing and plotting shapefiles is equally easy in R. We will import the shapefile of the updated global `IPCC climate reference regions` (<https://doi.org/10.5194/essd-12-2959-2020>) as Simple Feature (`sf`) Object. We will also use global `coastline` shapefile from the web for plotting.
+Importing and plotting shapefiles is equally easy in R. We will import the shapefile of the updated global IPCC climate reference regions (https://doi.org/10.5194/essd-12-2959-2020) as Simple Feature (sf) Object. We will also use global coastline shapefile from the web for plotting.
 
 Note: Even though terra provides vect() function to handle vector data, sf package is most suitable and powerful for manipulating and plotting purposes.
 
-```{r overlay, message = FALSE, warning = FALSE}
+{r overlay, message = FALSE, warning = FALSE}
 ###############################################################
 #~~~ PART 1.4.1: Importing and visualizing shapefiles
 library(sf)  
@@ -363,23 +361,22 @@ tm_shape(IPCC_shp[c(3,4,6,7),])+                       # Selected regions from '
   tm_shape(college_station)+                           # Add spatial point to the map
   tm_dots(size = 2, col = "blue")                      # Customize point
 
-```
 
 Note: Each layer (here 3) needs to be added as with tm_shape()!
 
-## Reprojection of rasters using `terra::project`
+Reprojection of rasters using terra::project
 
-A coordinate reference system (CRS) is used to relate locations on Earth (which is a 3-D spheroid) to a 2-D projected map using coordinates (for example latitude and longitude). Projected CRSs are usually expressed in Easting and Northing (x and y) values corresponding to long-lat values in Geographic CRS. A good description of coordinate reference systems and their importance can be found here: <https://docs.qgis.org/3.4/en/docs/gentle_gis_introduction/coordinate_reference_systems.html> <https://datacarpentry.org/organization-geospatial/03-crs/>
-
-<br>
-
-<center>![](/images/projection_families.png){width="60%"}</center>
+A coordinate reference system (CRS) is used to relate locations on Earth (which is a 3-D spheroid) to a 2-D projected map using coordinates (for example latitude and longitude). Projected CRSs are usually expressed in Easting and Northing (x and y) values corresponding to long-lat values in Geographic CRS. A good description of coordinate reference systems and their importance can be found here: https://docs.qgis.org/3.4/en/docs/gentle_gis_introduction/coordinate_reference_systems.html https://datacarpentry.org/organization-geospatial/03-crs/
 
 <br>
 
-In R, the coordinate reference systems or `CRS` are commonly specified in `EPSG` (European Petroleum Survey Group) or PROJ4 format (See: <https://epsg.io/>). <br> The Spatraster reprojection process is done with `project()` from the terra package.
+<center></center>
 
-```{r, message = FALSE, warning = FALSE,results='asis'}
+<br>
+
+In R, the coordinate reference systems or CRS are commonly specified in EPSG (European Petroleum Survey Group) or PROJ4 format (See: https://epsg.io/). <br> The Spatraster reprojection process is done with project() from the terra package.
+
+{r, message = FALSE, warning = FALSE,results='asis'}
 # Importing SMAP soil moisture data
 sm=rast("./SampleData-master/raster_files/SMAP_SM.tif") 
 
@@ -407,19 +404,16 @@ terra::plot(sm_proj2,
              asp = NA,          # No fixed aspect ratio; asp=NA fills plot to window
              legend=FALSE)      # Disable legend
 
-```
 
 Other than the projections demonstrated, try the following:
 
-```         
 "+init=epsg:3857" For Mercator (EPSG: 3857): Used in Google Maps, Open Street Maps, etc.
 "+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" for World Robinson Projection
 "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" for World Mercator projection
-```
 
 We will use a custom function provided with the material to plot the global raster in Robinson projection.
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 #~~~Projection 2: Robinson projection
 
 WorldSHP=terra::vect(spData::world)
@@ -441,11 +435,10 @@ RobinsonPlot <- ggplot() +
            ylim = c(-55,90)*100000)
 
 print(RobinsonPlot)
-```
 
-Now let's plot the `robison` plot using `tmap`:
+Now let's plot the robison plot using tmap:
 
-```{r, message = FALSE, warning = FALSE}
+{r, message = FALSE, warning = FALSE}
 WorldSHP = st_as_sf(WorldSHP)           # Convert 'WorldSHP' to simple feature
 
 tm_shape(WorldSHP,                      # Initiate shapefile       
@@ -472,6 +465,5 @@ tm_shape(WorldSHP,                      # Initiate shapefile
                 labels.inside.frame = FALSE,  
                 col = "lightgrey", n.x = 4, n.y = 3)
 
-```
 
-**Useful references:** More excellent examples on making maps in R can be found here: <https://bookdown.org/nicohahn/making_maps_with_r5/docs/introduction.html>. Quintessential resource for reference on charts and plots in R: <https://www.r-graph-gallery.com/index.html>.
+Useful references: More excellent examples on making maps in R can be found here: https://bookdown.org/nicohahn/making_maps_with_r5/docs/introduction.html. Quintessential resource for reference on charts and plots in R: https://www.r-graph-gallery.com/index.html.
