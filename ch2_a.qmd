@@ -53,7 +53,7 @@ list.files("./SampleData-master")   # List folder contents. Do you see sample da
 
 ```
 
-### Using R ad GIS
+### Using R as GIS
 
 A `geographic information system`, or `GIS` refers to a platform which can map, analyzes and manipulate **geographically referenced** dataset. A geographically referenced data (or geo-referenced data) is a spatial dataset which can be related to a point on Earth with the help of geographic coordinates. Types of geo-referenced spatial data include: rasters (grids of regularly sized pixels) and vectors (polygons, lines, points).
 
@@ -218,7 +218,7 @@ mapview(sm2,                  # RasterLayer
 )
 ```
 
-## Plotting raster data using `tidyterra`
+#### Plotting raster data using `tidyterra`
 
 `tidyterra` is a package that add common methods from the tidyverse for SpatRaster and SpatVectors objects created with the `terra` package. It also adds specific `geom_spat*()` functions for plotting rasters with `ggplot2`.
 
@@ -262,7 +262,7 @@ sm_conus= ggplot() +
 print(sm_conus)
 ```
 
-## Plotting vector data
+### Plotting vector data
 
 Importing and plotting shapefiles is equally easy in R. We will import the shapefile of the updated global `IPCC climate reference regions` and global `coastline`as Simple Feature (`sf`) Object. Terra can also be used to import shapefiles as vectors using the function `vect`. However, `sf` is more versatile, especially for shapefiles. Notice how the attributes of the `sf` objects resemble an Excel data sheet.
 
@@ -326,7 +326,7 @@ points(cbind(Long,Lat),                # Lat-Long as Spatial Points
        col="blue", pch=16, cex=1.2)    # Shape, size and color of point
 ```
 
-## Reprojection of rasters using `terra::project`
+### Reprojection of rasters using `terra::project`
 
 A coordinate reference system (CRS) is used to relate locations on Earth (which is a 3-D spheroid) to a 2-D projected map using coordinates (for example latitude and longitude). Projected CRSs are usually expressed in Easting and Northing (x and y) values corresponding to long-lat values in Geographic CRS.
 
@@ -344,21 +344,20 @@ A good description of coordinate reference systems and their importance can be f
 
 In R, the coordinate reference systems or `CRS` are commonly specified in `EPSG` (European Petroleum Survey Group) or PROJ4 format (See: <https://epsg.io/>). Few commonly used projection systems and their codes are summarized below:
 
-+---------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------+------------+
-| Projection system                                                                                 | PROJ.4 code                                                                                                                  | EPSG code  |
-+===================================================================================================+==============================================================================================================================+============+
-| NAD83 (North American Datum 1983)                                                                 | "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs +type=crs"                                                       | EPSG:4269  |
-+---------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------+------------+
-| Mercator                                                                                          | "+proj=merc +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +R=6371000 +units=m +no_defs +type=crs"                                         | ESRI:53004 |
-+---------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------+------------+
-| WGS 84 (World Geodetic System 1984)                                                               | "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"                                            | EPSG:3395  |
-+---------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------+------------+
-| WGS 84 / Pseudo-Mercator -- Spherical Mercator ( used in Google Maps, OpenStreetMap)              | "+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs" | EPSG:3857  |
-+---------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------+------------+
-| Robinson (better for plotting global data due to minimal distortion, except for higher latitudes) | "+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"                                                | ESRI:54030 |
-+---------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------+------------+
+------------------------------------------------------------------------
 
-: The `SpatRaster` reprojection process is done with `project()` from the `terra` package.
+|                                                                                                   |                                                                                                                                   |             |
+|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|-------------|
+| *Projection system*                                                                               | *PROJ.4 code*                                                                                                                     | *EPSG code* |
+| NAD83 (North American Datum 1983)                                                                 | "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs +type=crs"                                                            | EPSG:4269   |
+| Mercator                                                                                          | "+proj=merc +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +R=6371000 +units=m +no_defs +type=crs"                                              | ESRI:53004  |
+| WGS 84 (World Geodetic System 1984)                                                               | "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"                                                 | EPSG:3395   |
+| WGS 84 / Pseudo-Mercator -- Spherical Mercator ( used in Google Maps, OpenStreetMap)              | "+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=`@null` +wktext +no_defs +type=crs" \| | EPSG:3857   |
+| Robinson (better for plotting global data due to minimal distortion, except for higher latitudes) | "+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"                                                     | ESRI:54030  |
+
+------------------------------------------------------------------------
+
+The `SpatRaster` reprojection process is done with `project()` from the `terra` package.
 
 ```{r, message = FALSE, warning = FALSE,results='asis'}
 # Importing SMAP soil moisture data
@@ -417,18 +416,18 @@ RobinsonPlot <- ggplot() +
 print(RobinsonPlot)
 
 # Save high resolution plot to disk
-ggsave(
-  "globalSM.png",          # Name of the file to be created
-  plot = RobinsonPlot,     # Plot to be exported
-  bg = "white",            # Plot background
-  height = 6,              # Height 
-  width = 10,              # Width  
-  units = c("in")          # Units ("in", "cm", "mm" or "px")
-)
+  # ggsave(
+  #   "globalSM.png",          # Name of the file to be created
+  #   plot = RobinsonPlot,     # Plot to be exported
+  #   bg = "white",            # Plot background
+  #   height = 6,              # Height 
+  #   width = 10,              # Width  
+  #   units = c("in")          # Units ("in", "cm", "mm" or "px")
+  # )
 
 ```
 
-Let us view the exported plot saved on the disk.
+Run the commented script above, and view the exported plot saved on the disk.
 
 **Other resources:**
 
