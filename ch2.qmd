@@ -5,7 +5,7 @@ bibliography: references.bib
 
 # Spatial Mapping in R
 
-```{r child="ch2_a2.qmd", message = FALSE, warning = FALSE}
+```{r child="ch2_a.qmd", message = FALSE, warning = FALSE}
 
 
 ```

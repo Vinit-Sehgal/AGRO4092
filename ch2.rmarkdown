@@ -1,0 +1,14 @@
+---
+title-block-banner: true
+bibliography: references.bib
+---
+
+
+# Spatial Mapping in R
+
+
+```{r child="ch2_a.qmd", message = FALSE, warning = FALSE}
+
+
+```
+
