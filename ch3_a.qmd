@@ -1,0 +1,169 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Raster Resampling
+
+Raster resampling refers to changing the resolution of the raster.
+The term "resampling" used here implies that the pixel values are "sampled" to the new resolution using an interpolation method (nearest neighbor, bilinear, spline, min, max, mode, average etc).
+We will try three important functions for changing the resolution of a SpatRaster: `terra::aggregate` (resample from fine to coarse resolution), `terra::disagg` (resample from coarse to fine resolution) and `terra::resample` (resample to match the resolution of another raster).
+The following schematic helps illustrate the use of these functions:
+
+![](images/resampling.png)
+
+Lets us now explore an example for raster resampling.
+
+```{r resampling, message = FALSE, warning = FALSE}
+library(terra)
+
+# Import SMAP soil moisture raster
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif") 
+
+# Original resolution of raster for reference
+res(sm)
+
+#~~ Aggregate raster to coarser resolution
+SMcoarse = terra::aggregate(sm,           # Soil moisture raster
+                            fact = 10,    # Aggregate by x 10
+                            fun = mean)   # Function used to aggregate values
+res(SMcoarse)
+
+#~~ Disaggregate raster to finer resolution
+SMfine = terra::disagg(sm, 
+                   fact=3, 
+                   method='bilinear')
+res(SMfine)
+
+#~~ Raster resampling
+# Import global aridity raster
+aridity=rast("./SampleData-master/raster_files/aridity_36km.tif") 
+
+# Plot aridity map
+mypal = RColorBrewer::brewer.pal(5, "Spectral") 
+terra::plot(aridity, col=mypal, main= "Aridity Spatraster")
+
+
+# Resample aridity raster to coarse resolution  
+aridityResamp=terra::resample(aridity,      # Original raster
+                       SMcoarse,            # Target resolution raster
+                       method='ngb')        # bilinear or ngb (nearest neighbor) 
+
+# Plot resampled aridity map
+terra::plot(aridityResamp, col=mypal, main= "Aridity at Coarser Resolution")
+
+```
+
+## Raster Summary Statistics
+
+Arithmetic operations a.k.a. arith-generic (+, -, \*, /, \^, %%, %/%) on `SpatRasters` closely resemble simple vector-like operations.
+More details on arith-generic can be found here: <https://rdrr.io/cran/terra/man/arith-generic.html>.
+<br> We will use `global` function to apply summary statistics and user-defined operations on cells of a raster.
+
+```{r summarizeRaster, message = FALSE, warning = FALSE}
+# Simple arithmetic operations
+sm2=sm*2
+print(sm2) # Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values
+
+# Summary statistics
+global(sm, mean, na.rm = T)
+global(sm, sd, na.rm = T)
+global(sm, quantile, probs = c(0.25, 0.75), na.rm = T)
+
+# User-defined statistics by defining own function
+quant_fun = function(x, na.rm=TRUE){ # Remember to add "na.rm" option
+  quantile(x, probs = c(0.25, 0.75), na.rm=TRUE)
+} 
+global(sm, quant_fun)   # 25th, and 75th percentile of each layer
+
+```
+
+> Note: With a multi-layered raster object, `global` will summarize each layer separately.
+
+### Raster Summary with Polygons
+
+Let's explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using `extract` function from the `terra` library.
+We will also transform global aridity raster to a polygon using `as.polygons` and `st_as_sf` functions to find the mean soil moisture values for each aridity class.
+
+First, we will use the IPCC shapefile to summarize the soil moisture raster.
+
+```{r summarize, message = FALSE, warning = FALSE}
+
+# Import the shapefile of global IPCC climate reference regions (only for land) 
+IPCC_shp = vect("./SampleData-master/CMIP_land/CMIP_land.shp")
+
+#~~~ Using shapefile to summarize a raster
+sm_IPCC_df=terra::extract(sm,        # Spatraster to be summarized
+                          IPCC_shp,   # Shapefile/ polygon to summarize the raster
+                          #df=TRUE,   # Gives the summary statistics as a dataframe
+                          fun=mean,   # Desired statistic: mean, sum, min and max 
+                          na.rm=TRUE) # Ignore NA values? TRUE=yes! 
+
+head(sm_IPCC_df)
+
+#~~~ Extract cell values for each region 
+sm_IPCC_list=terra::extract(sm,       # Raster to be summarized
+                          IPCC_shp,   # Shapefile/ polygon to summarize the raster
+                          df=FALSE,   # Returns a list
+                          fun=NULL,   # fun=NULL will output cell values within each region
+                          na.rm=TRUE) # Ignore NA values? yes! 
+
+# Apply function on cell values for each region
+sm_IPCC_mean=lapply(sm_IPCC_list,mean)                       # Returns a list of regional means 
+sm_IPCC_mean=purrr::map(sm_IPCC_list,~ mean(.x, na.rm=TRUE)) # Returns a list of regional means
+
+#~~ Try user defined function
+myfun=function (y){return(mean(y, na.rm=TRUE))}    # User defined function for calculating means
+
+#~ Implement function using lapply and map
+library(purrr)
+
+sm_IPCC_mean=lapply(sm_IPCC_list,myfun)           # Returns a list of regional means 
+sm_IPCC_mean=purrr::map(sm_IPCC_list,~ myfun(.x)) # Returns a list of regional means 
+sm_IPCC_mean=unlist(sm_IPCC_mean)                 # Unlist to return a vector 
+
+head(sm_IPCC_mean) # Is this the same as the previous result?
+
+```
+
+### Raster Summary with Classified Raster
+
+In the next example, we will convert global aridity raster into a polygon based on aridity classification using `as.polygons` and `st_as_sf` functions.
+<br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate.
+We will use this polygon to extract values from the Spatraster and summarize soil moisture for each aridity class.
+
+```{r, message = FALSE, warning = FALSE}
+#~~~ Convert a raster to a shapefile
+aridity=rast("./SampleData-master/raster_files/aridity_36km.tif") #Global aridity
+
+# Convert raster to shapefile
+arid_poly=as.polygons(aridity)   # Convert SpatRaster to polygon and then to sf
+
+# Plot aridity polygon
+terra::plot(arid_poly, 
+     col=arid_poly$aridity_36km)  # Colors based on aridity values (i.e. 1,2,3,4,5)
+```
+
+Summarize values of SMAP soil moisture raster for aridity classes:
+
+```{r, message = FALSE, warning = FALSE}
+sm_arid_df=terra::extract(sm,        # Raster to be summarized
+                          arid_poly, # Shapefile/ polygon to summarize the raster
+                          #df=TRUE,   # Gives the summary statistics as a dataframe
+                          fun=mean,  # Desired statistic: mean, sum, min and max 
+                          na.rm=TRUE)# Ignore NA values? yes! 
+
+# Lets plot the climate-wise mean of surface soil moisture
+{plot(sm_arid_df,     
+     xaxt = "n",              # Disable x-tick labels
+     xlab="Aridity",          # X axis label
+     ylab="Soil moisture",    # Y axis label
+     type="b",                # line type
+     col="blue",              # Line color
+     main="Climate-wise mean of surface soil moisture")
+axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))}
+
+```

@@ -1,0 +1,11 @@
+---
+title-block-banner: true
+bibliography: references.bib
+---
+
+# Geospatial operations on raster and vectors
+
+```{r child="ch3_a.qmd", message = FALSE, warning = FALSE}
+
+
+```
