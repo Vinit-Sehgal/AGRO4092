@@ -1,6 +1,8 @@
 ---
 title-block-banner: true
 bibliography: references.bib
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ## Overview
@@ -53,7 +55,7 @@ list.files("./SampleData-master")   # List folder contents. Do you see sample da
 
 ```
 
-## Using R as GIS
+### Using R as GIS
 
 A `geographic information system`, or `GIS` refers to a platform which can map, analyzes and manipulate **geographically referenced** dataset. A geographically referenced data (or geo-referenced data) is a spatial dataset which can be related to a point on Earth with the help of geographic coordinates. Types of geo-referenced spatial data include: rasters (grids of regularly sized pixels) and vectors (polygons, lines, points).
 
@@ -65,12 +67,13 @@ A `geographic information system`, or `GIS` refers to a platform which can map, 
 
 A quick and helpful review of spatial data can be found here: <https://spatialvision.com.au/blog-raster-and-vector-data-in-gis/>
 
-### Plotting raster data: with `terra` and `tmap`
+#### Plotting raster data: with `terra` and `tmap`
 
 In this section, we plot global raster data of surface (\~5 cm) soil moisture from SMAP. Let's start by first importing the global soil moisture raster.
 
 ```{r, message = FALSE, warning = FALSE,results='asis'}
 # Import package for raster operations
+# install.packages("terra")
 library(terra) 
 
 # Import SMAP soil moisture raster from the downloaded folder
@@ -96,7 +99,7 @@ Now let's plot the raster using `terra::plot`.
 terra::plot(sm, main = "Soil Moisture") 
 ```
 
-### Color palettes
+#### Color palettes
 
 Using a good color palette is an important aspect of spatial mapping. Choice of a good colormap can help the readers understand the key aspects of the map. The selected colors must adequately represent the key features and their differences, wherever applicable, with the least distortion, ambiguity or effort. There are several libraries available in R specifically dedicated to generating color pelettes for scientific mapping. We will also learn the the usage of `cetcolor` and `scico` packages to generate perceptually uniform and color-blindness friendly palettes.
 
@@ -118,7 +121,7 @@ library(scico)
 library(unikn)   
 
 #~~ A) User defined color palette using brewer.pal
-mypal1 = RColorBrewer::brewer.pal(10, "Spectral") 
+mypal1 = RColorBrewer::brewer.pal(30, "BrBG") 
 
 # Brewerpal outputs a max of 9-11 colors. So,the pelette may needs expansion.
 mypal2= colorRampPalette(mypal1)(20)         # Expand pelette to 20 colors
@@ -146,7 +149,7 @@ mypal2 = rev(cetcolor::cet_pal(20, name = "r2") )
 unikn::seecol(mypal2) 
 ```
 
-### Customizing `terra` plot options
+#### Customizing `terra` plot options
 
 There is a long list of customization operations available while plotting rasters in R.
 
@@ -154,6 +157,7 @@ We will start with basic plot from `terra`, and then explore the function by cha
 
 ```{r, message = FALSE, warning = FALSE}
 sm=rast("./SampleData-master/raster_files/SMAP_SM.tif") # SMAP soil moisture data
+plot(sm)
 
 terra::plot(sm,
             main = "Scientific Plot of Raster",
@@ -161,7 +165,7 @@ terra::plot(sm,
             #Color options
             col = mypal2,                    # User Defined Color Palette
             breaks = seq(0, 1, by=0.1),      # Sequence from 0-1 with 0.1 increment
-            colNA = "lightgray",             # Color of cells with NA values
+            colNA = "transparent",             # Color of cells with NA values
             
             # Axis options      
             axes=TRUE,                       # Plot axes: TRUE/ FALSE
@@ -177,9 +181,10 @@ terra::plot(sm,
             mar = c(3.1, 3.1, 2.1, 7.1),     # Margins
             grid = FALSE                     # Add grid lines
         )
+
 ```
 
-### Spatial plotting with `tmap`
+#### Spatial plotting with `tmap`
 
 ```{r, message = FALSE, warning = FALSE}
 library(tmap)
@@ -200,7 +205,7 @@ tmap_SM = tm_shape(sm)+
 tmap_SM
 ```
 
-### Interactive raster visualization aster data with `mapview`
+#### Interactive raster visualization aster data with `mapview`
 
 Functionality of `terra` is largely similar to the legacy package `raster` (created by the same developer, Robert Hijmans). The development of `terra` is inspired by computational efficiency in geospatial operations. However, since `terra` is relatively new, and is continually developed, several other packages require conversion of the `SpatRasters` to `rasterLayer` for backwards compatibility.
 
@@ -218,7 +223,7 @@ mapview(sm2,                  # RasterLayer
 )
 ```
 
-### Plotting raster data using `tidyterra`
+#### Plotting raster data using `tidyterra`
 
 `tidyterra` is a package that add common methods from the tidyverse for SpatRaster and SpatVectors objects created with the `terra` package. It also adds specific `geom_spat*()` functions for plotting rasters with `ggplot2`.
 
@@ -227,6 +232,7 @@ Note on Performance: `tidyterra` is conceived as a user-friendly wrapper of `ter
 ```{r, message = FALSE, warning = FALSE}
 library(tidyterra) 
 library(ggplot2)  
+
 ggplot() +   
   geom_spatraster(data = sm) +   
   scale_fill_gradientn(colors=mypal2,                 # Use user-defined colormap
