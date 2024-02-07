@@ -274,14 +274,19 @@ library(terra)
 # Import the shapefile of global IPCC climate reference regions (only for land) 
 IPCC_shp = read_sf("./SampleData-master/CMIP_land/CMIP_land.shp")
 # View attribute table of the shapefile
-IPCC_shp # Notice the attributes look like a data frame
+print(IPCC_shp) # Notice the attributes look like a data frame
 
 ##~~~~ Use terra package for shapefile 
-IPCC_shp = vect("./SampleData-master/CMIP_land/CMIP_land.shp")
-# IPCC_shp
+IPCC_shp = vect("./SampleData-master/CMIP_land/CMIP_land.shp") # Reference regions
+print(IPCC_shp)
+dim(IPCC_shp) # Notice the dimensions of the shapefile
 
 # Load global coastline shapefile 
-coastlines = read_sf("./SampleData-master/ne_10m_coastline/ne_10m_coastline.shp")
+coastlines = vect("./SampleData-master/ne_10m_coastline/ne_10m_coastline.shp")
+print(coastlines)
+
+# Notice the difference in the geometry of coastlines and IPCC_shp
+
 
 # Alternatively, download global coastlines from the web 
 # NOTE: May not work if the online server is down
@@ -394,7 +399,7 @@ terra::plot(sm_proj2,
 
 ```
 
-Let us now plot a map of global surface soil moisture, reprojected to Robinson projection. Notice that to add the raster and vector to the plot, we use the functions `geom_spatraster` and `geom_spatvector` respectively. Another package `spData` provides several important datasets for global mapping, including, US states polygons (`us_states`), World country polygons (`world`), global elevation (`elev.tif`), among others (<https://jakubnowosad.com/spData/>). We will use orld country polygons (`world`) in our map.
+Let us now plot a map of global surface soil moisture, reprojected to Robinson projection. Notice that to add the raster and vector to the plot, we use the functions `geom_spatraster` and `geom_spatvector` respectively. Another package `spData` provides several important datasets for global mapping, including, US states polygons (`us_states`), World country polygons (`world`), global elevation (`elev.tif`), among others (<https://jakubnowosad.com/spData/>). We will use world country polygons (`world`) in our map.
 
 ```{r, message = FALSE, warning = FALSE}
 library(spData)
@@ -433,6 +438,62 @@ print(RobinsonPlot)
 ```
 
 Run the commented script above, and view the exported plot saved on the disk.
+
+### Reclassify and reproject \`SpatRasters\`
+
+So far we have used continuous color scales for plotting rasters. Now we will reclassify the raster in discrete domains based on the cell values. This operation is called *RATifying* the raster i.e. adding the Raster Attribute Table (RAT) to the file. This allows use of discrete color scales for plotting.
+
+```{r, message = FALSE, warning = FALSE}
+library(spData)
+
+# Import global political boundaries from spData package
+WorldSHP=terra::vect(spData::world)    
+
+# Import raster file 
+sm=rast("./SampleData-master/raster_files/SMAP_SM.tif") 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Defite category breaks for the raster
+  brk= seq(0,0.8, by=0.1)
+
+  # Add attribute table to the raster
+  library(dplyr)
+  sm_rat=dplyr::mutate(sm,                   # input raster
+               rat = cut(SMAP_SM,            # Raster attribute
+               breaks = seq(0,0.8, by=0.1),  # Breaks for each class
+               labels = levels(cut(values(sm$SMAP_SM), breaks=brk)) # Labels for each class
+  ))
+
+  # levels(cut(values(sm$SMAP_SM), breaks=brk)) is same as typing
+  #   c("(0,0.1]", "(0.1,0.2]", "(0.2,0.3]", 
+  #   "(0.3,0.4]", "(0.4,0.5]", "(0.5,0.6]", 
+  #   "(0.6,0.7]", "(0.7,0.8]")
+  
+  plot(sm_rat$rat) # Simple plot with ratified values
+  
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Generate global plot in Robinson projection for the RATifies raster
+  
+RobinsonPlot_cat <- ggplot() +
+  geom_spatraster(data = sm_rat,    # Plot SpatRaster layer 
+                  aes(fill = rat))+ # aes = the attribute to use for plotting
+  geom_spatvector(data = WorldSHP,
+                  fill = "transparent") +       # Add world political map
+  ggtitle("Robinson Projection") +              # Add title
+  scale_fill_manual(values = brewer.pal(length(brk)-1,"Spectral"), # Discrete palette 
+                    na.value="transparent",      # Set transparent fill values for NA cells
+                    name="SM",                   # Name of the legend bar
+                    labels=levels(cut(values(sm$SMAP_SM), breaks=brk)))+
+  theme_minimal()+                              # Select theme. Try 'theme_void'
+  theme(plot.title = element_text(hjust =0.5),  # Place title in the middle of the plot
+        text = element_text(size = 12))+        # Adjust plot text size for visibility
+  coord_sf(crs = "ESRI:54030",                  # Reproject to World Robinson
+           xlim = c(-152,152)*100000,           # Convert x-y limits from decimal Deg. to meter
+           ylim = c(-55,90)*100000)
+
+print(RobinsonPlot_cat)
+
+```
 
 **Other resources:**
 

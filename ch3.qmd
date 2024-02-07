@@ -3,7 +3,7 @@ title-block-banner: true
 bibliography: references.bib
 ---
 
-# Geospatial operations on raster and vectors
+# Geospatial Operations on Raster & Vectors
 
 ```{r child="ch3_a.qmd", message = FALSE, warning = FALSE}
 

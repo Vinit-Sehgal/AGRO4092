@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>R for Spatial Analysis &amp; Visualization - 4&nbsp; Geospatial operations on raster and vectors</title>
+<title>R for Spatial Analysis &amp; Visualization - 4&nbsp; Geospatial Operations on Raster &amp; Vectors</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch3.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geospatial operations on raster and vectors</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch3.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geospatial Operations on Raster &amp; Vectors</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -121,7 +121,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geospatial operations on raster and vectors</span></h1>
+      <h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geospatial Operations on Raster &amp; Vectors</span></h1>
                       </div>
   </div>
     
@@ -173,7 +173,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch3.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geospatial operations on raster and vectors</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geospatial Operations on Raster &amp; Vectors</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -311,7 +311,7 @@ SMAP_SM 0.09521707 0.2922016</code></pre>
 </blockquote>
 <section id="raster-summary-with-polygons" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="raster-summary-with-polygons"><span class="header-section-number">4.2.1</span> Raster Summary with Polygons</h3>
-<p>Let’s explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using <code>extract</code> function from the <code>terra</code> library. We will also transform global aridity raster to a polygon using <code>as.polygons</code> and <code>st_as_sf</code> functions to find the mean soil moisture values for each aridity class.</p>
+<p>Let’s explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using <code>extract</code> function from the <code>terra</code> library. We will also transform global aridity raster to a polygon using the function <code>as.polygons</code> to find the mean soil moisture values for each aridity class.</p>
 <p>First, we will use the IPCC shapefile to summarize the soil moisture raster.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the shapefile of global IPCC climate reference regions (only for land) </span></span>
@@ -320,11 +320,10 @@ SMAP_SM 0.09521707 0.2922016</code></pre>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Using shapefile to summarize a raster</span></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>sm_IPCC_df<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(sm,        <span class="co"># Spatraster to be summarized</span></span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                          IPCC_shp,   <span class="co"># Shapefile/ polygon to summarize the raster</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#df=TRUE,   # Gives the summary statistics as a dataframe</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span>mean,   <span class="co"># Desired statistic: mean, sum, min and max </span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Ignore NA values? TRUE=yes! </span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sm_IPCC_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span>mean,   <span class="co"># Desired statistic: mean, sum, min and max </span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Ignore NA values? TRUE=yes! </span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sm_IPCC_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  ID   SMAP_SM
 1  1 0.2545766
@@ -337,25 +336,24 @@ SMAP_SM 0.09521707 0.2922016</code></pre>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Extract cell values for each region </span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>sm_IPCC_list<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(sm,       <span class="co"># Raster to be summarized</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                          IPCC_shp,   <span class="co"># Shapefile/ polygon to summarize the raster</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">df=</span><span class="cn">FALSE</span>,   <span class="co"># Returns a list</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span><span class="cn">NULL</span>,   <span class="co"># fun=NULL will output cell values within each region</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Ignore NA values? yes! </span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function on cell values for each region</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">lapply</span>(sm_IPCC_list,mean)                       <span class="co"># Returns a list of regional means </span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span>purrr<span class="sc">::</span><span class="fu">map</span>(sm_IPCC_list,<span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="co"># Returns a list of regional means</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Try user defined function</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>myfun<span class="ot">=</span><span class="cf">function</span> (y){<span class="fu">return</span>(<span class="fu">mean</span>(y, <span class="at">na.rm=</span><span class="cn">TRUE</span>))}    <span class="co"># User defined function for calculating means</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">#~ Implement function using lapply and map</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">lapply</span>(sm_IPCC_list,myfun)           <span class="co"># Returns a list of regional means </span></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span>purrr<span class="sc">::</span><span class="fu">map</span>(sm_IPCC_list,<span class="sc">~</span> <span class="fu">myfun</span>(.x)) <span class="co"># Returns a list of regional means </span></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">unlist</span>(sm_IPCC_mean)                 <span class="co"># Unlist to return a vector </span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sm_IPCC_mean) <span class="co"># Is this the same as the previous result?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span><span class="cn">NULL</span>,   <span class="co"># fun=NULL will output cell values within each region</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Ignore NA values? yes! </span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function on cell values for each region</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">lapply</span>(sm_IPCC_list,mean)                       <span class="co"># Returns a list of regional means </span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span>purrr<span class="sc">::</span><span class="fu">map</span>(sm_IPCC_list,<span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="co"># Returns a list of regional means</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Try user defined function</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>myfun<span class="ot">=</span><span class="cf">function</span> (y){<span class="fu">return</span>(<span class="fu">mean</span>(y, <span class="at">na.rm=</span><span class="cn">TRUE</span>))}    <span class="co"># User defined function for calculating means</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">#~ Implement function using lapply and map</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">lapply</span>(sm_IPCC_list,myfun)           <span class="co"># Returns a list of regional means </span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span>purrr<span class="sc">::</span><span class="fu">map</span>(sm_IPCC_list,<span class="sc">~</span> <span class="fu">myfun</span>(.x)) <span class="co"># Returns a list of regional means </span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">unlist</span>(sm_IPCC_mean)                 <span class="co"># Unlist to return a vector </span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sm_IPCC_mean) <span class="co"># Is this the same as the previous result?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        ID    SMAP_SM 
 21.1513647  0.2088026 </code></pre>
@@ -364,7 +362,7 @@ SMAP_SM 0.09521707 0.2922016</code></pre>
 </section>
 <section id="raster-summary-with-classified-raster" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="raster-summary-with-classified-raster"><span class="header-section-number">4.2.2</span> Raster Summary with Classified Raster</h3>
-<p>In the next example, we will convert global aridity raster into a polygon based on aridity classification using <code>as.polygons</code> and <code>st_as_sf</code> functions. <br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate. We will use this polygon to extract values from the Spatraster and summarize soil moisture for each aridity class.</p>
+<p>In the next example, we will convert global aridity raster into a polygon based on aridity classification using <code>as.polygons</code> and <code>st_as_sf</code> functions. <br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate. We will use this polygon to extract values from the <code>SpatRaster</code> and summarize soil moisture for each aridity class.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Convert a raster to a shapefile</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>aridity<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/aridity_36km.tif"</span>) <span class="co">#Global aridity</span></span>
@@ -383,19 +381,18 @@ SMAP_SM 0.09521707 0.2922016</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sm_arid_df<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(sm,        <span class="co"># Raster to be summarized</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                          arid_poly, <span class="co"># Shapefile/ polygon to summarize the raster</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#df=TRUE,   # Gives the summary statistics as a dataframe</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span>mean,  <span class="co"># Desired statistic: mean, sum, min and max </span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>)<span class="co"># Ignore NA values? yes! </span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets plot the climate-wise mean of surface soil moisture</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>{<span class="fu">plot</span>(sm_arid_df,     </span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xaxt =</span> <span class="st">"n"</span>,              <span class="co"># Disable x-tick labels</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Aridity"</span>,          <span class="co"># X axis label</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Soil moisture"</span>,    <span class="co"># Y axis label</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">type=</span><span class="st">"b"</span>,                <span class="co"># line type</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"blue"</span>,              <span class="co"># Line color</span></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Climate-wise mean of surface soil moisture"</span>)</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"Hyper-arid"</span>, <span class="st">"Arid"</span>, <span class="st">"Semi-Arid"</span>,<span class="st">"Sub-humid"</span>,<span class="st">"Humid"</span>))}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span>mean,  <span class="co"># Desired statistic: mean, sum, min and max </span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>)<span class="co"># Ignore NA values? yes! </span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets plot the climate-wise mean of surface soil moisture</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm_arid_df,     </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">xaxt =</span> <span class="st">"n"</span>,              <span class="co"># Disable x-tick labels</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Aridity"</span>,          <span class="co"># X axis label</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Soil moisture"</span>,    <span class="co"># Y axis label</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">type=</span><span class="st">"b"</span>,                <span class="co"># line type</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"blue"</span>,              <span class="co"># Line color</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Climate-wise mean of surface soil moisture"</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"Hyper-arid"</span>, <span class="st">"Arid"</span>, <span class="st">"Semi-Arid"</span>,<span class="st">"Sub-humid"</span>,<span class="st">"Humid"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>

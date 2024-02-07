@@ -86,7 +86,7 @@ global(sm, quant_fun)   # 25th, and 75th percentile of each layer
 ### Raster Summary with Polygons
 
 Let's explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using `extract` function from the `terra` library.
-We will also transform global aridity raster to a polygon using `as.polygons` and `st_as_sf` functions to find the mean soil moisture values for each aridity class.
+We will also transform global aridity raster to a polygon using the function `as.polygons` to find the mean soil moisture values for each aridity class.
 
 First, we will use the IPCC shapefile to summarize the soil moisture raster.
 
@@ -98,7 +98,6 @@ IPCC_shp = vect("./SampleData-master/CMIP_land/CMIP_land.shp")
 #~~~ Using shapefile to summarize a raster
 sm_IPCC_df=terra::extract(sm,        # Spatraster to be summarized
                           IPCC_shp,   # Shapefile/ polygon to summarize the raster
-                          #df=TRUE,   # Gives the summary statistics as a dataframe
                           fun=mean,   # Desired statistic: mean, sum, min and max 
                           na.rm=TRUE) # Ignore NA values? TRUE=yes! 
 
@@ -107,7 +106,6 @@ head(sm_IPCC_df)
 #~~~ Extract cell values for each region 
 sm_IPCC_list=terra::extract(sm,       # Raster to be summarized
                           IPCC_shp,   # Shapefile/ polygon to summarize the raster
-                          df=FALSE,   # Returns a list
                           fun=NULL,   # fun=NULL will output cell values within each region
                           na.rm=TRUE) # Ignore NA values? yes! 
 
@@ -133,7 +131,7 @@ head(sm_IPCC_mean) # Is this the same as the previous result?
 
 In the next example, we will convert global aridity raster into a polygon based on aridity classification using `as.polygons` and `st_as_sf` functions.
 <br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate.
-We will use this polygon to extract values from the Spatraster and summarize soil moisture for each aridity class.
+We will use this polygon to extract values from the `SpatRaster` and summarize soil moisture for each aridity class.
 
 ```{r, message = FALSE, warning = FALSE}
 #~~~ Convert a raster to a shapefile
@@ -152,18 +150,17 @@ Summarize values of SMAP soil moisture raster for aridity classes:
 ```{r, message = FALSE, warning = FALSE}
 sm_arid_df=terra::extract(sm,        # Raster to be summarized
                           arid_poly, # Shapefile/ polygon to summarize the raster
-                          #df=TRUE,   # Gives the summary statistics as a dataframe
                           fun=mean,  # Desired statistic: mean, sum, min and max 
                           na.rm=TRUE)# Ignore NA values? yes! 
 
 # Lets plot the climate-wise mean of surface soil moisture
-{plot(sm_arid_df,     
+plot(sm_arid_df,     
      xaxt = "n",              # Disable x-tick labels
      xlab="Aridity",          # X axis label
      ylab="Soil moisture",    # Y axis label
      type="b",                # line type
      col="blue",              # Line color
      main="Climate-wise mean of surface soil moisture")
-axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))}
+axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))
 
 ```
