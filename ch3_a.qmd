@@ -76,45 +76,50 @@ print(sm)
 
 # Add 1 to raster values
 sm2=sm+1
-print(sm2, main= "sm+1") #Notice the max and min values have increased by 1. 
+print(sm2) #Notice the max and min values have increased by 1. 
 
 # Multiply raster values by 2
 sm2=sm*2
-plot(sm2, main= "sm*+1") # Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values
-
-# Similarly, logical operations can also be carried out with ease.
-sm2=sm>0.3   # Are cell values of sm raster greater than 0.3?
-plot(sm2)    # Notice that the raster has only True and False values
-
-# Logical operations can also be a convenient tool for raster data manipulation 
-sm[sm>0.3]=0.5 
-plot(sm)
+plot(sm2, main= "sm*2") # Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values
 ```
 
 Similarly, logical operations can also be carried out with ease.
 Logical operators can be a convenient tool for raster data manipulation.
 For example, any subset of values can be replaced, deleted based on a user-defined logical criteria.
-Imagine a raster may have a fill value of -999, it may be advisable to remove these values by replacing them with `NA` in certain cases.
+Imagine a raster may have a fill value of -9999, it may be advisable to remove these values by replacing them with `NA` in certain cases.
 
 ```{r, message = FALSE, warning = FALSE}
 # Are cell values of sm raster greater than 0.3?
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 sm2=sm>0.3    
-plot(sm2)    # Notice that the raster has only True and False values
+plot(sm2, main="is cell value >0.3")    # Notice that the raster has only True and False values
 
 # Replace all values of sm>0.3 with 0.5
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 sm[sm>0.3]=0.5 
-plot(sm)
+plot(sm, main="replace sm>0.3 with 0.5")
 
 # Or replace all values of sm>0.3 with NA 
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 sm[sm>0.3]=NA 
-plot(sm)
+plot(sm, main="replace sm>0.3 with NA")
 
 # Reaplace all NA values with 0
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 sm[is.na(sm)]=0
 plot(sm)
+
+# Reaplace fill values with NA
+
+sm=rast("./SampleData-master/SMAP_rasters/SMAP_L3_SM_P_20210513_R17030_001_Soil_Moisture_Retrieval_Data_AM_soil_moisture_d159ccb8.tif")
+
+smFilter=sm                   # Copy original raster before manipulation
+smFilter[smFilter==-9999]=NA  # Replace negative values with -9999
+
+# Plot original and manipulated raster
+layout(matrix(1:2, ncol = 2))   # Specify layout for plots
+plot(sm, main= "raw raster with fill values")
+plot(smFilter, main="Post filtering -9999")
 ```
 
 ------------------------------------------------------------------------
@@ -134,11 +139,50 @@ Similarly, ***A***x***B*** will also be a cell-wise multiplication of respective
 
 ![](images/clipboard-3088959865.png){width="500"}
 
+Let us now observe SMAP rasters from three consecutive days.
+Notice that these rasters are patchy.
+Previously we have used 3-day averaged soil moisture using rasters from individual days.
+Satellites collect dataset in regularly spaced swaths as they orbit around the globe.
+In the case of SMAP satellite, it takes 2-3 days to cover the entire planet.
+Let us observe the swaths and dynamics of SMAP soil moisture observations for three consecutive days:
+
 ```{r, message = FALSE, warning = FALSE}
 
+SMday1=rast("./SampleData-master/SMAP_rasters/SMAP_L3_SM_P_20210513_R17030_001_Soil_Moisture_Retrieval_Data_AM_soil_moisture_d159ccb8.tif")
 
+SMday2=rast("./SampleData-master/SMAP_rasters/SMAP_L3_SM_P_20210514_R17030_001_Soil_Moisture_Retrieval_Data_AM_soil_moisture_d30c6810.tif")
 
+SMday3=rast("./SampleData-master/SMAP_rasters/SMAP_L3_SM_P_20210515_R17030_001_Soil_Moisture_Retrieval_Data_AM_soil_moisture_d4a60938.tif")
+
+layout(matrix(1:3, ncol = 3))                # Specify layout
+plot(SMday1, main="day1")
+plot(SMday2, main="day2")
+plot(SMday3, main="day3")
 ```
+
+Note that we can not make out the differences in the rasters as the colors are skewed by the high negative fill value for missing data in the rasters.
+So, we first remove the fill values (i.e. cells valued at -9999) with `NA`.
+
+```{r, message = FALSE, warning = FALSE}
+
+SMday1[SMday1==-9999]=NA  # Replace negative values with -9999
+SMday2[SMday2==-9999]=NA  # Replace negative values with -9999
+SMday3[SMday3==-9999]=NA  # Replace negative values with -9999
+
+layout(matrix(1:3, ncol = 3))                # Specify layout
+plot(SMday1, main="day1, filtered")
+plot(SMday2, main="day2, filtered")
+plot(SMday3, main="day3, filtered")
+```
+
+Lets now calculate the average soil moisture for the three days of observation.
+
+```{r, message = FALSE, warning = FALSE}
+mean(SMday1-SMday2)
+```
+
+Note that we can not make out the differences in the rasters as the colors are skewed by the high negative fill value for missing data in the rasters.
+So, we first remove the fill values (i.e. cells valued at -9999) with `NA`.
 
 ------------------------------------------------------------------------
 
@@ -230,7 +274,7 @@ Arithmetic operations a.k.a. arith-generic (+, -, \*, /, \^, %%, %/%) on `SpatRa
 More details on arith-generic can be found here: <https://rdrr.io/cran/terra/man/arith-generic.html>.
 <br> We will use `global` function to apply summary statistics and user-defined operations on cells of a raster.
 
-```{r summarizeRaster, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(terra) 
 
 # Import SMAP soil moisture raster from the downloaded folder
@@ -262,7 +306,7 @@ We will also transform global aridity raster to a polygon using the function `as
 
 First, we will use the IPCC shapefile to summarize the soil moisture raster.
 
-```{r summarize, message = FALSE, warning = FALSE}
+```{r, summarize, message = FALSE, warning = FALSE}
 library(terra) 
 
 # Import SMAP soil moisture raster from the downloaded folder
@@ -309,7 +353,7 @@ In the next example, we will convert global aridity raster into a polygon based 
 <br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate.
 We will use this polygon to extract values from the `SpatRaster` and summarize soil moisture for each aridity class.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, summarize, message = FALSE, warning = FALSE}
 #~~~ Convert a raster to a shapefile
 aridity=rast("./SampleData-master/raster_files/aridity_36km.tif") #Global aridity
 
@@ -323,7 +367,7 @@ terra::plot(arid_poly,
 
 Summarize values of SMAP soil moisture raster for aridity classes:
 
-```{r, message = FALSE, warning = FALSE}
+```{r, summarize, message = FALSE, warning = FALSE}
 sm_arid_df=terra::extract(sm,        # Raster to be summarized
                           arid_poly, # Shapefile/ polygon to summarize the raster
                           fun=mean,  # Desired statistic: mean, sum, min and max 
