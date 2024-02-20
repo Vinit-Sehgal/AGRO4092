@@ -355,5 +355,3 @@ plot(sm_arid_df,
 axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))
 
 ```
-
-More details on arith-generic can be found here: <https://rdrr.io/cran/terra/man/arith-generic.html>
