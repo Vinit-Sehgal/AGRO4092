@@ -89,7 +89,7 @@ For example, any subset of values can be replaced, deleted based on a user-defin
 Imagine a raster may have a fill value of -9999, it may be advisable to remove these values by replacing them with `NA` in certain cases.
 
 Notice that some SMAP rasters used here are patchy.
-We have, so far, used 3-day averaged soil moisture using rasters from individual days.
+Previously, we have used 3-day averaged soil moisture using rasters from individual days.
 Satellites collect dataset in regularly spaced swaths as they orbit around the globe.
 In the case of SMAP satellite, it takes 2-3 days to cover the entire Earth.
 
@@ -117,7 +117,6 @@ plot(sm)
 # Reaplace fill values with NA
 sm=rast("./SampleData-master/raster_files/SMAP_L3_SM_P_20150401_R17000_002_Soil_Moisture_Retrieval_Data_AM_soil_moisture_867a5e36.tif")
 
-
 smFilter=sm                   # Copy original raster before manipulation
 smFilter[smFilter==-9999]=NA  # Replace negative values with -9999
 
@@ -144,21 +143,20 @@ Similarly, ***A***x***B*** will also be a cell-wise multiplication of respective
 
 ![](images/clipboard-3088959865.png){width="500"}
 
-Let us now observe SMAP rasters from three consecutive days.
-Let us observe the swaths and dynamics of SMAP soil moisture observations for three consecutive days:
+Let us now use modeled rootzone soil moisture from NASA's SMAP level 4 products for three consecutive days.
 
 ```{r, message = FALSE, warning = FALSE}
 
-SMday1=rast("./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211213T103000_Vv6030_001_Geophysical_Data_sm_rootzone_2052db4.tif")
+SMday1=rast("./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211213T103000_Vv6030_001_Geophysical_Data_sm_rootzone_2052db45.tif")
 
-SMday2=rast("./SampleData-master/SMAP_rasters/SMAP_L4_SM_gph_20211213T103000_Vv6030_001_Geophysical_Data_sm_rootzone_2052db45.tif")
+SMday2=rast("./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211214T103000_Vv6030_001_Geophysical_Data_sm_rootzone_22156243.tif")
 
-SMday3=rast("./SampleData-master/SMAP_rasters/SMAP_L4_SM_gph_20211213T103000_Vv6030_001_Geophysical_Data_sm_rootzone_2052db45.tif")
+SMday3=rast("./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211215T103000_Vv6030_001_Geophysical_Data_sm_rootzone_23bd7fe2.tif")
 
-layout(matrix(1:3, ncol = 3))                # Specify layout
-plot(SMday1, main="day1")
-plot(SMday2, main="day2")
-plot(SMday3, main="day3")
+layout(matrix(1:3, ncol = 1))                # Specify layout
+plot(SMday1, main="Rootzone SM day1")
+plot(SMday2, main="Rootzone SM day2")
+plot(SMday3, main="Rootzone SM day3")
 ```
 
 Note that we can not make out the differences in the rasters as the colors are skewed by the high negative fill value for missing data in the rasters.
@@ -170,20 +168,26 @@ SMday1[SMday1==-9999]=NA  # Replace negative values with -9999
 SMday2[SMday2==-9999]=NA  # Replace negative values with -9999
 SMday3[SMday3==-9999]=NA  # Replace negative values with -9999
 
-layout(matrix(1:3, ncol = 3))                # Specify layout
-plot(SMday1, main="day1, filtered")
-plot(SMday2, main="day2, filtered")
-plot(SMday3, main="day3, filtered")
+layout(matrix(1:3, ncol = 1))                # Specify layout
+plot(SMday1, main="SM day1, filtered")
+plot(SMday2, main="SM day2, filtered")
+plot(SMday3, main="SM day3, filtered")
 ```
 
-Lets now calculate the average soil moisture for the three days of observation.
+Now, let's calculate the change in soil moisture values between days 1-2 and 1-3.
+Can we identify a region which showed anomalous wetting during the three days of observation?
 
 ```{r, message = FALSE, warning = FALSE}
-mean(SMday1-SMday2)
+delta12=SMday1-SMday2
+delta13=SMday1-SMday3
+
+layout(matrix(1:2, ncol = 1))                # Specify layout
+plot(delta12, main="SM difference (day 1 & 2")
+plot(delta13, main="SM difference (day 1 & 3")
 ```
 
-Note that we can not make out the differences in the rasters as the colors are skewed by the high negative fill value for missing data in the rasters.
-So, we first remove the fill values (i.e. cells valued at -9999) with `NA`.
+Curious to know why Southern California showed such high levels of wetting?
+Check out: ['Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)]('Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com))
 
 ------------------------------------------------------------------------
 
@@ -192,7 +196,6 @@ So, we first remove the fill values (i.e. cells valued at -9999) with `NA`.
 We will use `global` function to apply summary statistics and user-defined operations on cells of a raster.
 
 ```{r, message = FALSE, warning = FALSE}
-
 
 library(terra) 
 
@@ -210,13 +213,11 @@ quant_fun = function(x, na.rm=TRUE){ # Remember to add "na.rm" option
 } 
 global(sm, quant_fun)   # 25th, and 75th percentile of each layer
 
+# Plot summary using standard statistical functions
+layout(matrix(1:2, ncol = 2))                # Specify layout
+hist(sm)
+boxplot(sm)
 ```
-
-## Value Extraction
-
-## Resampling and (Dis)aggregation
-
-## Raster RATification
 
 ## Raster Resampling
 
@@ -229,7 +230,7 @@ The following schematic helps illustrate the use of these functions:
 
 Lets us now explore an example for raster resampling.
 
-```{r resampling, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(terra)
 
 # Import SMAP soil moisture raster
@@ -269,37 +270,6 @@ terra::plot(aridityResamp, col=mypal, main= "Aridity at Coarser Resolution")
 
 ```
 
-## Raster Summary Statistics
-
-Arithmetic operations a.k.a. arith-generic (+, -, \*, /, \^, %%, %/%) on `SpatRasters` closely resemble simple vector-like operations.
-More details on arith-generic can be found here: <https://rdrr.io/cran/terra/man/arith-generic.html>.
-<br> We will use `global` function to apply summary statistics and user-defined operations on cells of a raster.
-
-```{r, message = FALSE, warning = FALSE}
-library(terra) 
-
-# Import SMAP soil moisture raster from the downloaded folder
-sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
-
-# Simple arithmetic operations
-sm2=sm*2
-print(sm2) # Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values
-
-# Summary statistics
-global(sm, mean, na.rm = T)
-global(sm, sd, na.rm = T)
-global(sm, quantile, probs = c(0.25, 0.75), na.rm = T)
-
-# User-defined statistics by defining own function
-quant_fun = function(x, na.rm=TRUE){ # Remember to add "na.rm" option
-  quantile(x, probs = c(0.25, 0.75), na.rm=TRUE)
-} 
-global(sm, quant_fun)   # 25th, and 75th percentile of each layer
-
-```
-
-> Note: With a multi-layered raster object, `global` will summarize each layer separately.
-
 ### Raster Summary with Polygons
 
 Let's explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using `extract` function from the `terra` library.
@@ -307,7 +277,7 @@ We will also transform global aridity raster to a polygon using the function `as
 
 First, we will use the IPCC shapefile to summarize the soil moisture raster.
 
-```{r, summarize, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(terra) 
 
 # Import SMAP soil moisture raster from the downloaded folder
@@ -354,7 +324,7 @@ In the next example, we will convert global aridity raster into a polygon based 
 <br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate.
 We will use this polygon to extract values from the `SpatRaster` and summarize soil moisture for each aridity class.
 
-```{r, summarize, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE}
 #~~~ Convert a raster to a shapefile
 aridity=rast("./SampleData-master/raster_files/aridity_36km.tif") #Global aridity
 
@@ -368,7 +338,7 @@ terra::plot(arid_poly,
 
 Summarize values of SMAP soil moisture raster for aridity classes:
 
-```{r, summarize, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE}
 sm_arid_df=terra::extract(sm,        # Raster to be summarized
                           arid_poly, # Shapefile/ polygon to summarize the raster
                           fun=mean,  # Desired statistic: mean, sum, min and max 

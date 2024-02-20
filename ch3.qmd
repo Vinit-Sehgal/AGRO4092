@@ -3,7 +3,7 @@ title-block-banner: true
 bibliography: references.bib
 ---
 
-# Raster Arithmatic and statistics
+# Raster Arithmatic and Statistics
 
 ```{r child="ch3_a.qmd", message = FALSE, warning = FALSE}
 
