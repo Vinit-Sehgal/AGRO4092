@@ -6,6 +6,173 @@ editor:
     wrap: sentence
 ---
 
+## Raster Arithmetic Operations 
+
+Arithmetic, comparison and logical operations on `SpatRasters` use the same operators as those used for simple vector-like operations.
+These operators are listed below:
+
+**a) Arithmetic operators**
+
+![](images/clipboard-3782266917.png){width="336"}
+
+**b) Comparison operators**
+
+![](images/clipboard-1580357337.png){width="331"}
+
+**c) Logical operators**
+
+![](images/clipboard-582905687.png){width="331"}
+
+------------------------------------------------------------------------
+
+The application of these operators on rasters can be conceptualized as element-wise operations on a matrix.
+For example, assume ***A*** is a raster with values shown in the matrix form as below:
+
+![](images/clipboard-120741885.png){width="300"}
+
+Then, ***A*** + 1 will be:
+
+![](images/clipboard-867285346.png){width="400"}
+
+Note how each element of the matrix gets an addition of 1.
+Similarly, for ***A*** x 2, each element of ***A*** will be multiplied by 2 as:
+
+![](images/clipboard-4015941933.png){width="400"}
+
+and, ***A*** \^ 2 will be given as:
+
+![](images/clipboard-4103069676.png){width="400"}
+
+Logical operations can also be carried out in a similar fashion.
+For example, if we were to test if the cell values of ***A*** are greater than 3 (i.e. ***A*** \> 3), it will be written as:
+
+![](images/clipboard-2109535833.png){width="400"}
+
+Now let us try a few examples of arithmetic, comparison and logical operations on `SpatRasters`.
+Before we begin this chapter, let us ensure that we have the sample dataset necessary for the analysis, otherwise, download the files from the GitHub repository using the following codes:
+
+```{r, message = FALSE, warning = FALSE}
+#~~~ Check if sample data exists. If not, download from GitHub repository
+
+if (dir.exists("SampleData-master")==FALSE){ 
+download.file(url = "https://github.com/Vinit-Sehgal/SampleData/archive/master.zip",
+destfile = "SampleData-master.zip")    
+
+# Unzip the downloaded .zip file
+unzip(zipfile = "SampleData-master.zip")
+}
+list.files("./SampleData-master")   # List folder contents
+
+```
+
+Taking example of SMAP soil moisture raster let us practice the application of arithmetic operations on `SpatRasters`.
+
+```{r, message = FALSE, warning = FALSE}
+library(terra) # Import library
+
+# Import SMAP soil moisture raster from the downloaded folder
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
+print(sm)
+
+# Add 1 to raster values
+sm2=sm+1
+print(sm2, main= "sm+1") #Notice the max and min values have increased by 1. 
+
+# Multiply raster values by 2
+sm2=sm*2
+plot(sm2, main= "sm*+1") # Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values
+
+# Similarly, logical operations can also be carried out with ease.
+sm2=sm>0.3   # Are cell values of sm raster greater than 0.3?
+plot(sm2)    # Notice that the raster has only True and False values
+
+# Logical operations can also be a convenient tool for raster data manipulation 
+sm[sm>0.3]=0.5 
+plot(sm)
+```
+
+Similarly, logical operations can also be carried out with ease.
+Logical operators can be a convenient tool for raster data manipulation.
+For example, any subset of values can be replaced, deleted based on a user-defined logical criteria.
+Imagine a raster may have a fill value of -999, it may be advisable to remove these values by replacing them with `NA` in certain cases.
+
+```{r, message = FALSE, warning = FALSE}
+# Are cell values of sm raster greater than 0.3?
+sm2=sm>0.3    
+plot(sm2)    # Notice that the raster has only True and False values
+
+# Replace all values of sm>0.3 with 0.5
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
+sm[sm>0.3]=0.5 
+plot(sm)
+
+# Or replace all values of sm>0.3 with NA 
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
+sm[sm>0.3]=NA 
+plot(sm)
+
+# Reaplace all NA values with 0
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
+sm[is.na(sm)]=0
+plot(sm)
+```
+
+------------------------------------------------------------------------
+
+So far we saw examples of a arithmetic/ logical operations on a single raster.
+However, the tenets of arithmetic operations discussed earlier are also applicable for operations on two (or more) rasters.
+These operations will be carried out cell-wise between the corresponding pixels of the rasters.
+Suppose, another raster ***B*** is given as:
+
+![](images/clipboard-582080679.png){width="300"}
+
+then, ***A***+***B*** will be:
+
+![](images/clipboard-3617557945.png){width="500"}
+
+Similarly, ***A***x***B*** will also be a cell-wise multiplication of respective data values:
+
+![](images/clipboard-3088959865.png){width="500"}
+
+```{r, message = FALSE, warning = FALSE}
+
+
+
+```
+
+------------------------------------------------------------------------
+
+## Raster Statistics
+
+We will use `global` function to apply summary statistics and user-defined operations on cells of a raster.
+
+```{r, message = FALSE, warning = FALSE}
+
+
+library(terra) 
+
+# Import SMAP soil moisture raster from the downloaded folder
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
+
+# Summary statistics
+global(sm, mean, na.rm = T)
+global(sm, sd, na.rm = T)
+global(sm, quantile, probs = c(0.25, 0.75), na.rm = T)
+
+# User-defined statistics by defining own function
+quant_fun = function(x, na.rm=TRUE){ # Remember to add "na.rm" option
+  quantile(x, probs = c(0.25, 0.75), na.rm=TRUE)
+} 
+global(sm, quant_fun)   # 25th, and 75th percentile of each layer
+
+```
+
+## Value Extraction
+
+## Resampling and (Dis)aggregation
+
+## Raster RATification
+
 ## Raster Resampling
 
 Raster resampling refers to changing the resolution of the raster.
@@ -64,6 +231,11 @@ More details on arith-generic can be found here: <https://rdrr.io/cran/terra/man
 <br> We will use `global` function to apply summary statistics and user-defined operations on cells of a raster.
 
 ```{r summarizeRaster, message = FALSE, warning = FALSE}
+library(terra) 
+
+# Import SMAP soil moisture raster from the downloaded folder
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
+
 # Simple arithmetic operations
 sm2=sm*2
 print(sm2) # Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values
@@ -91,6 +263,10 @@ We will also transform global aridity raster to a polygon using the function `as
 First, we will use the IPCC shapefile to summarize the soil moisture raster.
 
 ```{r summarize, message = FALSE, warning = FALSE}
+library(terra) 
+
+# Import SMAP soil moisture raster from the downloaded folder
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 
 # Import the shapefile of global IPCC climate reference regions (only for land) 
 IPCC_shp = vect("./SampleData-master/CMIP_land/CMIP_land.shp")
@@ -164,3 +340,5 @@ plot(sm_arid_df,
 axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))
 
 ```
+
+More details on arith-generic can be found here: <https://rdrr.io/cran/terra/man/arith-generic.html>
