@@ -34,7 +34,7 @@ For example, assume ***A*** is a raster with values shown in the matrix form as 
 
 Then, ***A*** + 1 will be:
 
-![](images/clipboard-867285346.png){width="400"}
+![](images/clipboard-4042785807.png){width="400"}
 
 Note how each element of the matrix gets an addition of 1.
 Similarly, for ***A*** x 2, each element of ***A*** will be multiplied by 2 as:
@@ -199,7 +199,7 @@ plot(delta13, main="SM difference (day 1 & 3")
 ```
 
 Curious to know why Southern California showed such high levels of wetting?
-Check out: ['Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)]('Storm%20of%20the%20season'%20dumps%20record-breaking%20rainfall%20on%20SoCal%20and%20snow%20in%20the%20mountains%20-%20Los%20Angeles%20Times%20(latimes.com)).
+Check out: [']('Storm%20of%20the%20season'%20dumps%20record-breaking%20rainfall%20on%20SoCal%20and%20snow%20in%20the%20mountains%20-%20Los%20Angeles%20Times%20(latimes.com))[Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)](https://www.latimes.com/california/story/2021-12-14/storm-of-the-season-delivers-rain-snow-and-wind-to-socal).
 
 ------------------------------------------------------------------------
 
@@ -276,7 +276,7 @@ quant_fun(values(sm))
 
 ------------------------------------------------------------------------
 
-![](images/clipboard-3271478404.png){fig-align="center" width="500"}
+![](images/clipboard-409053540.png){fig-align="center" width="600"}
 
 ## Exercise #2
 

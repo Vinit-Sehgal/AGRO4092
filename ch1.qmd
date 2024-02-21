@@ -2,26 +2,23 @@
 title-block-banner: true
 bibliography: references.bib
 ---
-# Basics of R
 
+# Basics of R
 
 ```{r child="ch1_a.qmd", message = FALSE, warning = FALSE}
 
 
 ```
 
-
 ```{r child="ch1_b.qmd", message = FALSE, warning = FALSE}
 
 
 ```
 
-
 ```{r child="ch1_c.qmd", message = FALSE, warning = FALSE}
 
 
 ```
-
 
 ```{r child="ch1_d.qmd", message = FALSE, warning = FALSE}
 
