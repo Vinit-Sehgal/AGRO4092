@@ -83,11 +83,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="raster-arithmetic-operations">Raster Arithmetic Operations</h2>
 <p>Arithmetic, comparison and logical operations on <code>SpatRasters</code> use the same operators as those used for simple vector-like operations. These operators are listed below:</p>
 <p><strong>a) Arithmetic operators</strong></p>
-<p><img src="images/clipboard-3782266917.png" class="img-fluid" width="336"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3782266917.png" class="img-fluid figure-img" width="336"></p>
+</figure>
+</div>
 <p><strong>b) Comparison operators</strong></p>
-<p><img src="images/clipboard-1580357337.png" class="img-fluid" width="331"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1580357337.png" class="img-fluid figure-img" width="331"></p>
+</figure>
+</div>
 <p><strong>c) Logical operators</strong></p>
-<p><img src="images/clipboard-582905687.png" class="img-fluid" width="331"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-582905687.png" class="img-fluid figure-img" width="331"></p>
+</figure>
+</div>
 <hr>
 <section id="single-raster-operations" class="level3">
 <h3 class="anchored" data-anchor-id="single-raster-operations">Single Raster Operations</h3>
@@ -275,46 +287,91 @@ max value   : 1.876676 </code></pre>
 <pre><code>            mean
 SMAP_SM 0.209402</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, sd, <span class="at">na.rm =</span> T)    <span class="co"># Calculate standard deviation, while ignoring NA values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is equivalent to: </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>sm_val<span class="ot">=</span><span class="fu">values</span>(sm)       <span class="co"># Create array of cell values of raster</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sm_val, <span class="at">na.rm =</span> T) <span class="co"># Calculate mean of cell values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.209402</code></pre>
+</div>
+</div>
+<p>Use of <code>global</code> function is equivalent to applying a function on all cell values</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, sd, <span class="at">na.rm =</span> T) <span class="co"># Calculate standard deviation, while ignoring NA values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>               sd
 SMAP_SM 0.1434444</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm =</span> T) <span class="co"># Calculate 25th and 75th percentiles of the ratser layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OR</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(<span class="fu">values</span>(sm), <span class="at">na.rm =</span> T) <span class="co"># Calculate mean of cell values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1434444</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Similarly, for finding quantiles of a raster layer</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm =</span> T) <span class="co"># Calculate 25th and 75th percentiles of the ratser layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              X25.      X75.
 SMAP_SM 0.09521707 0.2922016</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OR</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(<span class="fu">values</span>(sm), <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm =</span> T) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       25%        75% 
+0.09521707 0.29220164 </code></pre>
 </div>
 </div>
 <p>We can also generate common summary statistics plots using functions such as hist (histogram), barplot (box and whisker plot), etc.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot summary using standard statistical functions</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>))                <span class="co"># Specify layout</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sm)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot summary using standard statistical functions</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>))                <span class="co"># Specify layout</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sm)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="ch3_a_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<p><img src="ch3_a_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="user-defined-functions-for-raster-statistics" class="level3">
 <h3 class="anchored" data-anchor-id="user-defined-functions-for-raster-statistics">User-defined Functions for Raster Statistics</h3>
-<p>User-defined functions can also be applied to raster layer using the <code>global</code> function for specific operations. Let us revisit the application of the <code>quantile</code> function by passing it through a user-defined function with <code>global</code>.</p>
+<p>User-defined functions can also be applied to raster layer using the <code>global</code> function for specific operations. A user can define their own function with specific instructions which will be executed everytime the function is called. A simple template of a typical R function is given below:</p>
+<p><img src="images/clipboard-3958485223.png" class="img-fluid" width="400"></p>
+<p>Let us revisit the application of the <code>quantile</code> function by passing it through a user-defined function with <code>global</code>. In the <code>quant_fun</code> shown below function, <code>myRas</code> is the raster whose values are being summarized. Notice how instruction for <code>na.rm</code> is passed through the <code>ignoreNA</code> argument.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># User-defined statistics by defining own function</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>quant_fun <span class="ot">=</span> <span class="cf">function</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>){               <span class="co"># Remember to add "na.rm" option</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span><span class="fu">quantile</span>(x, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quant_fun)   <span class="co"># 25th, and 75th percentile of each layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># User-defined statistics by defining own function.   </span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>quant_fun <span class="ot">=</span> <span class="cf">function</span>(myRas, <span class="at">ignoreNA=</span><span class="cn">TRUE</span>){      </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span><span class="fu">quantile</span>(myRas, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm=</span>ignoreNA)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quant_fun)   <span class="co"># 25th, and 75th percentile of each layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              X25.      X75.
 SMAP_SM 0.09521707 0.2922016</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is equivalent to:</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">quant_fun</span>(<span class="fu">values</span>(sm))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       25%        75% 
+0.09521707 0.29220164 </code></pre>
+</div>
+</div>
+<hr>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3271478404.png" class="img-fluid figure-img" width="500"></p>
+</figure>
 </div>
 </section>
+</section>
+<section id="exercise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2">Exercise #2</h2>
+<p>Use the raster files in <em>SampleData-master/SMAPL4_rasters</em> folder, perform the tasks as listed below:</p>
+<ul>
+<li><p>Task 1: Write a user-defined function to count the number of pixels within the range [0.3, 0.4] for 20211213. Use <code>global</code> to implement your function. Pass the specified range as an input argument to the function.</p></li>
+<li><p>Task 2: Compared to 20211213, what is the percentage change in 20211215 for the pixels within the [0.3, 0.4] range?</p></li>
+<li><p>Task 3: Make a multivariate plot (2 or more variables on the same axis) comparing the density distribution of soil moisture for 20211213 and 20211215?</p></li>
+</ul>
+<hr>
 </section>
 
 </main>

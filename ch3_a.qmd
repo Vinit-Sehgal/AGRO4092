@@ -13,15 +13,15 @@ These operators are listed below:
 
 **a) Arithmetic operators**
 
-![](images/clipboard-3782266917.png){width="336"}
+![](images/clipboard-3782266917.png){fig-align="center" width="336"}
 
 **b) Comparison operators**
 
-![](images/clipboard-1580357337.png){width="331"}
+![](images/clipboard-1580357337.png){fig-align="center" width="331"}
 
 **c) Logical operators**
 
-![](images/clipboard-582905687.png){width="331"}
+![](images/clipboard-582905687.png){fig-align="center" width="331"}
 
 ------------------------------------------------------------------------
 
@@ -273,6 +273,10 @@ global(sm, quant_fun)   # 25th, and 75th percentile of each layer
 # This is equivalent to:
 quant_fun(values(sm))
 ```
+
+------------------------------------------------------------------------
+
+![](images/clipboard-3271478404.png){fig-align="center" width="500"}
 
 ## Exercise #2
 
