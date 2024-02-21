@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>R for Spatial Analysis &amp; Visualization - 4&nbsp; Raster Arithmatic and Statistics</title>
+<title>R for Spatial Analysis &amp; Visualization - 4&nbsp; Raster Arithmetic and Statistics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./chN.html" rel="next">
+<link href="./ch5.html" rel="next">
 <link href="./ch2.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -108,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch3.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmatic and Statistics</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch3.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmetic and Statistics</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -121,7 +121,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmatic and Statistics</span></h1>
+      <h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmetic and Statistics</span></h1>
                       </div>
   </div>
     
@@ -173,13 +173,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch3.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmatic and Statistics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmetic and Statistics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Raster Resampling and Data Extraction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -192,13 +198,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#raster-arithmetic-operations" id="toc-raster-arithmetic-operations" class="nav-link active" data-scroll-target="#raster-arithmetic-operations"><span class="header-section-number">4.1</span> Raster Arithmetic Operations</a></li>
-  <li><a href="#raster-statistics" id="toc-raster-statistics" class="nav-link" data-scroll-target="#raster-statistics"><span class="header-section-number">4.2</span> Raster Statistics</a></li>
-  <li><a href="#raster-resampling" id="toc-raster-resampling" class="nav-link" data-scroll-target="#raster-resampling"><span class="header-section-number">4.3</span> Raster Resampling</a>
+  <li><a href="#raster-arithmetic-operations" id="toc-raster-arithmetic-operations" class="nav-link active" data-scroll-target="#raster-arithmetic-operations"><span class="header-section-number">4.1</span> Raster Arithmetic Operations</a>
   <ul class="collapse">
-  <li><a href="#raster-summary-with-polygons" id="toc-raster-summary-with-polygons" class="nav-link" data-scroll-target="#raster-summary-with-polygons"><span class="header-section-number">4.3.1</span> Raster Summary with Polygons</a></li>
-  <li><a href="#raster-summary-with-classified-raster" id="toc-raster-summary-with-classified-raster" class="nav-link" data-scroll-target="#raster-summary-with-classified-raster"><span class="header-section-number">4.3.2</span> Raster Summary with Classified Raster</a></li>
+  <li><a href="#single-raster-operations" id="toc-single-raster-operations" class="nav-link" data-scroll-target="#single-raster-operations"><span class="header-section-number">4.1.1</span> Single Raster Operations</a></li>
+  <li><a href="#multi-raster-operations" id="toc-multi-raster-operations" class="nav-link" data-scroll-target="#multi-raster-operations"><span class="header-section-number">4.1.2</span> Multi-Raster Operations</a></li>
   </ul></li>
+  <li><a href="#raster-statistics" id="toc-raster-statistics" class="nav-link" data-scroll-target="#raster-statistics"><span class="header-section-number">4.2</span> Raster Statistics</a>
+  <ul class="collapse">
+  <li><a href="#user-defined-functions-for-raster-statistics" id="toc-user-defined-functions-for-raster-statistics" class="nav-link" data-scroll-target="#user-defined-functions-for-raster-statistics"><span class="header-section-number">4.2.1</span> User-defined Functions for Raster Statistics</a></li>
+  </ul></li>
+  <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2"><span class="header-section-number">4.3</span> Exercise #2</a></li>
   </ul>
 </nav>
     </div>
@@ -218,6 +227,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>c) Logical operators</strong></p>
 <p><img src="images/clipboard-582905687.png" class="img-fluid" width="331"></p>
 <hr>
+<section id="single-raster-operations" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="single-raster-operations"><span class="header-section-number">4.1.1</span> Single Raster Operations</h3>
 <p>The application of these operators on rasters can be conceptualized as element-wise operations on a matrix. For example, assume <strong><em>A</em></strong> is a raster with values shown in the matrix form as below:</p>
 <p><img src="images/clipboard-120741885.png" class="img-fluid" width="300"></p>
 <p>Then, <strong><em>A</em></strong> + 1 will be:</p>
@@ -230,43 +241,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/clipboard-2109535833.png" class="img-fluid" width="400"></p>
 <p>Now let us try a few examples of arithmetic, comparison and logical operations on <code>SpatRasters</code>. Before we begin this chapter, let us ensure that we have the sample dataset necessary for the analysis, otherwise, download the files from the GitHub repository using the following codes:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Check if sample data exists. If not, download from GitHub repository</span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Check if sample data exists on disk. If not, download from GitHub repository</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">dir.exists</span>(<span class="st">"SampleData-master"</span>)<span class="sc">==</span><span class="cn">FALSE</span>){ </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> <span class="st">"https://github.com/Vinit-Sehgal/SampleData/archive/master.zip"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">destfile =</span> <span class="st">"SampleData-master.zip"</span>)    </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Unzip the downloaded .zip file</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="at">zipfile =</span> <span class="st">"SampleData-master.zip"</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(<span class="st">"./SampleData-master"</span>)   <span class="co"># List folder contents</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> [1] "CMIP_land"                               
- [2] "functions"                               
- [3] "images"                                  
- [4] "Largescale_geospatial_analysis_2022.html"
- [5] "Largescale_geospatial_analysis_2023.html"
- [6] "location_points.xlsx"                    
- [7] "ne_10m_coastline"                        
- [8] "raster_files"                            
- [9] "README.md"                               
-[10] "sample_pdfs"                             
-[11] "SMAP_L3_USA.nc"                          
-[12] "SMAPL4_H5"                               
-[13] "SMAPL4_rasters"                          
-[14] "SMOS_nc"                                 
-[15] "USA_states"                              
-[16] "Workbook_DVGAR21-Part1.html"             
-[17] "Workbook_DVGAR21-Part2.html"             </code></pre>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> <span class="st">"https://github.com/Vinit-Sehgal/SampleData/archive/master.zip"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">destfile =</span> <span class="st">"SampleData-master.zip"</span>)    </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Unzip the downloaded .zip file</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="at">zipfile =</span> <span class="st">"SampleData-master.zip"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(<span class="st">"./SampleData-master"</span>)   <span class="co"># List folder contents</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>Taking example of SMAP soil moisture raster let us practice the application of arithmetic operations on <code>SpatRasters</code>.</p>
+<p>Taking example of SMAP soil moisture raster let’s practice the application of arithmetic operations on <code>SpatRasters</code>. We start by importing the <code>SpatRaster</code> in the current R environment.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra) <span class="co"># Import library</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture raster from the downloaded folder</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra) <span class="co"># Import library</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture raster from the downloaded folder</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster 
 dimensions  : 456, 964, 1  (nrow, ncol, nlyr)
@@ -278,9 +272,9 @@ name        :    SMAP_SM
 min value   : 0.01999998 
 max value   : 0.87667608 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add 1 to raster values</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sm2<span class="ot">=</span>sm<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sm2) <span class="co">#Notice the max and min values have increased by 1. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add 1 to raster values</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sm2<span class="ot">=</span>sm<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sm2) <span class="co">#Notice the max and min values have increased by 1. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster 
 dimensions  : 456, 964, 1  (nrow, ncol, nlyr)
@@ -293,303 +287,213 @@ name        :  SMAP_SM
 min value   : 1.020000 
 max value   : 1.876676 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiply raster values by 2</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sm2<span class="ot">=</span>sm<span class="sc">*</span><span class="dv">2</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm2, <span class="at">main=</span> <span class="st">"sm*2"</span>) <span class="co"># Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiply raster values by 2</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sm2<span class="ot">=</span>sm<span class="sc">*</span><span class="dv">2</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm2, <span class="at">main=</span> <span class="st">"sm*2"</span>) <span class="co"># Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Similarly, logical operations can also be carried out with ease. Logical operators can be a convenient tool for raster data manipulation. For example, any subset of values can be replaced, deleted based on a user-defined logical criteria. Imagine a raster may have a fill value of -9999, it may be advisable to remove these values by replacing them with <code>NA</code> in certain cases.</p>
-<p>Notice that some SMAP rasters used here are patchy. Previously, we have used 3-day averaged soil moisture using rasters from individual days. Satellites collect dataset in regularly spaced swaths as they orbit around the globe. In the case of SMAP satellite, it takes 2-3 days to cover the entire Earth.</p>
+<p>Similarly, logical operations can also be carried out on rasters with ease in R. Logical operators can be a convenient tool for raster data manipulation. For example, any subset of values can be manipulated based on a user-defined logical criteria.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Are cell values of sm raster greater than 0.3?</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>sm2<span class="ot">=</span>sm<span class="sc">&gt;</span><span class="fl">0.3</span>    </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm2, <span class="at">main=</span><span class="st">"is cell value &gt;0.3"</span>)    <span class="co"># Notice that the raster has only True and False values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Are cell values of sm raster greater than 0.3?</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>sm2<span class="ot">=</span>sm<span class="sc">&gt;</span><span class="fl">0.3</span>    </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm2, <span class="at">main=</span><span class="st">"is cell value &gt;0.3"</span>)    <span class="co"># Notice that the raster has only True and False values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace all values of sm&gt;0.3 with 0.5</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>sm[sm<span class="sc">&gt;</span><span class="fl">0.3</span>]<span class="ot">=</span><span class="fl">0.5</span> </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm, <span class="at">main=</span><span class="st">"replace sm&gt;0.3 with 0.5"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace all values of sm&gt;0.3 with 0.5</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>sm[sm<span class="sc">&gt;</span><span class="fl">0.3</span>]<span class="ot">=</span><span class="fl">0.5</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm, <span class="at">main=</span><span class="st">"replace sm&gt;0.3 with 0.5"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or replace all values of sm&gt;0.3 with NA </span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sm[sm<span class="sc">&gt;</span><span class="fl">0.3</span>]<span class="ot">=</span><span class="cn">NA</span> </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm, <span class="at">main=</span><span class="st">"replace sm&gt;0.3 with NA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or replace all values of sm&gt;0.3 with NA </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>sm[sm<span class="sc">&gt;</span><span class="fl">0.3</span>]<span class="ot">=</span><span class="cn">NA</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm, <span class="at">main=</span><span class="st">"replace sm&gt;0.3 with NA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reaplace all NA values with 0</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>sm[<span class="fu">is.na</span>(sm)]<span class="ot">=</span><span class="dv">0</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reaplace all NA values with 0</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sm[<span class="fu">is.na</span>(sm)]<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-5-4.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reaplace fill values with NA</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_L3_SM_P_20150401_R17000_002_Soil_Moisture_Retrieval_Data_AM_soil_moisture_867a5e36.tif"</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>smFilter<span class="ot">=</span>sm                   <span class="co"># Copy original raster before manipulation</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>smFilter[smFilter<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot original and manipulated raster</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>))   <span class="co"># Specify layout for plots</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm, <span class="at">main=</span> <span class="st">"raw raster with fill values"</span>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(smFilter, <span class="at">main=</span><span class="st">"Post filtering -9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Satellites record observations in regularly spaced swaths as they orbit around the globe. In the case of SMAP satellite, it takes 2-3 days to cover the Earth. So far, we used a pre-processed soil moisture raster that provided 3-day averaged soil moisture using rasters from individual days.</p>
+<p>Now, let us evaluate daily raster available from SMAP (pixel recorded at 6 AM local time). Notice that this raster is patchy and uses a fill value (values assigned to missing observations) of -9999. Replacing these fill values with <code>NA</code> prior to statistical analysis are highly useful.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reaplace fill values with NA</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_L3_SM_P_20150401_R17000_002_Soil_Moisture_Retrieval_Data_AM_soil_moisture_867a5e36.tif"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>smFilter<span class="ot">=</span>sm                   <span class="co"># Copy original raster before manipulation</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>smFilter[smFilter<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot original and manipulated raster</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>))   <span class="co"># Specify layout for plots</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm, <span class="at">main=</span> <span class="st">"raw raster with fill values"</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(smFilter, <span class="at">main=</span><span class="st">"Post filtering -9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="ch3_files/figure-html/unnamed-chunk-5-5.png" class="img-fluid" width="672"></p>
+<p><img src="ch3_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <hr>
-<p>So far we saw examples of a arithmetic/ logical operations on a single raster. However, the tenets of arithmetic operations discussed earlier are also applicable for operations on two (or more) rasters. These operations will be carried out cell-wise between the corresponding pixels of the rasters. Suppose, another raster <strong><em>B</em></strong> is given as:</p>
+</section>
+<section id="multi-raster-operations" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="multi-raster-operations"><span class="header-section-number">4.1.2</span> Multi-Raster Operations</h3>
+<p>So far we saw examples of arithmetic/ logical operations on a single raster. The tenets of arithmetic operations discussed earlier are also applicable for operations on two (or more) rasters. These operations are carried out cell-wise between the corresponding pixels of the raster layers. Suppose, another raster <strong><em>B</em></strong> is given as:</p>
 <p><img src="images/clipboard-582080679.png" class="img-fluid" width="300"></p>
 <p>then, <strong><em>A</em></strong>+<strong><em>B</em></strong> will be:</p>
 <p><img src="images/clipboard-3617557945.png" class="img-fluid" width="500"></p>
 <p>Similarly, <strong><em>A</em></strong>x<strong><em>B</em></strong> will also be a cell-wise multiplication of respective data values:</p>
 <p><img src="images/clipboard-3088959865.png" class="img-fluid" width="500"></p>
-<p>Let us now use modeled rootzone soil moisture from NASA’s SMAP level 4 products for three consecutive days.</p>
+<p>For this illustration, we will use rootzone (0-100 cm depth) soil moisture from NASA’s Catchment Land Surface Model (provided as SMAP science Level 4 product) for Contiguous U.S. over a period of three consecutive days i.e. December 13-15, 2021.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>SMday1<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211213T103000_Vv6030_001_Geophysical_Data_sm_rootzone_2052db45.tif"</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>SMday2<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211214T103000_Vv6030_001_Geophysical_Data_sm_rootzone_22156243.tif"</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>SMday3<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211215T103000_Vv6030_001_Geophysical_Data_sm_rootzone_23bd7fe2.tif"</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">ncol =</span> <span class="dv">1</span>))                <span class="co"># Specify layout</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday1, <span class="at">main=</span><span class="st">"Rootzone SM day1"</span>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday2, <span class="at">main=</span><span class="st">"Rootzone SM day2"</span>)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday3, <span class="at">main=</span><span class="st">"Rootzone SM day3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="ch3_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Note that we can not make out the differences in the rasters as the colors are skewed by the high negative fill value for missing data in the rasters. So, we first remove the fill values (i.e.&nbsp;cells valued at -9999) with <code>NA</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>SMday1[SMday1<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>SMday2[SMday2<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>SMday3[SMday3<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">ncol =</span> <span class="dv">1</span>))                <span class="co"># Specify layout</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday1, <span class="at">main=</span><span class="st">"SM day1, filtered"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday2, <span class="at">main=</span><span class="st">"SM day2, filtered"</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday3, <span class="at">main=</span><span class="st">"SM day3, filtered"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>SMday1<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211213T103000_Vv6030_001_Geophysical_Data_sm_rootzone_2052db45.tif"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>SMday2<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211214T103000_Vv6030_001_Geophysical_Data_sm_rootzone_22156243.tif"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>SMday3<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/SMAPL4_rasters/SMAP_L4_SM_gph_20211215T103000_Vv6030_001_Geophysical_Data_sm_rootzone_23bd7fe2.tif"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">ncol =</span> <span class="dv">1</span>))                <span class="co"># Specify layout</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday1, <span class="at">main=</span><span class="st">"Rootzone SM day1"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday2, <span class="at">main=</span><span class="st">"Rootzone SM day2"</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday3, <span class="at">main=</span><span class="st">"Rootzone SM day3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Now, let’s calculate the change in soil moisture values between days 1-2 and 1-3. Can we identify a region which showed anomalous wetting during the three days of observation?</p>
+<p>Note that we can not make out the differences in the rasters as the colors are skewed by the high negative fill value for missing data in the rasters. So, we first remove the fill values (i.e.&nbsp;cells valued at -9999) with <code>NA</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>delta12<span class="ot">=</span>SMday1<span class="sc">-</span>SMday2</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>delta13<span class="ot">=</span>SMday1<span class="sc">-</span>SMday3</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">1</span>))                <span class="co"># Specify layout</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(delta12, <span class="at">main=</span><span class="st">"SM difference (day 1 &amp; 2"</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(delta13, <span class="at">main=</span><span class="st">"SM difference (day 1 &amp; 3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>SMday1[SMday1<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>SMday2[SMday2<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>SMday3[SMday3<span class="sc">==-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span>  <span class="co"># Replace negative values with -9999</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">ncol =</span> <span class="dv">1</span>))                <span class="co"># Specify layout</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday1, <span class="at">main=</span><span class="st">"SM day1, filtered"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday2, <span class="at">main=</span><span class="st">"SM day2, filtered"</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SMday3, <span class="at">main=</span><span class="st">"SM day3, filtered"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Curious to know why Southern California showed such high levels of wetting? Check out: <a href="'Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)">‘Storm of the season’ dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)</a></p>
-<hr>
-</section>
-<section id="raster-statistics" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="raster-statistics"><span class="header-section-number">4.2</span> Raster Statistics</h2>
-<p>We will use <code>global</code> function to apply summary statistics and user-defined operations on cells of a raster.</p>
+<p>Now, let’s calculate the change in soil moisture values between days 1-2 and 1-3. Can we identify a region which showed anomalous wetting during the three days of observation?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra) </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture raster from the downloaded folder</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, mean, <span class="at">na.rm =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>            mean
-SMAP_SM 0.209402</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, sd, <span class="at">na.rm =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>               sd
-SMAP_SM 0.1434444</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>              X25.      X75.
-SMAP_SM 0.09521707 0.2922016</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># User-defined statistics by defining own function</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>quant_fun <span class="ot">=</span> <span class="cf">function</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>){ <span class="co"># Remember to add "na.rm" option</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">quantile</span>(x, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quant_fun)   <span class="co"># 25th, and 75th percentile of each layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>              X25.      X75.
-SMAP_SM 0.09521707 0.2922016</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot summary using standard statistical functions</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>))                <span class="co"># Specify layout</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sm)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>delta12<span class="ot">=</span>SMday1<span class="sc">-</span>SMday2</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>delta13<span class="ot">=</span>SMday1<span class="sc">-</span>SMday3</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">1</span>))                <span class="co"># Specify layout</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(delta12, <span class="at">main=</span><span class="st">"SM difference (day 1 &amp; 2"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(delta13, <span class="at">main=</span><span class="st">"SM difference (day 1 &amp; 3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Curious to know why Southern California showed such high levels of wetting? Check out: <a href="'Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)">‘Storm of the season’ dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)</a>.</p>
+<hr>
 </section>
-<section id="raster-resampling" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="raster-resampling"><span class="header-section-number">4.3</span> Raster Resampling</h2>
-<p>Raster resampling refers to changing the resolution of the raster. The term “resampling” used here implies that the pixel values are “sampled” to the new resolution using an interpolation method (nearest neighbor, bilinear, spline, min, max, mode, average etc). We will try three important functions for changing the resolution of a SpatRaster: <code>terra::aggregate</code> (resample from fine to coarse resolution), <code>terra::disagg</code> (resample from coarse to fine resolution) and <code>terra::resample</code> (resample to match the resolution of another raster). The following schematic helps illustrate the use of these functions:</p>
-<p><img src="images/resampling.png" class="img-fluid"></p>
-<p>Lets us now explore an example for raster resampling.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture raster</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>) </span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Original resolution of raster for reference</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.373444 0.373444</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Aggregate raster to coarser resolution</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>SMcoarse <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">aggregate</span>(sm,           <span class="co"># Soil moisture raster</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">fact =</span> <span class="dv">10</span>,    <span class="co"># Aggregate by x 10</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">fun =</span> mean)   <span class="co"># Function used to aggregate values</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(SMcoarse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 3.73444 3.73444</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Disaggregate raster to finer resolution</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>SMfine <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">disagg</span>(sm, </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fact=</span><span class="dv">3</span>, </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">method=</span><span class="st">'bilinear'</span>)</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(SMfine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.1244813 0.1244813</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Raster resampling</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Import global aridity raster</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>aridity<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/aridity_36km.tif"</span>) </span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot aridity map</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>mypal <span class="ot">=</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="dv">5</span>, <span class="st">"Spectral"</span>) </span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(aridity, <span class="at">col=</span>mypal, <span class="at">main=</span> <span class="st">"Aridity Spatraster"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="ch3_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resample aridity raster to coarse resolution  </span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>aridityResamp<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">resample</span>(aridity,      <span class="co"># Original raster</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                       SMcoarse,            <span class="co"># Target resolution raster</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">method=</span><span class="st">'ngb'</span>)        <span class="co"># bilinear or ngb (nearest neighbor) </span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot resampled aridity map</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(aridityResamp, <span class="at">col=</span>mypal, <span class="at">main=</span> <span class="st">"Aridity at Coarser Resolution"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="ch3_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<section id="raster-summary-with-polygons" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="raster-summary-with-polygons"><span class="header-section-number">4.3.1</span> Raster Summary with Polygons</h3>
-<p>Let’s explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using <code>extract</code> function from the <code>terra</code> library. We will also transform global aridity raster to a polygon using the function <code>as.polygons</code> to find the mean soil moisture values for each aridity class.</p>
-<p>First, we will use the IPCC shapefile to summarize the soil moisture raster.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra) </span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture raster from the downloaded folder</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the shapefile of global IPCC climate reference regions (only for land) </span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>IPCC_shp <span class="ot">=</span> <span class="fu">vect</span>(<span class="st">"./SampleData-master/CMIP_land/CMIP_land.shp"</span>)</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Using shapefile to summarize a raster</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>sm_IPCC_df<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(sm,        <span class="co"># Spatraster to be summarized</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>                          IPCC_shp,   <span class="co"># Shapefile/ polygon to summarize the raster</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span>mean,   <span class="co"># Desired statistic: mean, sum, min and max </span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Ignore NA values? TRUE=yes! </span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sm_IPCC_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  ID   SMAP_SM
-1  1 0.2545766
-2  2 0.3839087
-3  3 0.2345457
-4  4 0.3788003
-5  5 0.2383580
-6  6 0.1475145</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Extract cell values for each region </span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>sm_IPCC_list<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(sm,       <span class="co"># Raster to be summarized</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                          IPCC_shp,   <span class="co"># Shapefile/ polygon to summarize the raster</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span><span class="cn">NULL</span>,   <span class="co"># fun=NULL will output cell values within each region</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Ignore NA values? yes! </span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function on cell values for each region</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">lapply</span>(sm_IPCC_list,mean)                       <span class="co"># Returns a list of regional means </span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span>purrr<span class="sc">::</span><span class="fu">map</span>(sm_IPCC_list,<span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="co"># Returns a list of regional means</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Try user defined function</span></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>myfun<span class="ot">=</span><span class="cf">function</span> (y){<span class="fu">return</span>(<span class="fu">mean</span>(y, <span class="at">na.rm=</span><span class="cn">TRUE</span>))}    <span class="co"># User defined function for calculating means</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="co">#~ Implement function using lapply and map</span></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">lapply</span>(sm_IPCC_list,myfun)           <span class="co"># Returns a list of regional means </span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span>purrr<span class="sc">::</span><span class="fu">map</span>(sm_IPCC_list,<span class="sc">~</span> <span class="fu">myfun</span>(.x)) <span class="co"># Returns a list of regional means </span></span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>sm_IPCC_mean<span class="ot">=</span><span class="fu">unlist</span>(sm_IPCC_mean)                 <span class="co"># Unlist to return a vector </span></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sm_IPCC_mean) <span class="co"># Is this the same as the previous result?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>        ID    SMAP_SM 
-21.1513647  0.2088026 </code></pre>
-</div>
-</div>
 </section>
-<section id="raster-summary-with-classified-raster" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="raster-summary-with-classified-raster"><span class="header-section-number">4.3.2</span> Raster Summary with Classified Raster</h3>
-<p>In the next example, we will convert global aridity raster into a polygon based on aridity classification using <code>as.polygons</code> and <code>st_as_sf</code> functions. <br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate. We will use this polygon to extract values from the <code>SpatRaster</code> and summarize soil moisture for each aridity class.</p>
+<section id="raster-statistics" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="raster-statistics"><span class="header-section-number">4.2</span> Raster Statistics</h2>
+<p>We are all familiar with common statistical functions available in base R for summarizing arrays, such as: <code>min</code>, <code>max</code>, <code>range</code>, <code>sum</code>, <code>stdev</code>, <code>median</code>, <code>mean</code>, <code>modal</code>. These functions are applied using the <code>global</code> function, which calculates the “<em>global</em>” statistics based on the values of all cells within a raster layer. <code>Global</code> is a versatile function and can also be used to apply more complex user-defined operations on rasters. Let us now look at some examples:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Convert a raster to a shapefile</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>aridity<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/aridity_36km.tif"</span>) <span class="co">#Global aridity</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert raster to shapefile</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>arid_poly<span class="ot">=</span><span class="fu">as.polygons</span>(aridity)   <span class="co"># Convert SpatRaster to polygon and then to sf</span></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot aridity polygon</span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(arid_poly, </span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span>arid_poly<span class="sc">$</span>aridity_36km)  <span class="co"># Colors based on aridity values (i.e. 1,2,3,4,5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra) </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture raster from the downloaded folder</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, mean, <span class="at">na.rm =</span> T)  <span class="co"># Calculate mean, while ignoring NA values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean
+SMAP_SM 0.209402</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is equivalent to: </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>sm_val<span class="ot">=</span><span class="fu">values</span>(sm)       <span class="co"># Create array of cell values of raster</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sm_val, <span class="at">na.rm =</span> T) <span class="co"># Calculate mean of cell values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.209402</code></pre>
+</div>
+</div>
+<p>Use of <code>global</code> function is equivalent to applying a function on all cell values</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, sd, <span class="at">na.rm =</span> T) <span class="co"># Calculate standard deviation, while ignoring NA values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               sd
+SMAP_SM 0.1434444</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OR</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(<span class="fu">values</span>(sm), <span class="at">na.rm =</span> T) <span class="co"># Calculate mean of cell values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1434444</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Similarly, for finding quantiles of a raster layer</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quantile, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm =</span> T) <span class="co"># Calculate 25th and 75th percentiles of the ratser layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              X25.      X75.
+SMAP_SM 0.09521707 0.2922016</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OR</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(<span class="fu">values</span>(sm), <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm =</span> T) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       25%        75% 
+0.09521707 0.29220164 </code></pre>
+</div>
+</div>
+<p>We can also generate common summary statistics plots using functions such as hist (histogram), barplot (box and whisker plot), etc.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>sm<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/SMAP_SM.tif"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot summary using standard statistical functions</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>))                <span class="co"># Specify layout</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sm)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch3_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Summarize values of SMAP soil moisture raster for aridity classes:</p>
+<section id="user-defined-functions-for-raster-statistics" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="user-defined-functions-for-raster-statistics"><span class="header-section-number">4.2.1</span> User-defined Functions for Raster Statistics</h3>
+<p>User-defined functions can also be applied to raster layer using the <code>global</code> function for specific operations. A user can define their own function with specific instructions which will be executed everytime the function is called. A simple template of a typical R function is given below:</p>
+<p><img src="images/clipboard-3958485223.png" class="img-fluid" width="400"></p>
+<p>Let us revisit the application of the <code>quantile</code> function by passing it through a user-defined function with <code>global</code>. In the <code>quant_fun</code> shown below function, <code>myRas</code> is the raster whose values are being summarized. Notice how instruction for <code>na.rm</code> is passed through the <code>ignoreNA</code> argument.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>sm_arid_df<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(sm,        <span class="co"># Raster to be summarized</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                          arid_poly, <span class="co"># Shapefile/ polygon to summarize the raster</span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun=</span>mean,  <span class="co"># Desired statistic: mean, sum, min and max </span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm=</span><span class="cn">TRUE</span>)<span class="co"># Ignore NA values? yes! </span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets plot the climate-wise mean of surface soil moisture</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sm_arid_df,     </span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">xaxt =</span> <span class="st">"n"</span>,              <span class="co"># Disable x-tick labels</span></span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Aridity"</span>,          <span class="co"># X axis label</span></span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Soil moisture"</span>,    <span class="co"># Y axis label</span></span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">type=</span><span class="st">"b"</span>,                <span class="co"># line type</span></span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"blue"</span>,              <span class="co"># Line color</span></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Climate-wise mean of surface soil moisture"</span>)</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"Hyper-arid"</span>, <span class="st">"Arid"</span>, <span class="st">"Semi-Arid"</span>,<span class="st">"Sub-humid"</span>,<span class="st">"Humid"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="ch3_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># User-defined statistics by defining own function.   </span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>quant_fun <span class="ot">=</span> <span class="cf">function</span>(myRas, <span class="at">ignoreNA=</span><span class="cn">TRUE</span>){      </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  p<span class="ot">=</span><span class="fu">quantile</span>(myRas, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm=</span>ignoreNA)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sm, quant_fun)   <span class="co"># 25th, and 75th percentile of each layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              X25.      X75.
+SMAP_SM 0.09521707 0.2922016</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is equivalent to:</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">quant_fun</span>(<span class="fu">values</span>(sm))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       25%        75% 
+0.09521707 0.29220164 </code></pre>
 </div>
 </div>
-<p>More details on arith-generic can be found here: <a href="https://rdrr.io/cran/terra/man/arith-generic.html" class="uri">https://rdrr.io/cran/terra/man/arith-generic.html</a></p>
-
-
 </section>
+</section>
+<section id="exercise-2" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="exercise-2"><span class="header-section-number">4.3</span> Exercise #2</h2>
+<p>Use the raster files in <em>SampleData-master/SMAPL4_rasters</em> folder, perform the tasks as listed below:</p>
+<ul>
+<li><p>Task 1: Write a user-defined function to count the number of pixels within the range [0.3, 0.4] for 20211213. Use <code>global</code> to implement your function. Pass the specified range as an input argument to the function.</p></li>
+<li><p>Task 2: Compared to 20211213, what is the percentage change in 20211215 for the pixels within the [0.3, 0.4] range?</p></li>
+<li><p>Task 3: Make a multivariate plot (2 or more variables on the same axis) comparing the density distribution of soil moisture for 20211213 and 20211215?</p></li>
+</ul>
+<hr>
+
+
 </section>
 
 </main> <!-- /main -->
@@ -833,8 +737,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./chN.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">References</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch5.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Raster Resampling and Data Extraction</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -1,0 +1,11 @@
+---
+title-block-banner: true
+bibliography: references.bib
+---
+
+# Raster Resampling and Data Extraction
+
+```{r child="ch5_a.qmd", message = FALSE, warning = FALSE}
+
+
+```

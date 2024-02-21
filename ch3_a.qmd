@@ -6,7 +6,7 @@ editor:
     wrap: sentence
 ---
 
-## Raster Arithmetic Operations 
+## Raster Arithmetic Operations
 
 Arithmetic, comparison and logical operations on `SpatRasters` use the same operators as those used for simple vector-like operations.
 These operators are listed below:
@@ -24,6 +24,8 @@ These operators are listed below:
 ![](images/clipboard-582905687.png){width="331"}
 
 ------------------------------------------------------------------------
+
+### Single Raster Operations
 
 The application of these operators on rasters can be conceptualized as element-wise operations on a matrix.
 For example, assume ***A*** is a raster with values shown in the matrix form as below:
@@ -52,20 +54,22 @@ Now let us try a few examples of arithmetic, comparison and logical operations o
 Before we begin this chapter, let us ensure that we have the sample dataset necessary for the analysis, otherwise, download the files from the GitHub repository using the following codes:
 
 ```{r, message = FALSE, warning = FALSE}
-#~~~ Check if sample data exists. If not, download from GitHub repository
+#~~~ Check if sample data exists on disk. If not, download from GitHub repository
 
 if (dir.exists("SampleData-master")==FALSE){ 
+  
 download.file(url = "https://github.com/Vinit-Sehgal/SampleData/archive/master.zip",
 destfile = "SampleData-master.zip")    
 
 # Unzip the downloaded .zip file
 unzip(zipfile = "SampleData-master.zip")
-}
 list.files("./SampleData-master")   # List folder contents
 
+}
 ```
 
-Taking example of SMAP soil moisture raster let us practice the application of arithmetic operations on `SpatRasters`.
+Taking example of SMAP soil moisture raster let's practice the application of arithmetic operations on `SpatRasters`.
+We start by importing the `SpatRaster` in the current R environment.
 
 ```{r, message = FALSE, warning = FALSE}
 library(terra) # Import library
@@ -83,15 +87,9 @@ sm2=sm*2
 plot(sm2, main= "sm*2") # Try sm2=sm*10, or sm2=sm^2 and see the difference in sm2 values
 ```
 
-Similarly, logical operations can also be carried out with ease.
+Similarly, logical operations can also be carried out on rasters with ease in R.
 Logical operators can be a convenient tool for raster data manipulation.
-For example, any subset of values can be replaced, deleted based on a user-defined logical criteria.
-Imagine a raster may have a fill value of -9999, it may be advisable to remove these values by replacing them with `NA` in certain cases.
-
-Notice that some SMAP rasters used here are patchy.
-Previously, we have used 3-day averaged soil moisture using rasters from individual days.
-Satellites collect dataset in regularly spaced swaths as they orbit around the globe.
-In the case of SMAP satellite, it takes 2-3 days to cover the entire Earth.
+For example, any subset of values can be manipulated based on a user-defined logical criteria.
 
 ```{r, message = FALSE, warning = FALSE}
 # Are cell values of sm raster greater than 0.3?
@@ -113,6 +111,17 @@ plot(sm, main="replace sm>0.3 with NA")
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 sm[is.na(sm)]=0
 plot(sm)
+```
+
+Satellites record observations in regularly spaced swaths as they orbit around the globe.
+In the case of SMAP satellite, it takes 2-3 days to cover the Earth.
+So far, we used a pre-processed soil moisture raster that provided 3-day averaged soil moisture using rasters from individual days.
+
+Now, let us evaluate daily raster available from SMAP (pixel recorded at 6 AM local time).
+Notice that this raster is patchy and uses a fill value (values assigned to missing observations) of -9999.
+Replacing these fill values with `NA` prior to statistical analysis are highly useful.
+
+```{r, message = FALSE, warning = FALSE}
 
 # Reaplace fill values with NA
 sm=rast("./SampleData-master/raster_files/SMAP_L3_SM_P_20150401_R17000_002_Soil_Moisture_Retrieval_Data_AM_soil_moisture_867a5e36.tif")
@@ -128,9 +137,11 @@ plot(smFilter, main="Post filtering -9999")
 
 ------------------------------------------------------------------------
 
-So far we saw examples of a arithmetic/ logical operations on a single raster.
-However, the tenets of arithmetic operations discussed earlier are also applicable for operations on two (or more) rasters.
-These operations will be carried out cell-wise between the corresponding pixels of the rasters.
+### Multi-Raster Operations
+
+So far we saw examples of arithmetic/ logical operations on a single raster.
+The tenets of arithmetic operations discussed earlier are also applicable for operations on two (or more) rasters.
+These operations are carried out cell-wise between the corresponding pixels of the raster layers.
 Suppose, another raster ***B*** is given as:
 
 ![](images/clipboard-582080679.png){width="300"}
@@ -143,7 +154,8 @@ Similarly, ***A***x***B*** will also be a cell-wise multiplication of respective
 
 ![](images/clipboard-3088959865.png){width="500"}
 
-Let us now use modeled rootzone soil moisture from NASA's SMAP level 4 products for three consecutive days.
+For this illustration, we will use rootzone (0-100 cm depth) soil moisture from NASA's Catchment Land Surface Model (provided as SMAP science Level 4 product) for Contiguous U.S. over a period of three consecutive days i.e.
+December 13-15, 2021.
 
 ```{r, message = FALSE, warning = FALSE}
 
@@ -187,31 +199,48 @@ plot(delta13, main="SM difference (day 1 & 3")
 ```
 
 Curious to know why Southern California showed such high levels of wetting?
-Check out: ['Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)]('Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com))
+Check out: ['Storm of the season' dumps record-breaking rainfall on SoCal and snow in the mountains - Los Angeles Times (latimes.com)]('Storm%20of%20the%20season'%20dumps%20record-breaking%20rainfall%20on%20SoCal%20and%20snow%20in%20the%20mountains%20-%20Los%20Angeles%20Times%20(latimes.com)).
 
 ------------------------------------------------------------------------
 
 ## Raster Statistics
 
-We will use `global` function to apply summary statistics and user-defined operations on cells of a raster.
+We are all familiar with common statistical functions available in base R for summarizing arrays, such as: `min`, `max`, `range`, `sum`, `stdev`, `median`, `mean`, `modal`.
+These functions are applied using the `global` function, which calculates the "*global*" statistics based on the values of all cells within a raster layer.
+`Global` is a versatile function and can also be used to apply more complex user-defined operations on rasters.
+Let us now look at some examples:
 
 ```{r, message = FALSE, warning = FALSE}
-
 library(terra) 
 
 # Import SMAP soil moisture raster from the downloaded folder
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 
 # Summary statistics
-global(sm, mean, na.rm = T)
-global(sm, sd, na.rm = T)
-global(sm, quantile, probs = c(0.25, 0.75), na.rm = T)
+global(sm, mean, na.rm = T)  # Calculate mean, while ignoring NA values
 
-# User-defined statistics by defining own function
-quant_fun = function(x, na.rm=TRUE){ # Remember to add "na.rm" option
-  quantile(x, probs = c(0.25, 0.75), na.rm=TRUE)
-} 
-global(sm, quant_fun)   # 25th, and 75th percentile of each layer
+# This is equivalent to: 
+sm_val=values(sm)       # Create array of cell values of raster
+mean(sm_val, na.rm = T) # Calculate mean of cell values
+```
+
+Use of `global` function is equivalent to applying a function on all cell values
+
+```{r, message = FALSE, warning = FALSE}
+global(sm, sd, na.rm = T) # Calculate standard deviation, while ignoring NA values
+# OR
+sd(values(sm), na.rm = T) # Calculate mean of cell values
+
+# Similarly, for finding quantiles of a raster layer
+global(sm, quantile, probs = c(0.25, 0.75), na.rm = T) # Calculate 25th and 75th percentiles of the ratser layer
+# OR
+quantile(values(sm), probs = c(0.25, 0.75), na.rm = T) 
+```
+
+We can also generate common summary statistics plots using functions such as hist (histogram), barplot (box and whisker plot), etc.
+
+```{r, message = FALSE, warning = FALSE}
+sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 
 # Plot summary using standard statistical functions
 layout(matrix(1:2, ncol = 2))                # Specify layout
@@ -219,139 +248,42 @@ hist(sm)
 boxplot(sm)
 ```
 
-## Raster Resampling
+### User-defined Functions for Raster Statistics
 
-Raster resampling refers to changing the resolution of the raster.
-The term "resampling" used here implies that the pixel values are "sampled" to the new resolution using an interpolation method (nearest neighbor, bilinear, spline, min, max, mode, average etc).
-We will try three important functions for changing the resolution of a SpatRaster: `terra::aggregate` (resample from fine to coarse resolution), `terra::disagg` (resample from coarse to fine resolution) and `terra::resample` (resample to match the resolution of another raster).
-The following schematic helps illustrate the use of these functions:
+User-defined functions can also be applied to raster layer using the `global` function for specific operations.
+A user can define their own function with specific instructions which will be executed everytime the function is called.
+A simple template of a typical R function is given below:
 
-![](images/resampling.png)
+![](images/clipboard-3958485223.png){width="400"}
 
-Lets us now explore an example for raster resampling.
-
-```{r, message = FALSE, warning = FALSE}
-library(terra)
-
-# Import SMAP soil moisture raster
-sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif") 
-
-# Original resolution of raster for reference
-res(sm)
-
-#~~ Aggregate raster to coarser resolution
-SMcoarse = terra::aggregate(sm,           # Soil moisture raster
-                            fact = 10,    # Aggregate by x 10
-                            fun = mean)   # Function used to aggregate values
-res(SMcoarse)
-
-#~~ Disaggregate raster to finer resolution
-SMfine = terra::disagg(sm, 
-                   fact=3, 
-                   method='bilinear')
-res(SMfine)
-
-#~~ Raster resampling
-# Import global aridity raster
-aridity=rast("./SampleData-master/raster_files/aridity_36km.tif") 
-
-# Plot aridity map
-mypal = RColorBrewer::brewer.pal(5, "Spectral") 
-terra::plot(aridity, col=mypal, main= "Aridity Spatraster")
-
-
-# Resample aridity raster to coarse resolution  
-aridityResamp=terra::resample(aridity,      # Original raster
-                       SMcoarse,            # Target resolution raster
-                       method='ngb')        # bilinear or ngb (nearest neighbor) 
-
-# Plot resampled aridity map
-terra::plot(aridityResamp, col=mypal, main= "Aridity at Coarser Resolution")
-
-```
-
-### Raster Summary with Polygons
-
-Let's explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using `extract` function from the `terra` library.
-We will also transform global aridity raster to a polygon using the function `as.polygons` to find the mean soil moisture values for each aridity class.
-
-First, we will use the IPCC shapefile to summarize the soil moisture raster.
+Let us revisit the application of the `quantile` function by passing it through a user-defined function with `global`.
+In the `quant_fun` shown below function, `myRas` is the raster whose values are being summarized.
+Notice how instruction for `na.rm` is passed through the `ignoreNA` argument.
 
 ```{r, message = FALSE, warning = FALSE}
-library(terra) 
 
-# Import SMAP soil moisture raster from the downloaded folder
-sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
+# User-defined statistics by defining own function.   
+quant_fun = function(myRas, ignoreNA=TRUE){      
+  p=quantile(myRas, probs = c(0.25, 0.75), na.rm=ignoreNA)
+  return(p)
+} 
 
-# Import the shapefile of global IPCC climate reference regions (only for land) 
-IPCC_shp = vect("./SampleData-master/CMIP_land/CMIP_land.shp")
+global(sm, quant_fun)   # 25th, and 75th percentile of each layer
 
-#~~~ Using shapefile to summarize a raster
-sm_IPCC_df=terra::extract(sm,        # Spatraster to be summarized
-                          IPCC_shp,   # Shapefile/ polygon to summarize the raster
-                          fun=mean,   # Desired statistic: mean, sum, min and max 
-                          na.rm=TRUE) # Ignore NA values? TRUE=yes! 
-
-head(sm_IPCC_df)
-
-#~~~ Extract cell values for each region 
-sm_IPCC_list=terra::extract(sm,       # Raster to be summarized
-                          IPCC_shp,   # Shapefile/ polygon to summarize the raster
-                          fun=NULL,   # fun=NULL will output cell values within each region
-                          na.rm=TRUE) # Ignore NA values? yes! 
-
-# Apply function on cell values for each region
-sm_IPCC_mean=lapply(sm_IPCC_list,mean)                       # Returns a list of regional means 
-sm_IPCC_mean=purrr::map(sm_IPCC_list,~ mean(.x, na.rm=TRUE)) # Returns a list of regional means
-
-#~~ Try user defined function
-myfun=function (y){return(mean(y, na.rm=TRUE))}    # User defined function for calculating means
-
-#~ Implement function using lapply and map
-library(purrr)
-
-sm_IPCC_mean=lapply(sm_IPCC_list,myfun)           # Returns a list of regional means 
-sm_IPCC_mean=purrr::map(sm_IPCC_list,~ myfun(.x)) # Returns a list of regional means 
-sm_IPCC_mean=unlist(sm_IPCC_mean)                 # Unlist to return a vector 
-
-head(sm_IPCC_mean) # Is this the same as the previous result?
-
+# This is equivalent to:
+quant_fun(values(sm))
 ```
 
-### Raster Summary with Classified Raster
+## Exercise #2
 
-In the next example, we will convert global aridity raster into a polygon based on aridity classification using `as.polygons` and `st_as_sf` functions.
-<br> Global aridity raster has 5 classes with 5 indicating humid and 1 indicating hyper-arid climate.
-We will use this polygon to extract values from the `SpatRaster` and summarize soil moisture for each aridity class.
+Use the raster files in *SampleData-master/SMAPL4_rasters* folder, perform the tasks as listed below:
 
-```{r, message = FALSE, warning = FALSE}
-#~~~ Convert a raster to a shapefile
-aridity=rast("./SampleData-master/raster_files/aridity_36km.tif") #Global aridity
+-   Task 1: Write a user-defined function to count the number of pixels within the range \[0.3, 0.4\] for 20211213.
+    Use `global` to implement your function.
+    Pass the specified range as an input argument to the function.
 
-# Convert raster to shapefile
-arid_poly=as.polygons(aridity)   # Convert SpatRaster to polygon and then to sf
+-   Task 2: Compared to 20211213, what is the percentage change in 20211215 for the pixels within the \[0.3, 0.4\] range?
 
-# Plot aridity polygon
-terra::plot(arid_poly, 
-     col=arid_poly$aridity_36km)  # Colors based on aridity values (i.e. 1,2,3,4,5)
-```
+-   Task 3: Make a multivariate plot (2 or more variables on the same axis) comparing the density distribution of soil moisture for 20211213 and 20211215?
 
-Summarize values of SMAP soil moisture raster for aridity classes:
-
-```{r, message = FALSE, warning = FALSE}
-sm_arid_df=terra::extract(sm,        # Raster to be summarized
-                          arid_poly, # Shapefile/ polygon to summarize the raster
-                          fun=mean,  # Desired statistic: mean, sum, min and max 
-                          na.rm=TRUE)# Ignore NA values? yes! 
-
-# Lets plot the climate-wise mean of surface soil moisture
-plot(sm_arid_df,     
-     xaxt = "n",              # Disable x-tick labels
-     xlab="Aridity",          # X axis label
-     ylab="Soil moisture",    # Y axis label
-     type="b",                # line type
-     col="blue",              # Line color
-     main="Climate-wise mean of surface soil moisture")
-axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))
-
-```
+------------------------------------------------------------------------

@@ -31,9 +31,4 @@ This resource will serve as a dynamic class note, where students can access deta
 
 <br>
 
-------------------------------------------------------------------------
-**Acknowledgement:**
-We thank Debasish Mishra (Texas A&M University) for his generous contributions to the content of this resource over the years.    
-------------------------------------------------------------------------
-
 <center>![](./images/LSUlogo.jpg){width="20%"}</center>
