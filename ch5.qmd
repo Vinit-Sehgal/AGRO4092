@@ -3,7 +3,7 @@ title-block-banner: true
 bibliography: references.bib
 ---
 
-# Raster Resampling and Data Extraction
+# Raster Resampling, RATification and Zonal Statistics
 
 ```{r child="ch5_a.qmd", message = FALSE, warning = FALSE}
 
