@@ -6,7 +6,7 @@ editor:
     wrap: sentence
 ---
 
-# Raster Resampling, RATification and Zonal Statistics
+# Resampling, RATification and Zonal Statistics
 
 ```{r child="ch5_a.qmd", message = FALSE, warning = FALSE}
 

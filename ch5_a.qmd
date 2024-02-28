@@ -137,6 +137,52 @@ res(AIfine)        # Resolution changed from 0.8KM X 0.8KM  to (0.8/2KM)x(0.8/2K
 plot(AIfine, main="Disggregated AI raster")
 ```
 
+## Cropping and Masking
+
+Cropping and masking operations are used to reduct the spatial extent of a raster/vector data.
+We will use US states shapefile from `spData::us_states` to select the polygons for Louisiana and adjoining states.
+The resource `spData::us_states` provides features for the Contiguous U.S. as simple feature, i.e., `sf` collection.
+We note that the state names in the `us_states` multipolygon are given in the field `NAME`, which we will use to subset the multipolygon to the specific states we are interested in.
+We will take "Louisiana", "Texas", "Mississippi","Alabama", "Oklahoma", "Arkansas" as examples.
+
+```{r 5a3.2, message = FALSE, warning = FALSE}
+library(spData)
+library(sf)
+
+AI=terra::rast("./SampleData-master/raster_files/P_over_ET0.tif") 
+
+# Lets view the data
+head(spData::us_states)
+
+# From this we will subset the sf object for the selected states. We select forst column as we are only interested in a single attribute
+US_shp=spData::us_states
+
+# Subset selected states from the shapefile
+south_sf=US_shp[US_shp$NAME %in% c("Louisiana", "Texas", "Mississippi","Alabama", "Oklahoma", "Arkansas"),]
+
+# Convert the sf object to SpatRaster
+south_vect=vect(south_sf)
+plot(south_vect)
+
+# Crop AIfine raster to south_vect extent 
+AI_south=crop(AIfine, south_vect)
+plot(AI_south, main="Cropped AI")
+plot(south_vect, add=T)
+
+# Mask AIfine raster to match south_vect spatial domain 
+AI_south_msk=mask(AI_south, south_vect)   # Try: inverse=TRUE argument for fun
+plot(AI_south_msk, main="Masked AI")
+plot(south_vect, add=T)
+```
+
+> **Computing Counsel**
+>
+> 1.  For large rasters, it is computationally efficient to `crop` and/or `mask` rasters to the region of interest before the analysis.
+>
+> 2.  `crop` first, and `mask` later, as masking is computationally expensive than cropping.
+
+------------------------------------------------------------------------
+
 ## Raster RATification
 
 In the AI plot above, we see the expected climate pattern for the terrestrial landmass.
@@ -199,6 +245,10 @@ print(arid_poly)
 # View polygon of the climate zones
 library(mapview)
 mapview(arid_poly)
+
+# You can also crop SpatVectors
+AI_poly_south=terra::crop(arid_poly, south_vect)
+mapview(AI_poly_south)
 ```
 
 #### Value Extraction and Statistics
@@ -367,4 +417,4 @@ axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))
 
 ------------------------------------------------------------------------
 
-![](images/clipboard-11580629.png){width="600"}
+![](images/clipboard-1423756861.png){width="600"}
