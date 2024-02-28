@@ -8,6 +8,8 @@ editor:
 
 ## Raster Resampling
 
+### Introduction
+
 Raster resampling simply refers to making changes to the pixel resolution of the raster.
 The term "resampling" implies that the pixel values are "sampled" and reassigned to the pixels at the new resolution.
 This operations often involves an interpolation method (nearest neighbor, bilinear, spline, min, max, mode, average etc).
@@ -26,19 +28,19 @@ The following schematic helps illustrate the use of these functions:
 
 ------------------------------------------------------------------------
 
-### Introduction
+### Meet the Data
 
 We have so far worked with global surface soil moisture raster (from SMAP) and we are familiar with its spatial distribution across the globe.
 Now, let us consider this question:
 
 > [***How does the climate impact the spatial distribution of soil moisture?***]{.smallcaps}
 
-For this assessment, we will use Aridity index (AI), which is a popular approach for climate classification based on the relative availability of Mean Annual Precipitation (***P***) compared to the Mean Annual Reference Evapotranspiration (***ET~0~***) of a location.
+For this assessment, we will use Aridity index (AI), which is a popular metric for climate classification based on the relative availability of Mean Annual Precipitation (***P***) compared to the Mean Annual Reference Evapotranspiration (***ET~0~***) of a location.
 Aridity Index is defined as: $AI= P / ET_0$.
 Here, ***ET~0~*** is the maximum potential amount of moisture a hydrologic system can transfer to atmosphere through evaporation and transpiration.
 The value of $P / ET_0$ progressively increases from arid to humid regions.
 Since ***P*** and ***ET~0~*** can never be negative, AI is always \>0.
-We have access to CONUS-wide raster of aridity index estimates (i.e. P/ET~0~) provided by [@zomer2022version], at 0.8X0.8 KM spatial resolution.
+We have access to CONUS-wide raster of aridity index estimates (i.e. P/ET~0~) provided by [@zomer2022version], at \~0.8X0.8 KM spatial resolution.
 
 One approach of answering the question can be to compare pixel values of SMAP soil moisture with corresponding values of AI to establish the bivariate AI–SM relationship.
 So, we must first change the resolution of AI raster to match that of the SMAP soil moisture.
@@ -46,7 +48,7 @@ For this, we will use *raster resampling*.
 
 We will first import the raster and remove the negative fill values.
 We also plot a histogram of the raster to understand the probability distribution of the AI values.
-Do we agree that most pixels in the raster range within 0-5?
+Do we agree that most pixels in the raster range within 0-4?
 
 ```{r 5a1, message = FALSE, warning = FALSE}
 library(terra)
@@ -54,9 +56,9 @@ AI=terra::rast("./SampleData-master/raster_files/P_over_ET0.tif")
 
 # Let us plot a histogram of the raster
 hist(AI, breaks=20, 
-     xlim=c(0,10), 
+     xlim=c(0,5), 
      xlab="AI=P/ET0", 
-     ylab="Pixels") 
+     ylab="Pixels", main="") 
 
 # We observe most values in the raster are <4. So, we set the range of the plot accordingly
 terra::plot(AI, main="AI=P/ET0", range=c(0,4))
@@ -64,14 +66,14 @@ terra::plot(AI, main="AI=P/ET0", range=c(0,4))
 
 ### Why Resample?
 
-To explore the AI–SM relationship, first we will use the `terra::resample` function to resample the pixels in the `AI` raster to match the spatial resolution of `sm` pixels using `bilinear` interpolation.
+To explore the AI–SM relationship, first, we will resample the pixels in the `AI` raster to match the spatial resolution of `sm` pixels using the `terra::resample` function with `bilinear` interpolation method.
 This method estimates new cell values as a weighted-average values of the adjoining pixels.
-The weights are calculated according to the distance of the centriod of the target pixel from the adjoining cells.
-In addition to the `bilinear` approach, `terra::resample` has several interpolation methods available as options such as `near` (for nearest neighbor interpolation), `cubic`, `sum`, `min`, `max`, `average` , rms (root-mean square) etc.
+The weights are calculated according to the distance of the target pixel from the adjoining cells.
+In addition to the `bilinear` approach, `terra::resample` has several other interpolation methods available as options such as `near` (for nearest neighbor interpolation), `cubic`, `sum`, `min`, `max`, `average` , rms (root-mean square) etc.
 For more information on resampling methods within the context of remote sensing, please refer to [@SCHOWENGERDT2007285].
 
 Once `AI` raster is resamapled to match `sm`, we would then be able to generate scatter plots between the two rasters, and evaluate the relationship between aridity index (climate) and soil moisture.
-We see that the soil moisture increases as AI increases before reaching an asymptotic value as AI\>0.65 (humid climate, indicated by red vertical line in the plot).
+We see that the soil moisture increases as AI increases before reaching an asymptotic value as AI\>1 (humid climate, indicated by red vertical line in the plot).
 This relationship follows the famous Budyko formulation of energy and water limits on terrestrial water balance [@chen2020hydrological].
 For illustration, we use a simple formulation of Budyko curve to represent the non-linear interrelationship between AI and soil moisture given as:
 
@@ -82,24 +84,24 @@ $$
 ```{r 5a2, message = FALSE, warning = FALSE}
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif") 
 
-aridityResamp=terra::resample(AI,                # Raster to be resmapled
+AIResamp=terra::resample(AI,                # Raster to be resmapled
                               sm,                # Target resolution raster
                               method='bilinear') # bilinear interpolation method
 
 # Check the resolution of the aridity raster after resampling
-res(aridityResamp)
+res(AIResamp)
 
-plot(aridityResamp,sm , 
+plot(AIResamp,sm , 
      xlim=c(0,3), ylim=c(0,0.6),
      xlab="P/ET0", ylab="Soil Moisture", 
      pch=19)
 curve(x/((1+x)^1.5), col="blue",lwd=3, add = T)
-abline(v=0.65, col="red", lwd=3) 
+abline(v=1, col="red", lwd=3) 
 
 ```
 
-> **Food for thought**: Can we do this analysis had we used `AI` raster instead of `aridityResamp`?
-> What will be the output is we replace `aridityResamp` with `AI` in the code above.
+> **Food for thought**: Can we do this analysis had we used `AI` raster instead of `AIResamp`?
+> What will be the output is we replace `AIResamp` with `AI` in the code above.
 
 ### Aggregation and Disaggregation
 
@@ -137,9 +139,9 @@ plot(AIfine, main="Disggregated AI raster")
 
 ## Raster RATification
 
-In the AI plot above, we see the expected climate pattern for terrestrial landmass.
-The equatorial regions receive abundant precipitation, for example the Amazon forest and Southeast Asia, and have high aridity index values.
-Regions like Sahara desert, Central Australia, Western US are have hot and dry climate, and show low values of the aridity index.
+In the AI plot above, we see the expected climate pattern for the terrestrial landmass.
+The eastern U.S. receives abundant precipitation, and have high aridity index values.
+In contrast, Southwestern US have hot and dry climate, and show low values of the aridity index.
 However, in common use, we are more familiar with the use of generalized climate categories, and not a numerical index.
 For example, its easier to understand, compare and contrast the difference between the climate of Arizona and Louisiana in terms of "*arid*" versus "*humid*", than the respective AI values.
 
@@ -147,24 +149,24 @@ Such terms come from the United Nations Environment Program (UNEP, [@nash1999wor
 
 ![Table 1: Aridity Index based climate classes given by UNEP](images/clipboard-2676910344.png){width="300"}
 
-A discrete attribute table can be added to a raster which serves as a look-up reference for discrete classification of the continuous variable in the raster.
+An attribute table can be added to a raster which serves as a look-up reference for the discrete classification of the continuous variable in the raster.
 This process of adding a [**R**]{.underline}aster [**A**]{.underline}ttribute [**T**]{.underline}able to a raster is called raster **RAT**-ification.
 
-As an example, we will follow class breaks and names given in **Table 1** to add climate attribute to the `AI` raster.
-We will `cut` the pixel `values` of the AI raster into discrete classes and ass the attribute back to the original AI raster.
+As an example, we will follow class breaks and names given in **Table 1** to add a *climate* attribute to the `AI` raster.
+We will `cut` the pixel `values` of the AI raster into discrete classes and add the attribute table back to the original AI raster.
 
 ```{r 5a4, message = FALSE, warning = FALSE}
 # Import AI raster and remove negative fill value
 AI=terra::rast("./SampleData-master/raster_files/P_over_ET0.tif") 
 
-# Breaks for each climate class (Table 1)
+# Breaks for each climate class from Table 1
 class_brk= c(0, 0.03, 0.2, 0.5, 0.65, 10)                                
-# Labels for each climate class
+# Labels for each climate class from Table 1
 class_names=c("Hyper arid", "Arid", "Semi arid", 
               "Sub humid", "Humid")   
 
 # Divide the cell values in the AI raster into distinct levels
-attributes=base::cut(values(AI), # Notice that we apply cut after extracting raster values. 
+attributes=base::cut(values(AI), # Notice we apply cut on raster "values" 
                  breaks = class_brk,
                  labels =class_names )
 
@@ -176,15 +178,12 @@ plot(AI$climate,  plg = list(loc = "bottomleft"))
 ## Zonal Statistics
 
 Zonal statistics refers to estimate statistical measures of the cell values of a raster within the zones of another dataset (raster/vector).
-In the subsequent examples, we will use the aridity index raster to create a polygon, demarcating the spatial boundaries of different climate zones.
+In the subsequent examples, we will use the aridity index raster to create a polygon, demarcating the spatial boundaries of the discrete climate zones.
 We will then use these polygons to `extract` respective cell values and calculate zonal statistics for each climate.
 
 ### Zonal Statistics with Polygons
 
 #### Raster to Polygons
-
-Let's explore using a spatial polygon/shapefile for summarizing a raster (in this case, global SMAP soil moisture) by using `extract` function from the `terra` library.
-We will also transform the aridity raster to a polygon using the function `as.polygons` to find the mean soil moisture values for each aridity class.
 
 In the next example, we will convert the aridity raster into a polygon based on aridity classification using `terra::as.polygons` function.
 <br> We will use previously RATified the aridity index raster to generate polygons for the climate zones.
@@ -204,7 +203,7 @@ mapview(arid_poly)
 
 #### Value Extraction and Statistics
 
-Now we will use `terra::extract` function to extract the cell values of the soil moisture raster within each climate zone.
+Now we will use `terra::extract` function to extract the cell values of the soil moisture raster, `sm`, within each climate zone.
 We can then use `tapply` or the built-in `fun` option within `terra::extract` to calculate zonal statistics.
 
 ```{r 5a7, message = FALSE, warning = FALSE}
@@ -219,13 +218,13 @@ head(sm_climate_df)
 # Calculate group-wise AI 
 tapply(sm_climate_df$SMAP_SM,     # Column to be summarized
        sm_climate_df$ID,          # Grouping variable
-       median,                    # Function to use. User defined functions can be used too
+       median,          # Function to use. User defined functions can be used too
        na.rm = TRUE)              # Ignore NA values? yes! 
 
 # OR: We can specify the "fun" argument within terra::extract function
 sm_climate_median=terra::extract(sm,    # Raster to be summarized
                           arid_poly,    # Shapefile/ polygon to summarize the raster
-                          fun=median,   # Desired statistic: median, mean, sum, min and max, etc.? 
+                          fun=median,   # Statistic needed: median/mean/sum/min/max?
                           na.rm=TRUE)   # Ignore NA values? yes! 
 
 # The climate-wise median values are extracted as a dataframe
@@ -252,11 +251,16 @@ Can we make a similar conclusion as before?
 
 #### extract vs exact_extract
 
-This is a good point to learn about another excellent function for raster cell extraction from the `exactextractr` package, `exact_extract`.
-This function is computationally better than `terra::extract`, which will be evident when working with rasters with heavier size.
+This is a good time to learn about another excellent function for raster cell extraction from the `exactextractr` package, `exact_extract`.
+This function is computationally faster and efficient than `terra::extract`, which will be evident when working with rasters of large size.
 
-> **Remember**: `exactextractr::exact_extract` also outputs the fractional cell coverage of each pixel extracted.
-> For several analysis, this information may not be needed.
+> **Remember**:
+>
+> 1.  `exactextractr::exact_extract` also outputs the fractional cell coverage of each pixel extracted.
+>     For some analysis (including ours), this information may not be needed.
+>
+> 2.  `exact_extract` works on simple feature, `sf`, objects.
+>     So, we will use `st_as_sf` to convert `SpatVector` objects to `sf`.
 
 ```{r 5a8, message = FALSE, warning = FALSE}
 library(exactextractr)
@@ -265,11 +269,11 @@ library(sf)
 sm=terra::rast("./SampleData-master/raster_files/SMAP_SM.tif")
 
 zonal_extract=exactextractr::exact_extract(sm,  # Raster to be summarized
-                st_as_sf(arid_poly),          # Convert shapefile to sf (simple feature)
-                force_df = TRUE,             # Output as a data.frame?
-                include_xy = FALSE,           # Include cell lat-long in output?
-                fun = NULL,                   # Specify the function to apply for each feature extracted data
-                progress = TRUE)              # Progressbar
+                st_as_sf(arid_poly),    # Convert shapefile to sf (simple feature)
+                force_df = TRUE,        # Output as a data.frame?
+                include_xy = FALSE,     # Include cell lat-long in output?
+                fun = NULL,             # Specify the function to apply for each feature extracted data
+                progress = TRUE)        # Progressbar
 
 zonal_data=sapply(zonal_extract,"[[",1)  # Select only cell values (first column within each element of the list)
 
@@ -281,7 +285,7 @@ boxplot(zonal_data,
 
 #### User-defined functions for zonal statistics
 
-Cell value extraction for each zone can help a user to carry a diver set of analysis for each region using user defined function.
+Cell value extraction for each zone can help a user to carry a diverse set of analysis for each region using custom functions.
 Once the zonal cell values are extracted, vectorized application of user-defined function can be carried out on these datasets using `lapply` (list+apply) or `purrr::map` functions.
 
 ```{r 5a9, message = FALSE, warning = FALSE}
@@ -309,7 +313,7 @@ zonal_stat=lapply(zonal_data,myfun)           # Returns a list of zonal median
 #~~ Using purrr::map
 library(purrr)
 zonal_stat=purrr::map(zonal_data,~ myfun(.x)) # Returns a list of zonal median 
-zonal_stat=unlist(zonal_stat)               # Unlist to return a vector 
+zonal_stat=unlist(zonal_stat)                 # Unlist to return a vector 
 
 head(zonal_stat) # Is this the same as the previous result?
 ```
@@ -317,18 +321,36 @@ head(zonal_stat) # Is this the same as the previous result?
 ### Zonal Statistics with RATified Raster
 
 Rasters with discrete data groups can also be used to summarize other rasters.
-Here, we will use the RATified AI raster to extract cell values corresponding to each zone.
+Here, we will use the RATified aridity index raster to extract cell values corresponding to each climate zone.
 
 ```{r 5a10, message = FALSE, warning = FALSE}
-zonal_data=list()
-climate_num=as.numeric(AI$climate)
-climate_num=resample(climate_num,sm, method="near")
+zonal_data=list()                   # Create an empty list to store values
+climate_num=as.numeric(AI$climate)  # Convert climate class to numerical values
+climate_num=resample(climate_num,sm, method="near") # Resample to sm resolution 
 
 # Extract pixel values within each climate zone
-zonal_data=lapply(list(1,2,3,4,5),function(x) (na.omit((sm[climate_num==x]))))
+ZonalCells=function(x){
+  zonalCells=na.omit(sm[climate_num==x])
+  return(zonalCells)
+} 
+climate_zone_num=list(1,2,3,4,5)    # Store climate zone numbers as a list
+
+# Apply function using lapply 
+zonal_data=lapply(climate_zone_num,
+                  ZonalCells)
 
 # Calculate and store stats for each climate zone
-zonal_stat_list=lapply(list(1,2,3,4,5),function(x) (mean(sm[climate_num==x], na.rm=TRUE)))
+#~~ Custom function for zonal median
+zonalMean=function(x){
+  zonalCells=na.omit(sm[climate_num==x])
+  p=median(zonalCells, na.rm=TRUE)
+  return(p)
+} 
+climate_zone_num=list(1,2,3,4,5)    # Store climate zone numbers as a list
+zonal_stat_list=lapply(climate_zone_num,zonalMean)
+
+# Equivalent to:
+# zonal_stat_list=lapply(list(1,2,3,4,5),function(x) (median(sm[climate_num==x], na.rm=TRUE)))
 
 # lapply returns a list, so we unlist the output to get an array
 zonal_stat=unlist(zonal_stat_list)
@@ -339,7 +361,7 @@ plot(zonal_stat,
      ylab="Soil moisture",    # Y axis label
      type="b",                # line type
      col="blue",              # Line color
-     main="Climate-wise mean of surface soil moisture")
+     main="Climate-wise median of surface soil moisture")
 axis(1, at=1:5, labels=c("Hyper-arid", "Arid", "Semi-Arid","Sub-humid","Humid"))
 ```
 
