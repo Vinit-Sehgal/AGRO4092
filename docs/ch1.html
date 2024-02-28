@@ -182,7 +182,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Raster Resampling, RATification and Zonal Statistics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Spatial Operations on Rasters and Vectors</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -497,13 +497,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 28.72752 24.36753 24.97132 28.33293 25.18336 24.46416 28.01437 22.77461
- [9] 23.04377 24.81140 25.50075 20.49175 23.31216 22.09949 20.90853 25.75774
-[17] 29.63597 29.73883 29.68796 26.35019 22.78926 28.68461 24.85632 24.07891
-[25] 25.24850 25.98902 20.31475 27.58352 20.16079 27.75531 22.68557 21.92867
-[33] 23.75057 20.43459 27.63631 24.84853 20.65471 29.85343 28.70214 24.71415
-[41] 27.95273 21.94358 22.50306 25.48135 26.92947 26.02523 22.19784 20.63193
-[49] 29.83782 20.62135</code></pre>
+<pre><code> [1] 23.34808 22.60840 27.75600 25.10207 27.41353 20.70037 21.26572 24.66896
+ [9] 24.09896 27.64309 26.29410 29.15789 27.75933 23.81316 26.54938 26.97994
+[17] 21.96451 27.92273 27.42240 29.57656 25.54189 28.28742 22.11062 25.90967
+[25] 22.80239 26.19911 25.09312 27.58279 28.79487 25.79543 22.40386 26.35247
+[33] 23.35732 27.32145 28.10962 24.91716 25.37446 28.41098 28.32732 21.76062
+[41] 25.20083 24.17486 27.47194 24.64822 25.12180 23.45074 23.54012 20.17221
+[49] 25.65665 21.42465</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -856,12 +856,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913    19.0 Jan    -4.67
-2  1913    19.0 Feb   -18.3 
-3  1913    19.0 Mar    -9.67
-4  1914    64.3 Jan    -4.50
-5  1914    64.3 Feb   -16.6 
-6  1914    64.3 Mar   -13.8 </code></pre>
+1  1913    47.1 Jan    -9.03
+2  1913    47.1 Feb    -9.47
+3  1913    47.1 Mar   -11.5 
+4  1914    15.8 Jan    -3.56
+5  1914    15.8 Feb    -1.52
+6  1914    15.8 Mar    -4.72</code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>

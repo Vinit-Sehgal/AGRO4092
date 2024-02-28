@@ -6,9 +6,43 @@ editor:
     wrap: sentence
 ---
 
+## Meet the Data
+
+For this assessment, we will use Aridity index (AI), which is a popular metric for climate classification based on the relative availability of Mean Annual Precipitation (***P***) compared to the Mean Annual Reference Evapotranspiration (***ET~0~***) of a location.
+Aridity Index is defined as: $AI= P / ET_0$.
+Here, ***ET~0~*** is the maximum potential amount of moisture a hydrologic system can transfer to atmosphere through evaporation and transpiration.
+The value of $P / ET_0$ progressively increases from arid to humid regions.
+Since ***P*** and ***ET~0~*** can never be negative, AI is always \>0.
+We have access to CONUS-wide raster of aridity index estimates (i.e. P/ET~0~) provided by [@zomer2022version], at \~0.8X0.8 KM spatial resolution.
+
+Let us first start by downloading the sample data files (refer to previous chapters for the code).
+We will then import the raster and plot a histogram of the raster to understand the probability distribution of the AI values.
+Do we agree that most pixels in the raster range within 0-4?
+
+```{r 5a1, message = FALSE, warning = FALSE}
+library(terra)
+AI=terra::rast("./SampleData-master/raster_files/P_over_ET0.tif") 
+
+# Let us plot a histogram of the raster
+hist(AI, breaks=20, 
+     xlim=c(0,5), 
+     xlab="AI=P/ET0", 
+     ylab="Pixels", main="") 
+
+# We observe most values in the raster are <4. So, we set the range of the plot accordingly
+terra::plot(AI, main="AI=P/ET0", range=c(0,4))
+```
+
 ## Raster Resampling
 
-### Introduction
+We have so far worked with global surface soil moisture raster (from SMAP) and we are familiar with its spatial distribution across the globe.
+Now, let us consider this question:
+
+> [***How does the climate impact the spatial distribution of soil moisture?***]{.smallcaps}
+
+One approach of answering the question can be to compare pixel values of SMAP soil moisture with corresponding values of AI to establish the bivariate AI–SM relationship.
+So, we must first change the resolution of AI raster to match that of the SMAP soil moisture.
+For this, we will use *raster resampling*.
 
 Raster resampling simply refers to making changes to the pixel resolution of the raster.
 The term "resampling" implies that the pixel values are "sampled" and reassigned to the pixels at the new resolution.
@@ -27,42 +61,6 @@ The following schematic helps illustrate the use of these functions:
 ![](images/clipboard-2841574521.png){width="800"}
 
 ------------------------------------------------------------------------
-
-### Meet the Data
-
-We have so far worked with global surface soil moisture raster (from SMAP) and we are familiar with its spatial distribution across the globe.
-Now, let us consider this question:
-
-> [***How does the climate impact the spatial distribution of soil moisture?***]{.smallcaps}
-
-For this assessment, we will use Aridity index (AI), which is a popular metric for climate classification based on the relative availability of Mean Annual Precipitation (***P***) compared to the Mean Annual Reference Evapotranspiration (***ET~0~***) of a location.
-Aridity Index is defined as: $AI= P / ET_0$.
-Here, ***ET~0~*** is the maximum potential amount of moisture a hydrologic system can transfer to atmosphere through evaporation and transpiration.
-The value of $P / ET_0$ progressively increases from arid to humid regions.
-Since ***P*** and ***ET~0~*** can never be negative, AI is always \>0.
-We have access to CONUS-wide raster of aridity index estimates (i.e. P/ET~0~) provided by [@zomer2022version], at \~0.8X0.8 KM spatial resolution.
-
-One approach of answering the question can be to compare pixel values of SMAP soil moisture with corresponding values of AI to establish the bivariate AI–SM relationship.
-So, we must first change the resolution of AI raster to match that of the SMAP soil moisture.
-For this, we will use *raster resampling*.
-
-We will first import the raster and remove the negative fill values.
-We also plot a histogram of the raster to understand the probability distribution of the AI values.
-Do we agree that most pixels in the raster range within 0-4?
-
-```{r 5a1, message = FALSE, warning = FALSE}
-library(terra)
-AI=terra::rast("./SampleData-master/raster_files/P_over_ET0.tif") 
-
-# Let us plot a histogram of the raster
-hist(AI, breaks=20, 
-     xlim=c(0,5), 
-     xlab="AI=P/ET0", 
-     ylab="Pixels", main="") 
-
-# We observe most values in the raster are <4. So, we set the range of the plot accordingly
-terra::plot(AI, main="AI=P/ET0", range=c(0,4))
-```
 
 ### Why Resample?
 
@@ -251,7 +249,7 @@ AI_poly_south=terra::crop(arid_poly, south_vect)
 mapview(AI_poly_south)
 ```
 
-#### Value Extraction and Statistics
+#### Zonal Data Extraction and Statistics
 
 Now we will use `terra::extract` function to extract the cell values of the soil moisture raster, `sm`, within each climate zone.
 We can then use `tapply` or the built-in `fun` option within `terra::extract` to calculate zonal statistics.
@@ -333,7 +331,7 @@ boxplot(zonal_data,
         names=c("Hyper arid", "Arid", "Semi arid","Sub humid", "Humid")  )
 ```
 
-#### User-defined functions for zonal statistics
+#### User-defined Functions for Zonal Statistics
 
 Cell value extraction for each zone can help a user to carry a diverse set of analysis for each region using custom functions.
 Once the zonal cell values are extracted, vectorized application of user-defined function can be carried out on these datasets using `lapply` (list+apply) or `purrr::map` functions.
