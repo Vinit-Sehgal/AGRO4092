@@ -8,13 +8,15 @@ editor:
 
 ## Meet the Data
 
-For this assessment, we will use Aridity index (AI), which is a popular metric for climate classification based on the relative availability of Mean Annual Precipitation (***P***) compared to the Mean Annual Reference Evapotranspiration (***ET~0~***) of a location.
+For this chapter, we will use Aridity index (AI), which is a popular metric for climate classification based on the relative availability of Mean Annual Precipitation (***P***) compared to the Mean Annual Reference Evapotranspiration (***ET~0~***) of a location.
 Aridity Index is defined as: $AI= P / ET_0$.
 Here, ***ET~0~*** is the maximum potential amount of moisture a hydrologic system can transfer to atmosphere through evaporation and transpiration.
 The value of $P / ET_0$ progressively increases from arid to humid regions.
 Since ***P*** and ***ET~0~*** can never be negative, AI is always \>0.
-We have access to CONUS-wide raster of aridity index estimates (i.e. P/ET~0~) provided by [@zomer2022version], at \~0.8X0.8 KM spatial resolution.
 
+![Global Climate Classification Map Based on Aridity Index](images/clipboard-1114277511.png){fig-align="left" width="600"}
+
+For the purpose of this demonstration, we will use CONUS-wide raster of aridity index estimates (i.e. P/ET~0~) provided by [@zomer2022version], at \~0.8X0.8 KM spatial resolution.
 Let us first start by downloading the sample data files (refer to previous chapters for the code).
 We will then import the raster and plot a histogram of the raster to understand the probability distribution of the AI values.
 Do we agree that most pixels in the raster range within 0-4?

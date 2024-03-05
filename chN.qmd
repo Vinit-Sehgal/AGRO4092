@@ -6,11 +6,13 @@ editor:
     wrap: sentence
 ---
 
-**References**
+# Acknowledgement and References
 
-------------------------------------------------------------------------
+## Acknowledgement
 
-### References
+Special thanks to Debasish Mishra (Texas A&M University) for his contribution in the development of this resource.
+
+## References
 
 ::: {#refs}
 :::

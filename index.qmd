@@ -21,9 +21,9 @@ In this course, we equip ourselves with hands-on knowledge of accessing, analyzi
 
 -   Mapping and visualizing spatial datasets.
 
-The course will include the latest `R` tools for working with global Earth-observation datasets, such as from NASA’s `MODIS` and `SMAP` satellites. Basic operations of geospatial analysis such as (re)projection, (re)sampling, summary statistics, merge/join, and (re)shape will be covered. The students will be introduced to structured/layered spatial datasets such as NetCDF and HDF formats used in climate modeling. Special emphasis will be placed on applying available out-of-the-box parallel computing techniques for geospatial analysis available in `R`.
+The course will include the latest `R` tools for working with global Earth-observation datasets from several remote-sensing platforms, such as NASA’s `MODIS` and `SMAP`. Basic operations of geospatial analysis such as (re)projection, (re)sampling, summary statistics, merge/join, and (re)shape will be covered. The students will be introduced to structured/layered spatial datasets such as NetCDF and HDF formats used in climate modeling. Special emphasis will be placed on applying available out-of-the-box parallel computing techniques for geospatial analysis available in `R`.
 
-We will first start with a refresher of basic `R` programming in Module 1. In Module 2 and 3, we will explore spatial data visualization, before we learn about large-scale application of parallel computing for geospatial analysis.
+We will first start with a refresher of basic `R` programming in Chapter 1. In Chapter 2 and 3, we will explore spatial data visualization, before we learn about large-scale application of parallel computing for geospatial analysis.
 
 **Purpose of this document:**
 
