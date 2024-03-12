@@ -204,16 +204,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#open-data-user-interface" id="toc-open-data-user-interface" class="nav-link active" data-scroll-target="#open-data-user-interface"><span class="header-section-number">6.1</span> Open Data User Interface</a>
+  <li><a href="#popular-gridded-data-format" id="toc-popular-gridded-data-format" class="nav-link active" data-scroll-target="#popular-gridded-data-format"><span class="header-section-number">6.1</span> Popular Gridded Data Format</a></li>
+  <li><a href="#open-data-platforms" id="toc-open-data-platforms" class="nav-link" data-scroll-target="#open-data-platforms"><span class="header-section-number">6.2</span> Open-Data Platforms</a>
   <ul class="collapse">
-  <li><a href="#climate-data-from-noaa-physical-sciences-lab" id="toc-climate-data-from-noaa-physical-sciences-lab" class="nav-link" data-scroll-target="#climate-data-from-noaa-physical-sciences-lab"><span class="header-section-number">6.1.1</span> Climate Data from NOAA Physical Sciences Lab</a></li>
-  <li><a href="#chirps-global-precipitation-5-km-x-5km" id="toc-chirps-global-precipitation-5-km-x-5km" class="nav-link" data-scroll-target="#chirps-global-precipitation-5-km-x-5km"><span class="header-section-number">6.1.2</span> CHIRPS Global Precipitation [~5 km x 5km]</a></li>
-  <li><a href="#gimms-modis-global-ndvi-225-m-x-225-m" id="toc-gimms-modis-global-ndvi-225-m-x-225-m" class="nav-link" data-scroll-target="#gimms-modis-global-ndvi-225-m-x-225-m"><span class="header-section-number">6.1.3</span> GIMMS MODIS Global NDVI [~225 m x 225 m]</a></li>
-  <li><a href="#climate-prediction-center" id="toc-climate-prediction-center" class="nav-link" data-scroll-target="#climate-prediction-center"><span class="header-section-number">6.1.4</span> Climate Prediction Center</a></li>
-  <li><a href="#nasa-aρρeears" id="toc-nasa-aρρeears" class="nav-link" data-scroll-target="#nasa-aρρeears"><span class="header-section-number">6.1.5</span> <strong>NASA <em>A</em></strong><em>ρρ</em><strong>EEARS</strong></a></li>
-  <li><a href="#nasa-earth-data-search" id="toc-nasa-earth-data-search" class="nav-link" data-scroll-target="#nasa-earth-data-search"><span class="header-section-number">6.1.6</span> NASA Earth Data Search</a></li>
+  <li><a href="#climate-data-from-noaa-physical-sciences-lab" id="toc-climate-data-from-noaa-physical-sciences-lab" class="nav-link" data-scroll-target="#climate-data-from-noaa-physical-sciences-lab"><span class="header-section-number">6.2.1</span> Climate Data from NOAA Physical Sciences Lab</a></li>
+  <li><a href="#chirps-global-precipitation-5-km-x-5km" id="toc-chirps-global-precipitation-5-km-x-5km" class="nav-link" data-scroll-target="#chirps-global-precipitation-5-km-x-5km"><span class="header-section-number">6.2.2</span> CHIRPS Global Precipitation [~5 km x 5km]</a></li>
+  <li><a href="#gimms-modis-global-ndvi-225-m-x-225-m" id="toc-gimms-modis-global-ndvi-225-m-x-225-m" class="nav-link" data-scroll-target="#gimms-modis-global-ndvi-225-m-x-225-m"><span class="header-section-number">6.2.3</span> GIMMS MODIS Global NDVI [~225 m x 225 m]</a></li>
+  <li><a href="#climate-prediction-center" id="toc-climate-prediction-center" class="nav-link" data-scroll-target="#climate-prediction-center"><span class="header-section-number">6.2.4</span> Climate Prediction Center</a></li>
+  <li><a href="#nasa-aρρeears" id="toc-nasa-aρρeears" class="nav-link" data-scroll-target="#nasa-aρρeears"><span class="header-section-number">6.2.5</span> <strong>NASA <em>A</em></strong><em>ρρ</em><strong>EEARS</strong></a></li>
+  <li><a href="#nasa-earth-data-search" id="toc-nasa-earth-data-search" class="nav-link" data-scroll-target="#nasa-earth-data-search"><span class="header-section-number">6.2.6</span> NASA Earth Data Search</a></li>
   </ul></li>
-  <li><a href="#programmatic-data-acquisition" id="toc-programmatic-data-acquisition" class="nav-link" data-scroll-target="#programmatic-data-acquisition"><span class="header-section-number">6.2</span> Programmatic Data Acquisition</a></li>
+  <li><a href="#programmatic-data-acquisition" id="toc-programmatic-data-acquisition" class="nav-link" data-scroll-target="#programmatic-data-acquisition"><span class="header-section-number">6.3</span> Programmatic Data Acquisition</a>
+  <ul class="collapse">
+  <li><a href="#downloading-raster-files" id="toc-downloading-raster-files" class="nav-link" data-scroll-target="#downloading-raster-files"><span class="header-section-number">6.3.1</span> Downloading Raster files</a></li>
+  <li><a href="#downloading-netcdf" id="toc-downloading-netcdf" class="nav-link" data-scroll-target="#downloading-netcdf"><span class="header-section-number">6.3.2</span> Downloading netCDF</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -223,23 +228,48 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="open-data-user-interface" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="open-data-user-interface"><span class="header-section-number">6.1</span> Open Data User Interface</h2>
-<section id="climate-data-from-noaa-physical-sciences-lab" class="level3" data-number="6.1.1">
-<h3 data-number="6.1.1" class="anchored" data-anchor-id="climate-data-from-noaa-physical-sciences-lab"><span class="header-section-number">6.1.1</span> Climate Data from NOAA Physical Sciences Lab</h3>
+<section id="popular-gridded-data-format" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="popular-gridded-data-format"><span class="header-section-number">6.1</span> Popular Gridded Data Format</h2>
+<p>Raster and netCDF are two popular formats used for gridded climate data dissemination and archiving.</p>
+<p>We are all too familiar with the raster format (pixelated, georeferenced data) from the previous chapters. NetCDF (Network Common Data Form), is a common data type for multi-layered, structured, gridded dataset. NetCDF is a machine-independent data format and is a community standard for sharing scientific data.&nbsp; A netCDF has certain features which makes it suitable for complex scientific data archiving and sharing, namely,</p>
+<div>
+<blockquote class="blockquote">
+<ul>
+<li><p><em>Self-Describing</em>. A netCDF file includes information about the data it contains.</p></li>
+<li><p><em>Portable</em>. A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.</p></li>
+<li><p><em>Scalable</em>. A small subset of a large dataset may be accessed efficiently.</p></li>
+<li><p><em>Appendable</em>. Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.</p></li>
+<li><p><em>Shareable</em>. One writer and multiple readers may simultaneously access the same netCDF file.</p></li>
+<li><p><em>Archivable</em>. Access to all earlier forms of netCDF data will be supported by current and future versions of the software.</p>
+<p>- From [Unidata | NetCDF (ucar.edu) <a href="https://www.unidata.ucar.edu/software/netcdf/" class="uri">https://www.unidata.ucar.edu/software/netcdf/</a>]</p></li>
+</ul>
+</blockquote>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-628643623.png" class="img-fluid figure-img" width="750"></p>
+<figcaption class="figure-caption">Two widely used formats for gridded climate data storage and dissemination: (<em>Left</em>) Raster and (<em>Right)</em> netCDF</figcaption>
+</figure>
+</div>
+<p>Several open-source plaforms and agencies provide open access to a multitude of gridded land and climate datasets generated using satellites and land-surface/ climate models. In the following sections, we will familiarize ourselves with some of these resources.</p>
+</section>
+<section id="open-data-platforms" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="open-data-platforms"><span class="header-section-number">6.2</span> Open-Data Platforms</h2>
+<section id="climate-data-from-noaa-physical-sciences-lab" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="climate-data-from-noaa-physical-sciences-lab"><span class="header-section-number">6.2.1</span> Climate Data from NOAA Physical Sciences Lab</h3>
 <ul>
 <li>Product overview / Data access/ Information: <a href="https://psl.noaa.gov/data/gridded/tables/daily.html" class="uri">https://psl.noaa.gov/data/gridded/tables/daily.html</a></li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="https://psl.noaa.gov/data/gridded/tables/daily.html"><img src="images/clipboard-3047835026.png" class="img-fluid figure-img" width="750"></a></p>
-<figcaption class="figure-caption">A snapshot of NOAA’s Physical Sciences Lab’s portal for gridded climate data access.</figcaption>
+<figcaption class="figure-caption">A snapshot of NOAA’s Physical Sciences Lab’s portal for gridded climate data access</figcaption>
 </figure>
 </div>
 <p>This website provides several land and climate variables such as: CPC Global Unified Gauge-Based Analysis of Daily Precipitation, CPC Global Temperature, NCEP/NCAR Reanalysis, Livneh daily CONUS near-surface gridded meteorological and derived hydrometeorological data</p>
 </section>
-<section id="chirps-global-precipitation-5-km-x-5km" class="level3" data-number="6.1.2">
-<h3 data-number="6.1.2" class="anchored" data-anchor-id="chirps-global-precipitation-5-km-x-5km"><span class="header-section-number">6.1.2</span> CHIRPS Global Precipitation [~5 km x 5km]</h3>
+<section id="chirps-global-precipitation-5-km-x-5km" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="chirps-global-precipitation-5-km-x-5km"><span class="header-section-number">6.2.2</span> CHIRPS Global Precipitation [~5 km x 5km]</h3>
 <ul>
 <li><p>Product overview: <a href="https://climatedataguide.ucar.edu/climate-data/chirps-climate-hazards-infrared-precipitation-station-data-version-2" class="uri">https://climatedataguide.ucar.edu/climate-data/chirps-climate-hazards-infrared-precipitation-station-data-version-2</a></p></li>
 <li><p>Data access: <a href="https://data.chc.ucsb.edu/products/CHIRPS-2.0/" class="uri">https://data.chc.ucsb.edu/products/CHIRPS-2.0/</a></p></li>
@@ -252,8 +282,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </section>
-<section id="gimms-modis-global-ndvi-225-m-x-225-m" class="level3" data-number="6.1.3">
-<h3 data-number="6.1.3" class="anchored" data-anchor-id="gimms-modis-global-ndvi-225-m-x-225-m"><span class="header-section-number">6.1.3</span> GIMMS MODIS Global NDVI [~225 m x 225 m]</h3>
+<section id="gimms-modis-global-ndvi-225-m-x-225-m" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="gimms-modis-global-ndvi-225-m-x-225-m"><span class="header-section-number">6.2.3</span> GIMMS MODIS Global NDVI [~225 m x 225 m]</h3>
 <ul>
 <li><p>Product overview: <a href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD13Q1" class="uri">https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD13Q1</a></p></li>
 <li><p>Data access: <a href="https://gimms.gsfc.nasa.gov/MODIS/" class="uri">https://gimms.gsfc.nasa.gov/MODIS/</a></p></li>
@@ -266,8 +296,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </section>
-<section id="climate-prediction-center" class="level3" data-number="6.1.4">
-<h3 data-number="6.1.4" class="anchored" data-anchor-id="climate-prediction-center"><span class="header-section-number">6.1.4</span> Climate Prediction Center</h3>
+<section id="climate-prediction-center" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="climate-prediction-center"><span class="header-section-number">6.2.4</span> Climate Prediction Center</h3>
 <ul>
 <li>Product overview / Data access/ Information: <a href="https://ftp.cpc.ncep.noaa.gov/GIS/" class="uri">https://ftp.cpc.ncep.noaa.gov/GIS/</a></li>
 </ul>
@@ -285,8 +315,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Input variables for US Drought Monitor (USDM)</p></li>
 </ul>
 </section>
-<section id="nasa-aρρeears" class="level3" data-number="6.1.5">
-<h3 data-number="6.1.5" class="anchored" data-anchor-id="nasa-aρρeears"><span class="header-section-number">6.1.5</span> <strong>NASA <em>A</em></strong><em>ρρ</em><strong>EEARS</strong></h3>
+<section id="nasa-aρρeears" class="level3" data-number="6.2.5">
+<h3 data-number="6.2.5" class="anchored" data-anchor-id="nasa-aρρeears"><span class="header-section-number">6.2.5</span> <strong>NASA <em>A</em></strong><em>ρρ</em><strong>EEARS</strong></h3>
 <ul>
 <li>Product overview / Data access/ Information: <a href="https://appeears.earthdatacloud.nasa.gov/" class="uri">https://appeears.earthdatacloud.nasa.gov/</a></li>
 </ul>
@@ -310,8 +340,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </section>
-<section id="nasa-earth-data-search" class="level3" data-number="6.1.6">
-<h3 data-number="6.1.6" class="anchored" data-anchor-id="nasa-earth-data-search"><span class="header-section-number">6.1.6</span> NASA Earth Data Search</h3>
+<section id="nasa-earth-data-search" class="level3" data-number="6.2.6">
+<h3 data-number="6.2.6" class="anchored" data-anchor-id="nasa-earth-data-search"><span class="header-section-number">6.2.6</span> NASA Earth Data Search</h3>
 <ul>
 <li>Product overview / Data access/ Information: <a href="https://search.earthdata.nasa.gov/search" class="uri">https://search.earthdata.nasa.gov/search</a></li>
 </ul>
@@ -321,8 +351,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <figcaption class="figure-caption">Earth Data Search application interface</figcaption>
 </figure>
 </div>
-<section id="bulk-download-order" class="level4" data-number="6.1.6.1">
-<h4 data-number="6.1.6.1" class="anchored" data-anchor-id="bulk-download-order"><span class="header-section-number">6.1.6.1</span> Bulk Download Order</h4>
+<section id="bulk-download-order" class="level4" data-number="6.2.6.1">
+<h4 data-number="6.2.6.1" class="anchored" data-anchor-id="bulk-download-order"><span class="header-section-number">6.2.6.1</span> Bulk Download Order</h4>
 <p>NASA Earth Data provides customization options for bulk data download. Lets say we are interested in downloading global SMAP Level 3 soil moisture. We start by selecting the product, and specify start/ end date as needed.</p>
 <ol type="1">
 <li><div>
@@ -378,30 +408,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 </section>
-<section id="programmatic-data-acquisition" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="programmatic-data-acquisition"><span class="header-section-number">6.2</span> Programmatic Data Acquisition</h2>
+<section id="programmatic-data-acquisition" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="programmatic-data-acquisition"><span class="header-section-number">6.3</span> Programmatic Data Acquisition</h2>
 <p>In the HTTP, FTP or HTP links provided before, one can download a file by clicking on the individual hyperlink. Alternatively, we can use <code>download.file</code> function to download the file programmatically in R. This help us by opening the path to automate download and processing of multiple files with minimal supervision.</p>
-<p>Raster and netCDF are two popular formats of gridded climate data dissemination and archiving. NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. It is also a community standard for sharing scientific data [Unidata | NetCDF (ucar.edu) <a href="https://www.unidata.ucar.edu/software/netcdf/" class="uri">https://www.unidata.ucar.edu/software/netcdf/</a>].&nbsp; To be in a NetCDF format, the dataset must be:</p>
-<div>
-<blockquote class="blockquote">
-<ul>
-<li><p><em>Self-Describing</em>. A netCDF file includes information about the data it contains.</p></li>
-<li><p><em>Portable</em>. A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.</p></li>
-<li><p><em>Scalable</em>. A small subset of a large dataset may be accessed efficiently.</p></li>
-<li><p><em>Appendable</em>. Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.</p></li>
-<li><p><em>Shareable</em>. One writer and multiple readers may simultaneously access the same netCDF file.</p></li>
-<li><p><em>Archivable</em>. Access to all earlier forms of netCDF data will be supported by current and future versions of the software.</p></li>
-</ul>
-</blockquote>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/clipboard-2422944132.png" class="img-fluid figure-img" width="750"></p>
-<figcaption class="figure-caption">Two widely used formats of gridded climate data type</figcaption>
-</figure>
-</div>
-<section id="downloading-raster-files" class="level4" data-number="6.2.0.1">
-<h4 data-number="6.2.0.1" class="anchored" data-anchor-id="downloading-raster-files"><span class="header-section-number">6.2.0.1</span> Downloading Raster files</h4>
+<section id="downloading-raster-files" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="downloading-raster-files"><span class="header-section-number">6.3.1</span> Downloading Raster files</h3>
 <p>Let us take an example of <code>us_tmax</code> data available at: <u>https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/</u></p>
 <p>Right-click on the raster file for 20240218, and copy the file path. We will then use this link to access the files programmatically using <em>Client URL</em>, or <em>cURL</em> - a utility for transferring data between systems. We will download the raster using <code>download.file</code> to local disk, and saved with a uder-defined name <code>tmax_20240218.tif</code>.</p>
 <p><img src="images/clipboard-4016904923.png" class="img-fluid" width="450"></p>
@@ -478,8 +489,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(loc, <span class="st">"df_with_temp.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="downloading-netcdf" class="level4" data-number="6.2.0.2">
-<h4 data-number="6.2.0.2" class="anchored" data-anchor-id="downloading-netcdf"><span class="header-section-number">6.2.0.2</span> Downloading netCDF</h4>
+<section id="downloading-netcdf" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="downloading-netcdf"><span class="header-section-number">6.3.2</span> Downloading netCDF</h3>
 <p>We will now download a netCDF of global daily precipitation for the year 2023 from CHIRPS, accessible through the link: <u>https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc</u></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copied path of the raster</span></span>

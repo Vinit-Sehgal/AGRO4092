@@ -6,13 +6,51 @@ editor:
     wrap: sentence
 ---
 
-## Open Data User Interface
+## Popular Gridded Data Format
+
+Raster and netCDF are two popular formats used for gridded climate data dissemination and archiving.
+
+We are all too familiar with the raster format (pixelated, georeferenced data) from the previous chapters.
+NetCDF (Network Common Data Form), is a common data type for multi-layered, structured, gridded dataset.
+NetCDF is a machine-independent data format and is a community standard for sharing scientific data. 
+A netCDF has certain features which makes it suitable for complex scientific data archiving and sharing, namely,
+
+<div>
+
+> -   *Self-Describing*.
+>     A netCDF file includes information about the data it contains.
+>
+> -   *Portable*.
+>     A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.
+>
+> -   *Scalable*.
+>     A small subset of a large dataset may be accessed efficiently.
+>
+> -   *Appendable*.
+>     Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.
+>
+> -   *Shareable*.
+>     One writer and multiple readers may simultaneously access the same netCDF file.
+>
+> -   *Archivable*.
+>     Access to all earlier forms of netCDF data will be supported by current and future versions of the software.
+>
+>     \- From \[Unidata \| NetCDF (ucar.edu) <https://www.unidata.ucar.edu/software/netcdf/>\]
+
+</div>
+
+![Two widely used formats for gridded climate data storage and dissemination: (*Left*) Raster and (*Right)* netCDF](images/clipboard-628643623.png){width="750"}
+
+Several open-source plaforms and agencies provide open access to a multitude of gridded land and climate datasets generated using satellites and land-surface/ climate models.
+In the following sections, we will familiarize ourselves with some of these resources.
+
+## Open-Data Platforms
 
 ### Climate Data from NOAA Physical Sciences Lab
 
 -   Product overview / Data access/ Information: <https://psl.noaa.gov/data/gridded/tables/daily.html>
 
-[![A snapshot of NOAA's Physical Sciences Lab's portal for gridded climate data access.](images/clipboard-3047835026.png){width="750"}](https://psl.noaa.gov/data/gridded/tables/daily.html)
+[![A snapshot of NOAA's Physical Sciences Lab's portal for gridded climate data access](images/clipboard-3047835026.png){width="750"}](https://psl.noaa.gov/data/gridded/tables/daily.html)
 
 This website provides several land and climate variables such as: CPC Global Unified Gauge-Based Analysis of Daily Precipitation, CPC Global Temperature, NCEP/NCAR Reanalysis, Livneh daily CONUS near-surface gridded meteorological and derived hydrometeorological data
 
@@ -121,36 +159,7 @@ In the HTTP, FTP or HTP links provided before, one can download a file by clicki
 Alternatively, we can use `download.file` function to download the file programmatically in R.
 This help us by opening the path to automate download and processing of multiple files with minimal supervision.
 
-Raster and netCDF are two popular formats of gridded climate data dissemination and archiving.
-NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data.
-It is also a community standard for sharing scientific data \[Unidata \| NetCDF (ucar.edu) <https://www.unidata.ucar.edu/software/netcdf/>\]. 
-To be in a NetCDF format, the dataset must be:
-
-<div>
-
-> -   *Self-Describing*.
->     A netCDF file includes information about the data it contains.
->
-> -   *Portable*.
->     A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.
->
-> -   *Scalable*.
->     A small subset of a large dataset may be accessed efficiently.
->
-> -   *Appendable*.
->     Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.
->
-> -   *Shareable*.
->     One writer and multiple readers may simultaneously access the same netCDF file.
->
-> -   *Archivable*.
->     Access to all earlier forms of netCDF data will be supported by current and future versions of the software.
-
-</div>
-
-![Two widely used formats of gridded climate data type](images/clipboard-2422944132.png){width="750"}
-
-#### Downloading Raster files
+### Downloading Raster files
 
 Let us take an example of `us_tmax` data available at: [https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/]{.underline}
 
@@ -207,7 +216,7 @@ print(loc)
 write.csv(loc, "df_with_temp.csv")
 ```
 
-#### Downloading netCDF
+### Downloading netCDF
 
 We will now download a netCDF of global daily precipitation for the year 2023 from CHIRPS, accessible through the link: [https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc]{.underline}
 

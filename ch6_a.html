@@ -79,8 +79,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="open-data-user-interface" class="level2">
-<h2 class="anchored" data-anchor-id="open-data-user-interface">Open Data User Interface</h2>
+<section id="popular-gridded-data-format" class="level2">
+<h2 class="anchored" data-anchor-id="popular-gridded-data-format">Popular Gridded Data Format</h2>
+<p>Raster and netCDF are two popular formats used for gridded climate data dissemination and archiving.</p>
+<p>We are all too familiar with the raster format (pixelated, georeferenced data) from the previous chapters. NetCDF (Network Common Data Form), is a common data type for multi-layered, structured, gridded dataset. NetCDF is a machine-independent data format and is a community standard for sharing scientific data.&nbsp; A netCDF has certain features which makes it suitable for complex scientific data archiving and sharing, namely,</p>
+<div>
+<blockquote class="blockquote">
+<ul>
+<li><p><em>Self-Describing</em>. A netCDF file includes information about the data it contains.</p></li>
+<li><p><em>Portable</em>. A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.</p></li>
+<li><p><em>Scalable</em>. A small subset of a large dataset may be accessed efficiently.</p></li>
+<li><p><em>Appendable</em>. Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.</p></li>
+<li><p><em>Shareable</em>. One writer and multiple readers may simultaneously access the same netCDF file.</p></li>
+<li><p><em>Archivable</em>. Access to all earlier forms of netCDF data will be supported by current and future versions of the software.</p>
+<p>- From [Unidata | NetCDF (ucar.edu) <a href="https://www.unidata.ucar.edu/software/netcdf/" class="uri">https://www.unidata.ucar.edu/software/netcdf/</a>]</p></li>
+</ul>
+</blockquote>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-628643623.png" class="img-fluid figure-img" width="750"></p>
+<figcaption class="figure-caption">Two widely used formats for gridded climate data storage and dissemination: (<em>Left</em>) Raster and (<em>Right)</em> netCDF</figcaption>
+</figure>
+</div>
+<p>Several open-source plaforms and agencies provide open access to a multitude of gridded land and climate datasets generated using satellites and land-surface/ climate models. In the following sections, we will familiarize ourselves with some of these resources.</p>
+</section>
+<section id="open-data-platforms" class="level2">
+<h2 class="anchored" data-anchor-id="open-data-platforms">Open-Data Platforms</h2>
 <section id="climate-data-from-noaa-physical-sciences-lab" class="level3">
 <h3 class="anchored" data-anchor-id="climate-data-from-noaa-physical-sciences-lab">Climate Data from NOAA Physical Sciences Lab</h3>
 <ul>
@@ -89,7 +114,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="https://psl.noaa.gov/data/gridded/tables/daily.html"><img src="images/clipboard-3047835026.png" class="img-fluid figure-img" width="750"></a></p>
-<figcaption class="figure-caption">A snapshot of NOAA’s Physical Sciences Lab’s portal for gridded climate data access.</figcaption>
+<figcaption class="figure-caption">A snapshot of NOAA’s Physical Sciences Lab’s portal for gridded climate data access</figcaption>
 </figure>
 </div>
 <p>This website provides several land and climate variables such as: CPC Global Unified Gauge-Based Analysis of Daily Precipitation, CPC Global Temperature, NCEP/NCAR Reanalysis, Livneh daily CONUS near-surface gridded meteorological and derived hydrometeorological data</p>
@@ -236,9 +261,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="programmatic-data-acquisition" class="level2">
 <h2 class="anchored" data-anchor-id="programmatic-data-acquisition">Programmatic Data Acquisition</h2>
-<p>In the HTTP/ FTP or HTP servers avove, we can download a file by clicking on the individual file. Alternatively, we can use <code>download.file</code> function to download the file. This help us by opening the path to automate download and processing of multiple files with minimal supervision.</p>
-<section id="raster-files" class="level4">
-<h4 class="anchored" data-anchor-id="raster-files">Raster files</h4>
+<p>In the HTTP, FTP or HTP links provided before, one can download a file by clicking on the individual hyperlink. Alternatively, we can use <code>download.file</code> function to download the file programmatically in R. This help us by opening the path to automate download and processing of multiple files with minimal supervision.</p>
+<section id="downloading-raster-files" class="level3">
+<h3 class="anchored" data-anchor-id="downloading-raster-files">Downloading Raster files</h3>
 <p>Let us take an example of <code>us_tmax</code> data available at: <u>https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/</u></p>
 <p>Right-click on the raster file for 20240218, and copy the file path. We will then use this link to access the files programmatically using <em>Client URL</em>, or <em>cURL</em> - a utility for transferring data between systems. We will download the raster using <code>download.file</code> to local disk, and saved with a uder-defined name <code>tmax_20240218.tif</code>.</p>
 <p><img src="images/clipboard-4016904923.png" class="img-fluid" width="450"></p>
@@ -315,24 +340,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(loc, <span class="st">"df_with_temp.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="netcdf" class="level4">
-<h4 class="anchored" data-anchor-id="netcdf">NetCDF</h4>
-<p>NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. It is also a community standard for sharing scientific data [Unidata | NetCDF (ucar.edu) <a href="https://www.unidata.ucar.edu/software/netcdf/" class="uri">https://www.unidata.ucar.edu/software/netcdf/</a>].&nbsp; To be in a NetCDF format, the dataset must be:</p>
-<ul>
-<li><div>
-<blockquote class="blockquote">
-<ul>
-<li><p><em>Self-Describing</em>. A netCDF file includes information about the data it contains.</p></li>
-<li><p><em>Portable</em>. A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.</p></li>
-<li><p><em>Scalable</em>. A small subset of a large dataset may be accessed efficiently.</p></li>
-<li><p><em>Appendable</em>. Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.</p></li>
-<li><p><em>Shareable</em>. One writer and multiple readers may simultaneously access the same netCDF file.</p></li>
-<li><p><em>Archivable</em>. Access to all earlier forms of netCDF data will be supported by current and future versions of the software.</p></li>
-</ul>
-</blockquote>
-</div></li>
-</ul>
-<p>We will now download a NetCDF of global daily precipitation for the year 2023 from CHIRPS, accessible through the link: <u>https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc</u></p>
+<section id="downloading-netcdf" class="level3">
+<h3 class="anchored" data-anchor-id="downloading-netcdf">Downloading netCDF</h3>
+<p>We will now download a netCDF of global daily precipitation for the year 2023 from CHIRPS, accessible through the link: <u>https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc</u></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copied path of the raster</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="st">"https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc"</span></span>
@@ -362,81 +372,10 @@ names       : precip_1, precip_2, precip_3, precip_4, precip_5, precip_6, ...
 unit        :   mm/day,   mm/day,   mm/day,   mm/day,   mm/day,   mm/day, ... 
 time (days) : 2023-01-01 to 2023-12-31 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">time</span>(pcp)  <span class="co"># time variable in the netCDF indicating corresponding time of acquisition</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">time</span>(pcp))  <span class="co"># time variable in the netCDF indicating corresponding time of acquisition</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  [1] "2023-01-01" "2023-01-02" "2023-01-03" "2023-01-04" "2023-01-05"
-  [6] "2023-01-06" "2023-01-07" "2023-01-08" "2023-01-09" "2023-01-10"
- [11] "2023-01-11" "2023-01-12" "2023-01-13" "2023-01-14" "2023-01-15"
- [16] "2023-01-16" "2023-01-17" "2023-01-18" "2023-01-19" "2023-01-20"
- [21] "2023-01-21" "2023-01-22" "2023-01-23" "2023-01-24" "2023-01-25"
- [26] "2023-01-26" "2023-01-27" "2023-01-28" "2023-01-29" "2023-01-30"
- [31] "2023-01-31" "2023-02-01" "2023-02-02" "2023-02-03" "2023-02-04"
- [36] "2023-02-05" "2023-02-06" "2023-02-07" "2023-02-08" "2023-02-09"
- [41] "2023-02-10" "2023-02-11" "2023-02-12" "2023-02-13" "2023-02-14"
- [46] "2023-02-15" "2023-02-16" "2023-02-17" "2023-02-18" "2023-02-19"
- [51] "2023-02-20" "2023-02-21" "2023-02-22" "2023-02-23" "2023-02-24"
- [56] "2023-02-25" "2023-02-26" "2023-02-27" "2023-02-28" "2023-03-01"
- [61] "2023-03-02" "2023-03-03" "2023-03-04" "2023-03-05" "2023-03-06"
- [66] "2023-03-07" "2023-03-08" "2023-03-09" "2023-03-10" "2023-03-11"
- [71] "2023-03-12" "2023-03-13" "2023-03-14" "2023-03-15" "2023-03-16"
- [76] "2023-03-17" "2023-03-18" "2023-03-19" "2023-03-20" "2023-03-21"
- [81] "2023-03-22" "2023-03-23" "2023-03-24" "2023-03-25" "2023-03-26"
- [86] "2023-03-27" "2023-03-28" "2023-03-29" "2023-03-30" "2023-03-31"
- [91] "2023-04-01" "2023-04-02" "2023-04-03" "2023-04-04" "2023-04-05"
- [96] "2023-04-06" "2023-04-07" "2023-04-08" "2023-04-09" "2023-04-10"
-[101] "2023-04-11" "2023-04-12" "2023-04-13" "2023-04-14" "2023-04-15"
-[106] "2023-04-16" "2023-04-17" "2023-04-18" "2023-04-19" "2023-04-20"
-[111] "2023-04-21" "2023-04-22" "2023-04-23" "2023-04-24" "2023-04-25"
-[116] "2023-04-26" "2023-04-27" "2023-04-28" "2023-04-29" "2023-04-30"
-[121] "2023-05-01" "2023-05-02" "2023-05-03" "2023-05-04" "2023-05-05"
-[126] "2023-05-06" "2023-05-07" "2023-05-08" "2023-05-09" "2023-05-10"
-[131] "2023-05-11" "2023-05-12" "2023-05-13" "2023-05-14" "2023-05-15"
-[136] "2023-05-16" "2023-05-17" "2023-05-18" "2023-05-19" "2023-05-20"
-[141] "2023-05-21" "2023-05-22" "2023-05-23" "2023-05-24" "2023-05-25"
-[146] "2023-05-26" "2023-05-27" "2023-05-28" "2023-05-29" "2023-05-30"
-[151] "2023-05-31" "2023-06-01" "2023-06-02" "2023-06-03" "2023-06-04"
-[156] "2023-06-05" "2023-06-06" "2023-06-07" "2023-06-08" "2023-06-09"
-[161] "2023-06-10" "2023-06-11" "2023-06-12" "2023-06-13" "2023-06-14"
-[166] "2023-06-15" "2023-06-16" "2023-06-17" "2023-06-18" "2023-06-19"
-[171] "2023-06-20" "2023-06-21" "2023-06-22" "2023-06-23" "2023-06-24"
-[176] "2023-06-25" "2023-06-26" "2023-06-27" "2023-06-28" "2023-06-29"
-[181] "2023-06-30" "2023-07-01" "2023-07-02" "2023-07-03" "2023-07-04"
-[186] "2023-07-05" "2023-07-06" "2023-07-07" "2023-07-08" "2023-07-09"
-[191] "2023-07-10" "2023-07-11" "2023-07-12" "2023-07-13" "2023-07-14"
-[196] "2023-07-15" "2023-07-16" "2023-07-17" "2023-07-18" "2023-07-19"
-[201] "2023-07-20" "2023-07-21" "2023-07-22" "2023-07-23" "2023-07-24"
-[206] "2023-07-25" "2023-07-26" "2023-07-27" "2023-07-28" "2023-07-29"
-[211] "2023-07-30" "2023-07-31" "2023-08-01" "2023-08-02" "2023-08-03"
-[216] "2023-08-04" "2023-08-05" "2023-08-06" "2023-08-07" "2023-08-08"
-[221] "2023-08-09" "2023-08-10" "2023-08-11" "2023-08-12" "2023-08-13"
-[226] "2023-08-14" "2023-08-15" "2023-08-16" "2023-08-17" "2023-08-18"
-[231] "2023-08-19" "2023-08-20" "2023-08-21" "2023-08-22" "2023-08-23"
-[236] "2023-08-24" "2023-08-25" "2023-08-26" "2023-08-27" "2023-08-28"
-[241] "2023-08-29" "2023-08-30" "2023-08-31" "2023-09-01" "2023-09-02"
-[246] "2023-09-03" "2023-09-04" "2023-09-05" "2023-09-06" "2023-09-07"
-[251] "2023-09-08" "2023-09-09" "2023-09-10" "2023-09-11" "2023-09-12"
-[256] "2023-09-13" "2023-09-14" "2023-09-15" "2023-09-16" "2023-09-17"
-[261] "2023-09-18" "2023-09-19" "2023-09-20" "2023-09-21" "2023-09-22"
-[266] "2023-09-23" "2023-09-24" "2023-09-25" "2023-09-26" "2023-09-27"
-[271] "2023-09-28" "2023-09-29" "2023-09-30" "2023-10-01" "2023-10-02"
-[276] "2023-10-03" "2023-10-04" "2023-10-05" "2023-10-06" "2023-10-07"
-[281] "2023-10-08" "2023-10-09" "2023-10-10" "2023-10-11" "2023-10-12"
-[286] "2023-10-13" "2023-10-14" "2023-10-15" "2023-10-16" "2023-10-17"
-[291] "2023-10-18" "2023-10-19" "2023-10-20" "2023-10-21" "2023-10-22"
-[296] "2023-10-23" "2023-10-24" "2023-10-25" "2023-10-26" "2023-10-27"
-[301] "2023-10-28" "2023-10-29" "2023-10-30" "2023-10-31" "2023-11-01"
-[306] "2023-11-02" "2023-11-03" "2023-11-04" "2023-11-05" "2023-11-06"
-[311] "2023-11-07" "2023-11-08" "2023-11-09" "2023-11-10" "2023-11-11"
-[316] "2023-11-12" "2023-11-13" "2023-11-14" "2023-11-15" "2023-11-16"
-[321] "2023-11-17" "2023-11-18" "2023-11-19" "2023-11-20" "2023-11-21"
-[326] "2023-11-22" "2023-11-23" "2023-11-24" "2023-11-25" "2023-11-26"
-[331] "2023-11-27" "2023-11-28" "2023-11-29" "2023-11-30" "2023-12-01"
-[336] "2023-12-02" "2023-12-03" "2023-12-04" "2023-12-05" "2023-12-06"
-[341] "2023-12-07" "2023-12-08" "2023-12-09" "2023-12-10" "2023-12-11"
-[346] "2023-12-12" "2023-12-13" "2023-12-14" "2023-12-15" "2023-12-16"
-[351] "2023-12-17" "2023-12-18" "2023-12-19" "2023-12-20" "2023-12-21"
-[356] "2023-12-22" "2023-12-23" "2023-12-24" "2023-12-25" "2023-12-26"
-[361] "2023-12-27" "2023-12-28" "2023-12-29" "2023-12-30" "2023-12-31"</code></pre>
+<pre><code>[1] "2023-01-01" "2023-01-02" "2023-01-03" "2023-01-04" "2023-01-05"
+[6] "2023-01-06"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>worldSHP<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">vect</span>(spData<span class="sc">::</span>world)    <span class="co"># Shapefile for CONUS</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -478,16 +417,12 @@ time (days) : 2023-01-01 to 2023-12-31 </code></pre>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                       latlon,               <span class="co">#2-column matrix or data.frame with lat-long</span></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">method=</span><span class="st">'bilinear'</span>)    <span class="co"># Use bilinear interpolation (or ngb) option</span></span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># View data sample</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>loc_pcp[,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>] <span class="co"># View(loc_pcp)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>loc_pcp[,<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>] <span class="co"># View(loc_pcp)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  ID  precip_1 precip_2 precip_3 precip_4 precip_5 precip_6 precip_7 precip_8
-1  1 0.0000000 9.755308 46.80546 0.000000 0.000000 0.000000        0 0.000000
-2  2 7.3486811 0.000000  0.00000 1.276224 3.523982 1.272632        0 3.414116
-3  3 0.7002416 4.201450  0.00000 0.000000 0.000000 0.000000        0 0.000000
-  precip_9
-1 0.000000
-2 5.121175
-3 0.000000</code></pre>
+<pre><code>  ID  precip_1 precip_2 precip_3 precip_4 precip_5 precip_6 precip_7
+1  1 0.0000000 9.755308 46.80546 0.000000 0.000000 0.000000        0
+2  2 7.3486811 0.000000  0.00000 1.276224 3.523982 1.272632        0
+3  3 0.7002416 4.201450  0.00000 0.000000 0.000000 0.000000        0</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot hyetograph for the location in Louisiana</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
