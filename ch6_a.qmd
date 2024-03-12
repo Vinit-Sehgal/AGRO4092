@@ -1,0 +1,276 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Open Data User Interface
+
+### Climate Data from NOAA Physical Sciences Lab
+
+-   Product overview / Data access/ Information: <https://psl.noaa.gov/data/gridded/tables/daily.html>
+
+[![A snapshot of NOAA's Physical Sciences Lab's portal for gridded climate data access.](images/clipboard-3047835026.png){width="750"}](https://psl.noaa.gov/data/gridded/tables/daily.html)
+
+This website provides several land and climate variables such as: CPC Global Unified Gauge-Based Analysis of Daily Precipitation, CPC Global Temperature, NCEP/NCAR Reanalysis, Livneh daily CONUS near-surface gridded meteorological and derived hydrometeorological data
+
+### CHIRPS Global Precipitation \[\~5 km x 5km\]
+
+-   Product overview: <https://climatedataguide.ucar.edu/climate-data/chirps-climate-hazards-infrared-precipitation-station-data-version-2>
+
+-   Data access: <https://data.chc.ucsb.edu/products/CHIRPS-2.0/>
+
+-   Data information: [https://data.chc.ucsb.edu/products/CHIRPS-2.0/docs/README-CHIRPS.txt](#0)
+
+[![Snapshot of the web portal for CHIRPS-2.0 (Climate Hazards InfraRed Precipitation with Station data, version 2) data access](images/clipboard-1182974535.png){width="450"}](https://data.chc.ucsb.edu/products/CHIRPS-2.0/)
+
+### GIMMS MODIS Global NDVI \[\~225 m x 225 m\]
+
+-   Product overview: <https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD13Q1>
+
+-   Data access: <https://gimms.gsfc.nasa.gov/MODIS/>
+
+-   Data information: <https://gimms.gsfc.nasa.gov/MODIS/README-global.txt>
+
+[![Global Inventory Modeling and Mapping Studies (GIMMS) portal for global MODIS (Terra & Aqua) NDVI access](images/clipboard-3173143460.png){width="750"}](https://gimms.gsfc.nasa.gov/MODIS/)
+
+### Climate Prediction Center
+
+-   Product overview / Data access/ Information: <https://ftp.cpc.ncep.noaa.gov/GIS/>
+
+[![FTP portal for NOAA's Climate Prediction Center (CPC) data access](images/clipboard-2345890941.png){width="400"}](https://ftp.cpc.ncep.noaa.gov/GIS/)
+
+Includes several variables including (but not limited to):
+
+-   Climate Prediction Center (CPC) Morphing Technique (MORPH) to form a global, high resolution precipitation analysis
+
+-   Joint Agricultural Weather Facility (JAWF)
+
+-   Grid Analysis and Display System (GRADS): Global precipitation monitoring and forecasts, Tmax, Tmin
+
+-   Input variables for US Drought Monitor (USDM)
+
+### **NASA *A****ρρ***EEARS**
+
+-   Product overview / Data access/ Information: <https://appeears.earthdatacloud.nasa.gov/>
+
+[![Interface for the Application for Extracting and Exploring Analysis Ready Samples (AρρEEARS)](images/clipboard-2997479403.png){width="750"}](https://appeears.earthdatacloud.nasa.gov/)
+
+Climate/ land data variables can be extracted for an area or a point using the interactive interface.
+Click on point samples/ area samples:
+
+![Start a new request](images/clipboard-58271291.png){width="400"}
+
+![Select the variable and Lat-Long/ area of interest](images/clipboard-3257417500.png){width="400"}
+
+### NASA Earth Data Search
+
+-   Product overview / Data access/ Information: <https://search.earthdata.nasa.gov/search>
+
+[![Earth Data Search application interface](images/clipboard-1059799726.png){width="750"}](https://search.earthdata.nasa.gov/search)
+
+#### Bulk Download Order
+
+NASA Earth Data provides customization options for bulk data download.
+Lets say we are interested in downloading global SMAP Level 3 soil moisture.
+We start by selecting the product, and specify start/ end date as needed.
+
+1.  <div>
+
+    ![Search for the product, click "Download All". You will be taken to a log-in page.](images/clipboard-2012053062.png){width="750"}
+
+    </div>
+
+2.  <div>
+
+    ![After logging in, Click "Edit Options"-\> "Customize" and select options as needed. Click "Done".](images/clipboard-40460522.png){width="750"}
+
+    </div>
+
+3.  <div>
+
+    ![Click "Download Data"](images/clipboard-1173527781.png){width="750"}
+
+    </div>
+
+4.  <div>
+
+    ![A "Download Status" page will appear. Click on the ".html" link.](images/clipboard-2315624312.png){width="750"}
+
+    </div>
+
+5.  <div>
+
+    ![Several download options will available. For bulk download, click the link under "Retrieve list of files as a text listing (no html)"](images/clipboard-32527255.png){width="500"}
+
+    </div>
+
+6.  <div>
+
+    ![You will be able to see the active download links.](images/clipboard-2725729723.png){width="500"}
+
+    </div>
+
+Copy and Paste these links in any internet download manager (my favorite in Chrono for Google Chrome), Select output location (typically an external hard drive) and let the download begin.
+
+## Programmatic Data Acquisition
+
+In the HTTP, FTP or HTP links provided before, one can download a file by clicking on the individual hyperlink.
+Alternatively, we can use `download.file` function to download the file programmatically in R.
+This help us by opening the path to automate download and processing of multiple files with minimal supervision.
+
+Raster and netCDF are two popular formats of gridded climate data dissemination and archiving.
+NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data.
+It is also a community standard for sharing scientific data \[Unidata \| NetCDF (ucar.edu) <https://www.unidata.ucar.edu/software/netcdf/>\]. 
+To be in a NetCDF format, the dataset must be:
+
+<div>
+
+> -   *Self-Describing*.
+>     A netCDF file includes information about the data it contains.
+>
+> -   *Portable*.
+>     A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.
+>
+> -   *Scalable*.
+>     A small subset of a large dataset may be accessed efficiently.
+>
+> -   *Appendable*.
+>     Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.
+>
+> -   *Shareable*.
+>     One writer and multiple readers may simultaneously access the same netCDF file.
+>
+> -   *Archivable*.
+>     Access to all earlier forms of netCDF data will be supported by current and future versions of the software.
+
+</div>
+
+![Two widely used formats of gridded climate data type](images/clipboard-2422944132.png){width="750"}
+
+#### Downloading Raster files
+
+Let us take an example of `us_tmax` data available at: [https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/]{.underline}
+
+Right-click on the raster file for 20240218, and copy the file path.
+We will then use this link to access the files programmatically using *Client URL*, or *cURL* - a utility for transferring data between systems.
+We will download the raster using `download.file` to local disk, and saved with a uder-defined name `tmax_20240218.tif`.
+
+![](images/clipboard-4016904923.png){width="450"}
+
+Copied link: [https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/us.tmax_nohads_ll_20240218_float.tif]{.underline}
+
+```{r 6a1, message = FALSE, warning = FALSE}
+# Copied path of the raster
+data_path <- "https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/us.tmax_nohads_ll_20240218_float.tif"
+
+# Download the raster using download.file, assign the name tmax_20240218.tif to the downloaded 
+download.file(url = data_path, 
+              method="curl",
+              destfile = "tmax_20240218.tif")  
+
+# Plot downloaded file
+library(terra)
+tempRas=rast("tmax_20240218.tif")       # Import raster to the environment 
+usSHP=terra::vect(spData::us_states)    # Shapefile for CONUS
+
+plot(tempRas)
+plot(usSHP, add=TRUE)
+```
+
+Now that we have the `tmax_20240218` raster, let us extract the values for certain selected locations: s
+
+```{r 6a2, message = FALSE, warning = FALSE}
+# Import sample locations from contrasting hydroclimate
+library(readxl)
+loc= read_excel("./SampleData-master/location_points.xlsx")
+print(loc)
+
+# Value of the lat & lon of the locations
+latlon=loc[,3:4] 
+print(latlon)
+
+# Extract time series using "terra::extract"
+loc_temp=terra::extract(tempRas,
+                         latlon,               #2-column matrix or data.frame with lat-long
+                         method='bilinear')    # Use bilinear interpolation (or ngb) option
+
+print(loc_temp)
+
+# Add temperature attribute to the data frame as "temp"
+loc$temp=loc_temp$tmax_20240218
+print(loc)
+
+# Export the modified data as CSV
+write.csv(loc, "df_with_temp.csv")
+```
+
+#### Downloading netCDF
+
+We will now download a netCDF of global daily precipitation for the year 2023 from CHIRPS, accessible through the link: [https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc]{.underline}
+
+```{r 6a3, message = FALSE, warning = FALSE}
+# Copied path of the raster
+data_path <- "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc"
+
+# Download the raster using download.file, assign the name "daily_pcp_2023.nc" to the downloaded 
+if (file.exists("daily_pcp_2023.nc")==FALSE){
+  
+ download.file(url = data_path, 
+              method="curl",
+              destfile = "daily_pcp_2023.nc") 
+  
+}
+
+# Plot downloaded file
+library(terra)
+pcp=rast("daily_pcp_2023.nc")       # Import raster to the environment 
+print(pcp) # Notice the attributes (esp. nlyr, i.e. number of layers, unit and time)
+head(time(pcp))  # time variable in the netCDF indicating corresponding time of acquisition
+
+worldSHP=terra::vect(spData::world)    # Shapefile for CONUS
+
+# Plot data for a specific layer
+plot(pcp[[100]])   # Same as pcp[[which(time(pcp)=="2023-04-10")]]
+plot(worldSHP, add=TRUE)
+points(latlon, pch=19, col="red")
+```
+
+Next we will extract values for the selected locations.
+However, compared to the temperature data, which was a single layer, precipitation NetCDF has 365 layers, one for each day in the year 2023.
+So, when we extract values using the point locations, 365 values for each location are extracted.
+
+```{r 6a4, message = FALSE, warning = FALSE}
+# Import sample locations from contrasting hydroclimate
+library(readxl)
+loc= read_excel("./SampleData-master/location_points.xlsx")
+print(loc)
+
+# Value of the lat & lon of the locations
+latlon=loc[,3:4] 
+print(latlon)
+
+# Extract time series using "terra::extract"
+loc_pcp=terra::extract(pcp,
+                       latlon,               #2-column matrix or data.frame with lat-long
+                       method='bilinear')    # Use bilinear interpolation (or ngb) option
+# View data sample
+loc_pcp[,1:8] # View(loc_pcp)
+
+# Plot hyetograph for the location in Louisiana
+library(ggplot2)
+pcp_df1=data.frame(time=time(pcp),
+                   pcp=as.numeric(loc_pcp[1,-c(1)]))  # Select first row, exclude the first column
+
+# ggplot
+ggplot(pcp_df1,aes(x=time,y=pcp)) + 
+  geom_bar(stat = 'identity')+
+  theme_bw()+
+  ylab("Precipitation [mm/day]")+
+  xlab("Time [Days]")
+ 
+# Export the extracted data as CSV
+write.csv(loc, "extracted_pcp2023.csv")
+```

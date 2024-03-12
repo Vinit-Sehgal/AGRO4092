@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>ch6_a</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ch6_a_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ch6_a_files/libs/quarto-html/quarto.js"></script>
+<script src="ch6_a_files/libs/quarto-html/popper.min.js"></script>
+<script src="ch6_a_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ch6_a_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ch6_a_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ch6_a_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ch6_a_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ch6_a_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ch6_a_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+<section id="open-data-user-interface" class="level2">
+<h2 class="anchored" data-anchor-id="open-data-user-interface">Open Data User Interface</h2>
+<section id="climate-data-from-noaa-physical-sciences-lab" class="level3">
+<h3 class="anchored" data-anchor-id="climate-data-from-noaa-physical-sciences-lab">Climate Data from NOAA Physical Sciences Lab</h3>
+<ul>
+<li>Product overview / Data access/ Information: <a href="https://psl.noaa.gov/data/gridded/tables/daily.html" class="uri">https://psl.noaa.gov/data/gridded/tables/daily.html</a></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://psl.noaa.gov/data/gridded/tables/daily.html"><img src="images/clipboard-3047835026.png" class="img-fluid figure-img" width="750"></a></p>
+<figcaption class="figure-caption">A snapshot of NOAA’s Physical Sciences Lab’s portal for gridded climate data access.</figcaption>
+</figure>
+</div>
+<p>This website provides several land and climate variables such as: CPC Global Unified Gauge-Based Analysis of Daily Precipitation, CPC Global Temperature, NCEP/NCAR Reanalysis, Livneh daily CONUS near-surface gridded meteorological and derived hydrometeorological data</p>
+</section>
+<section id="chirps-global-precipitation-5-km-x-5km" class="level3">
+<h3 class="anchored" data-anchor-id="chirps-global-precipitation-5-km-x-5km">CHIRPS Global Precipitation [~5 km x 5km]</h3>
+<ul>
+<li><p>Product overview: <a href="https://climatedataguide.ucar.edu/climate-data/chirps-climate-hazards-infrared-precipitation-station-data-version-2" class="uri">https://climatedataguide.ucar.edu/climate-data/chirps-climate-hazards-infrared-precipitation-station-data-version-2</a></p></li>
+<li><p>Data access: <a href="https://data.chc.ucsb.edu/products/CHIRPS-2.0/" class="uri">https://data.chc.ucsb.edu/products/CHIRPS-2.0/</a></p></li>
+<li><p>Data information: <a href="#0">https://data.chc.ucsb.edu/products/CHIRPS-2.0/docs/README-CHIRPS.txt</a></p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://data.chc.ucsb.edu/products/CHIRPS-2.0/"><img src="images/clipboard-1182974535.png" class="img-fluid figure-img" width="450"></a></p>
+<figcaption class="figure-caption">Snapshot of the web portal for CHIRPS-2.0 (Climate Hazards InfraRed Precipitation with Station data, version 2) data access</figcaption>
+</figure>
+</div>
+</section>
+<section id="gimms-modis-global-ndvi-225-m-x-225-m" class="level3">
+<h3 class="anchored" data-anchor-id="gimms-modis-global-ndvi-225-m-x-225-m">GIMMS MODIS Global NDVI [~225 m x 225 m]</h3>
+<ul>
+<li><p>Product overview: <a href="https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD13Q1" class="uri">https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD13Q1</a></p></li>
+<li><p>Data access: <a href="https://gimms.gsfc.nasa.gov/MODIS/" class="uri">https://gimms.gsfc.nasa.gov/MODIS/</a></p></li>
+<li><p>Data information: <a href="https://gimms.gsfc.nasa.gov/MODIS/README-global.txt" class="uri">https://gimms.gsfc.nasa.gov/MODIS/README-global.txt</a></p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://gimms.gsfc.nasa.gov/MODIS/"><img src="images/clipboard-3173143460.png" class="img-fluid figure-img" width="750"></a></p>
+<figcaption class="figure-caption">Global Inventory Modeling and Mapping Studies (GIMMS) portal for global MODIS (Terra &amp; Aqua) NDVI access</figcaption>
+</figure>
+</div>
+</section>
+<section id="climate-prediction-center" class="level3">
+<h3 class="anchored" data-anchor-id="climate-prediction-center">Climate Prediction Center</h3>
+<ul>
+<li>Product overview / Data access/ Information: <a href="https://ftp.cpc.ncep.noaa.gov/GIS/" class="uri">https://ftp.cpc.ncep.noaa.gov/GIS/</a></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://ftp.cpc.ncep.noaa.gov/GIS/"><img src="images/clipboard-2345890941.png" class="img-fluid figure-img" width="400"></a></p>
+<figcaption class="figure-caption">FTP portal for NOAA’s Climate Prediction Center (CPC) data access</figcaption>
+</figure>
+</div>
+<p>Includes several variables including (but not limited to):</p>
+<ul>
+<li><p>Climate Prediction Center (CPC) Morphing Technique (MORPH) to form a global, high resolution precipitation analysis</p></li>
+<li><p>Joint Agricultural Weather Facility (JAWF)</p></li>
+<li><p>Grid Analysis and Display System (GRADS): Global precipitation monitoring and forecasts, Tmax, Tmin</p></li>
+<li><p>Input variables for US Drought Monitor (USDM)</p></li>
+</ul>
+</section>
+<section id="nasa-aρρeears" class="level3">
+<h3 class="anchored" data-anchor-id="nasa-aρρeears"><strong>NASA <em>A</em></strong><em>ρρ</em><strong>EEARS</strong></h3>
+<ul>
+<li>Product overview / Data access/ Information: <a href="https://appeears.earthdatacloud.nasa.gov/" class="uri">https://appeears.earthdatacloud.nasa.gov/</a></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://appeears.earthdatacloud.nasa.gov/"><img src="images/clipboard-2997479403.png" class="img-fluid figure-img" width="750"></a></p>
+<figcaption class="figure-caption">Interface for the Application for Extracting and Exploring Analysis Ready Samples (AρρEEARS)</figcaption>
+</figure>
+</div>
+<p>Climate/ land data variables can be extracted for an area or a point using the interactive interface. Click on point samples/ area samples:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-58271291.png" class="img-fluid figure-img" width="400"></p>
+<figcaption class="figure-caption">Start a new request</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3257417500.png" class="img-fluid figure-img" width="400"></p>
+<figcaption class="figure-caption">Select the variable and Lat-Long/ area of interest</figcaption>
+</figure>
+</div>
+</section>
+<section id="nasa-earth-data-search" class="level3">
+<h3 class="anchored" data-anchor-id="nasa-earth-data-search">NASA Earth Data Search</h3>
+<ul>
+<li>Product overview / Data access/ Information: <a href="https://search.earthdata.nasa.gov/search" class="uri">https://search.earthdata.nasa.gov/search</a></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://search.earthdata.nasa.gov/search"><img src="images/clipboard-1059799726.png" class="img-fluid figure-img" width="750"></a></p>
+<figcaption class="figure-caption">Earth Data Search application interface</figcaption>
+</figure>
+</div>
+<section id="bulk-download-order" class="level4">
+<h4 class="anchored" data-anchor-id="bulk-download-order">Bulk Download Order</h4>
+<p>NASA Earth Data provides customization options for bulk data download. Lets say we are interested in downloading global SMAP Level 3 soil moisture. We start by selecting the product, and specify start/ end date as needed.</p>
+<ol type="1">
+<li><div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2012053062.png" class="img-fluid figure-img" width="750"></p>
+<figcaption class="figure-caption">Search for the product, click “Download All”. You will be taken to a log-in page.</figcaption>
+</figure>
+</div>
+</div></li>
+<li><div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-40460522.png" class="img-fluid figure-img" width="750"></p>
+<figcaption class="figure-caption">After logging in, Click “Edit Options”-&gt; “Customize” and select options as needed. Click “Done”.</figcaption>
+</figure>
+</div>
+</div></li>
+<li><div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1173527781.png" class="img-fluid figure-img" width="750"></p>
+<figcaption class="figure-caption">Click “Download Data”</figcaption>
+</figure>
+</div>
+</div></li>
+<li><div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2315624312.png" class="img-fluid figure-img" width="750"></p>
+<figcaption class="figure-caption">A “Download Status” page will appear. Click on the “.html” link.</figcaption>
+</figure>
+</div>
+</div></li>
+<li><div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-32527255.png" class="img-fluid figure-img" width="500"></p>
+<figcaption class="figure-caption">Several download options will available. For bulk download, click the link under “Retrieve list of files as a text listing (no html)”</figcaption>
+</figure>
+</div>
+</div></li>
+<li><div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2725729723.png" class="img-fluid figure-img" width="500"></p>
+<figcaption class="figure-caption">You will be able to see the active download links.</figcaption>
+</figure>
+</div>
+</div></li>
+</ol>
+<p>Copy and Paste these links in any internet download manager (my favorite in Chrono for Google Chrome), Select output location (typically an external hard drive) and let the download begin.</p>
+</section>
+</section>
+</section>
+<section id="programmatic-data-acquisition" class="level2">
+<h2 class="anchored" data-anchor-id="programmatic-data-acquisition">Programmatic Data Acquisition</h2>
+<p>In the HTTP/ FTP or HTP servers avove, we can download a file by clicking on the individual file. Alternatively, we can use <code>download.file</code> function to download the file. This help us by opening the path to automate download and processing of multiple files with minimal supervision.</p>
+<section id="raster-files" class="level4">
+<h4 class="anchored" data-anchor-id="raster-files">Raster files</h4>
+<p>Let us take an example of <code>us_tmax</code> data available at: <u>https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/</u></p>
+<p>Right-click on the raster file for 20240218, and copy the file path. We will then use this link to access the files programmatically using <em>Client URL</em>, or <em>cURL</em> - a utility for transferring data between systems. We will download the raster using <code>download.file</code> to local disk, and saved with a uder-defined name <code>tmax_20240218.tif</code>.</p>
+<p><img src="images/clipboard-4016904923.png" class="img-fluid" width="450"></p>
+<p>Copied link: <u>https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/us.tmax_nohads_ll_20240218_float.tif</u></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copied path of the raster</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="st">"https://ftp.cpc.ncep.noaa.gov/GIS/GRADS_GIS/GeoTIFF/TEMP/us_tmax/us.tmax_nohads_ll_20240218_float.tif"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the raster using download.file, assign the name tmax_20240218.tif to the downloaded </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> data_path, </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">"curl"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="st">"tmax_20240218.tif"</span>)  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot downloaded file</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>tempRas<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"tmax_20240218.tif"</span>)       <span class="co"># Import raster to the environment </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>usSHP<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">vect</span>(spData<span class="sc">::</span>us_states)    <span class="co"># Shapefile for CONUS</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tempRas)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(usSHP, <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch6_a_files/figure-html/6a1-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Now that we have the <code>tmax_20240218</code> raster, let us extract the values for certain selected locations: s</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import sample locations from contrasting hydroclimate</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>loc<span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">"./SampleData-master/location_points.xlsx"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(loc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  Aridity   State     Longitude Latitude
+  &lt;chr&gt;     &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;
+1 Humid     Louisiana     -92.7     34.3
+2 Arid      Nevada       -116.      38.7
+3 Semi-arid Kansas        -99.8     38.8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Value of the lat &amp; lon of the locations</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>latlon<span class="ot">=</span>loc[,<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>] </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(latlon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Longitude Latitude
+      &lt;dbl&gt;    &lt;dbl&gt;
+1     -92.7     34.3
+2    -116.      38.7
+3     -99.8     38.8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract time series using "terra::extract"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>loc_temp<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(tempRas,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                         latlon,               <span class="co">#2-column matrix or data.frame with lat-long</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method=</span><span class="st">'bilinear'</span>)    <span class="co"># Use bilinear interpolation (or ngb) option</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(loc_temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ID tmax_20240218
+1  1      12.58291
+2  2      11.52682
+3  3      13.41145</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add temperature attribute to the data frame as "temp"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>loc<span class="sc">$</span>temp<span class="ot">=</span>loc_temp<span class="sc">$</span>tmax_20240218</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(loc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  Aridity   State     Longitude Latitude  temp
+  &lt;chr&gt;     &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+1 Humid     Louisiana     -92.7     34.3  12.6
+2 Arid      Nevada       -116.      38.7  11.5
+3 Semi-arid Kansas        -99.8     38.8  13.4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Export the modified data as CSV</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(loc, <span class="st">"df_with_temp.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="netcdf" class="level4">
+<h4 class="anchored" data-anchor-id="netcdf">NetCDF</h4>
+<p>NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. It is also a community standard for sharing scientific data [Unidata | NetCDF (ucar.edu) <a href="https://www.unidata.ucar.edu/software/netcdf/" class="uri">https://www.unidata.ucar.edu/software/netcdf/</a>].&nbsp; To be in a NetCDF format, the dataset must be:</p>
+<ul>
+<li><div>
+<blockquote class="blockquote">
+<ul>
+<li><p><em>Self-Describing</em>. A netCDF file includes information about the data it contains.</p></li>
+<li><p><em>Portable</em>. A netCDF file can be accessed by computers with different ways of storing integers, characters, and floating-point numbers.</p></li>
+<li><p><em>Scalable</em>. A small subset of a large dataset may be accessed efficiently.</p></li>
+<li><p><em>Appendable</em>. Data may be appended to a properly structured netCDF file without copying the dataset or redefining its structure.</p></li>
+<li><p><em>Shareable</em>. One writer and multiple readers may simultaneously access the same netCDF file.</p></li>
+<li><p><em>Archivable</em>. Access to all earlier forms of netCDF data will be supported by current and future versions of the software.</p></li>
+</ul>
+</blockquote>
+</div></li>
+</ul>
+<p>We will now download a NetCDF of global daily precipitation for the year 2023 from CHIRPS, accessible through the link: <u>https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc</u></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copied path of the raster</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="st">"https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the raster using download.file, assign the name "daily_pcp_2023.nc" to the downloaded </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(<span class="st">"daily_pcp_2023.nc"</span>)<span class="sc">==</span><span class="cn">FALSE</span>){</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">download.file</span>(<span class="at">url =</span> data_path, </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">"curl"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="st">"daily_pcp_2023.nc"</span>) </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot downloaded file</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>pcp<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"daily_pcp_2023.nc"</span>)       <span class="co"># Import raster to the environment </span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pcp) <span class="co"># Notice the attributes (esp. nlyr, i.e. number of layers, unit and time)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 2000, 7200, 365  (nrow, ncol, nlyr)
+resolution  : 0.05, 0.05  (x, y)
+extent      : -180, 180, -50, 50  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84) 
+source      : daily_pcp_2023.nc 
+varname     : precip (Climate Hazards group InfraRed Precipitation with Stations) 
+names       : precip_1, precip_2, precip_3, precip_4, precip_5, precip_6, ... 
+unit        :   mm/day,   mm/day,   mm/day,   mm/day,   mm/day,   mm/day, ... 
+time (days) : 2023-01-01 to 2023-12-31 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">time</span>(pcp)  <span class="co"># time variable in the netCDF indicating corresponding time of acquisition</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "2023-01-01" "2023-01-02" "2023-01-03" "2023-01-04" "2023-01-05"
+  [6] "2023-01-06" "2023-01-07" "2023-01-08" "2023-01-09" "2023-01-10"
+ [11] "2023-01-11" "2023-01-12" "2023-01-13" "2023-01-14" "2023-01-15"
+ [16] "2023-01-16" "2023-01-17" "2023-01-18" "2023-01-19" "2023-01-20"
+ [21] "2023-01-21" "2023-01-22" "2023-01-23" "2023-01-24" "2023-01-25"
+ [26] "2023-01-26" "2023-01-27" "2023-01-28" "2023-01-29" "2023-01-30"
+ [31] "2023-01-31" "2023-02-01" "2023-02-02" "2023-02-03" "2023-02-04"
+ [36] "2023-02-05" "2023-02-06" "2023-02-07" "2023-02-08" "2023-02-09"
+ [41] "2023-02-10" "2023-02-11" "2023-02-12" "2023-02-13" "2023-02-14"
+ [46] "2023-02-15" "2023-02-16" "2023-02-17" "2023-02-18" "2023-02-19"
+ [51] "2023-02-20" "2023-02-21" "2023-02-22" "2023-02-23" "2023-02-24"
+ [56] "2023-02-25" "2023-02-26" "2023-02-27" "2023-02-28" "2023-03-01"
+ [61] "2023-03-02" "2023-03-03" "2023-03-04" "2023-03-05" "2023-03-06"
+ [66] "2023-03-07" "2023-03-08" "2023-03-09" "2023-03-10" "2023-03-11"
+ [71] "2023-03-12" "2023-03-13" "2023-03-14" "2023-03-15" "2023-03-16"
+ [76] "2023-03-17" "2023-03-18" "2023-03-19" "2023-03-20" "2023-03-21"
+ [81] "2023-03-22" "2023-03-23" "2023-03-24" "2023-03-25" "2023-03-26"
+ [86] "2023-03-27" "2023-03-28" "2023-03-29" "2023-03-30" "2023-03-31"
+ [91] "2023-04-01" "2023-04-02" "2023-04-03" "2023-04-04" "2023-04-05"
+ [96] "2023-04-06" "2023-04-07" "2023-04-08" "2023-04-09" "2023-04-10"
+[101] "2023-04-11" "2023-04-12" "2023-04-13" "2023-04-14" "2023-04-15"
+[106] "2023-04-16" "2023-04-17" "2023-04-18" "2023-04-19" "2023-04-20"
+[111] "2023-04-21" "2023-04-22" "2023-04-23" "2023-04-24" "2023-04-25"
+[116] "2023-04-26" "2023-04-27" "2023-04-28" "2023-04-29" "2023-04-30"
+[121] "2023-05-01" "2023-05-02" "2023-05-03" "2023-05-04" "2023-05-05"
+[126] "2023-05-06" "2023-05-07" "2023-05-08" "2023-05-09" "2023-05-10"
+[131] "2023-05-11" "2023-05-12" "2023-05-13" "2023-05-14" "2023-05-15"
+[136] "2023-05-16" "2023-05-17" "2023-05-18" "2023-05-19" "2023-05-20"
+[141] "2023-05-21" "2023-05-22" "2023-05-23" "2023-05-24" "2023-05-25"
+[146] "2023-05-26" "2023-05-27" "2023-05-28" "2023-05-29" "2023-05-30"
+[151] "2023-05-31" "2023-06-01" "2023-06-02" "2023-06-03" "2023-06-04"
+[156] "2023-06-05" "2023-06-06" "2023-06-07" "2023-06-08" "2023-06-09"
+[161] "2023-06-10" "2023-06-11" "2023-06-12" "2023-06-13" "2023-06-14"
+[166] "2023-06-15" "2023-06-16" "2023-06-17" "2023-06-18" "2023-06-19"
+[171] "2023-06-20" "2023-06-21" "2023-06-22" "2023-06-23" "2023-06-24"
+[176] "2023-06-25" "2023-06-26" "2023-06-27" "2023-06-28" "2023-06-29"
+[181] "2023-06-30" "2023-07-01" "2023-07-02" "2023-07-03" "2023-07-04"
+[186] "2023-07-05" "2023-07-06" "2023-07-07" "2023-07-08" "2023-07-09"
+[191] "2023-07-10" "2023-07-11" "2023-07-12" "2023-07-13" "2023-07-14"
+[196] "2023-07-15" "2023-07-16" "2023-07-17" "2023-07-18" "2023-07-19"
+[201] "2023-07-20" "2023-07-21" "2023-07-22" "2023-07-23" "2023-07-24"
+[206] "2023-07-25" "2023-07-26" "2023-07-27" "2023-07-28" "2023-07-29"
+[211] "2023-07-30" "2023-07-31" "2023-08-01" "2023-08-02" "2023-08-03"
+[216] "2023-08-04" "2023-08-05" "2023-08-06" "2023-08-07" "2023-08-08"
+[221] "2023-08-09" "2023-08-10" "2023-08-11" "2023-08-12" "2023-08-13"
+[226] "2023-08-14" "2023-08-15" "2023-08-16" "2023-08-17" "2023-08-18"
+[231] "2023-08-19" "2023-08-20" "2023-08-21" "2023-08-22" "2023-08-23"
+[236] "2023-08-24" "2023-08-25" "2023-08-26" "2023-08-27" "2023-08-28"
+[241] "2023-08-29" "2023-08-30" "2023-08-31" "2023-09-01" "2023-09-02"
+[246] "2023-09-03" "2023-09-04" "2023-09-05" "2023-09-06" "2023-09-07"
+[251] "2023-09-08" "2023-09-09" "2023-09-10" "2023-09-11" "2023-09-12"
+[256] "2023-09-13" "2023-09-14" "2023-09-15" "2023-09-16" "2023-09-17"
+[261] "2023-09-18" "2023-09-19" "2023-09-20" "2023-09-21" "2023-09-22"
+[266] "2023-09-23" "2023-09-24" "2023-09-25" "2023-09-26" "2023-09-27"
+[271] "2023-09-28" "2023-09-29" "2023-09-30" "2023-10-01" "2023-10-02"
+[276] "2023-10-03" "2023-10-04" "2023-10-05" "2023-10-06" "2023-10-07"
+[281] "2023-10-08" "2023-10-09" "2023-10-10" "2023-10-11" "2023-10-12"
+[286] "2023-10-13" "2023-10-14" "2023-10-15" "2023-10-16" "2023-10-17"
+[291] "2023-10-18" "2023-10-19" "2023-10-20" "2023-10-21" "2023-10-22"
+[296] "2023-10-23" "2023-10-24" "2023-10-25" "2023-10-26" "2023-10-27"
+[301] "2023-10-28" "2023-10-29" "2023-10-30" "2023-10-31" "2023-11-01"
+[306] "2023-11-02" "2023-11-03" "2023-11-04" "2023-11-05" "2023-11-06"
+[311] "2023-11-07" "2023-11-08" "2023-11-09" "2023-11-10" "2023-11-11"
+[316] "2023-11-12" "2023-11-13" "2023-11-14" "2023-11-15" "2023-11-16"
+[321] "2023-11-17" "2023-11-18" "2023-11-19" "2023-11-20" "2023-11-21"
+[326] "2023-11-22" "2023-11-23" "2023-11-24" "2023-11-25" "2023-11-26"
+[331] "2023-11-27" "2023-11-28" "2023-11-29" "2023-11-30" "2023-12-01"
+[336] "2023-12-02" "2023-12-03" "2023-12-04" "2023-12-05" "2023-12-06"
+[341] "2023-12-07" "2023-12-08" "2023-12-09" "2023-12-10" "2023-12-11"
+[346] "2023-12-12" "2023-12-13" "2023-12-14" "2023-12-15" "2023-12-16"
+[351] "2023-12-17" "2023-12-18" "2023-12-19" "2023-12-20" "2023-12-21"
+[356] "2023-12-22" "2023-12-23" "2023-12-24" "2023-12-25" "2023-12-26"
+[361] "2023-12-27" "2023-12-28" "2023-12-29" "2023-12-30" "2023-12-31"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>worldSHP<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">vect</span>(spData<span class="sc">::</span>world)    <span class="co"># Shapefile for CONUS</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot data for a specific layer</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pcp[[<span class="dv">100</span>]])   <span class="co"># Same as pcp[[which(time(pcp)=="2023-04-10")]]</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(worldSHP, <span class="at">add=</span><span class="cn">TRUE</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(latlon, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">col=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch6_a_files/figure-html/6a3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Next we will extract values for the selected locations. However, compared to the temperature data, which was a single layer, precipitation NetCDF has 365 layers, one for each day in the year 2023. So, when we extract values using the point locations, 365 values for each location are extracted.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import sample locations from contrasting hydroclimate</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>loc<span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">"./SampleData-master/location_points.xlsx"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(loc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  Aridity   State     Longitude Latitude
+  &lt;chr&gt;     &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;
+1 Humid     Louisiana     -92.7     34.3
+2 Arid      Nevada       -116.      38.7
+3 Semi-arid Kansas        -99.8     38.8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Value of the lat &amp; lon of the locations</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>latlon<span class="ot">=</span>loc[,<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>] </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(latlon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Longitude Latitude
+      &lt;dbl&gt;    &lt;dbl&gt;
+1     -92.7     34.3
+2    -116.      38.7
+3     -99.8     38.8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract time series using "terra::extract"</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>loc_pcp<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(pcp,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                       latlon,               <span class="co">#2-column matrix or data.frame with lat-long</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">method=</span><span class="st">'bilinear'</span>)    <span class="co"># Use bilinear interpolation (or ngb) option</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># View data sample</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>loc_pcp[,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>] <span class="co"># View(loc_pcp)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ID  precip_1 precip_2 precip_3 precip_4 precip_5 precip_6 precip_7 precip_8
+1  1 0.0000000 9.755308 46.80546 0.000000 0.000000 0.000000        0 0.000000
+2  2 7.3486811 0.000000  0.00000 1.276224 3.523982 1.272632        0 3.414116
+3  3 0.7002416 4.201450  0.00000 0.000000 0.000000 0.000000        0 0.000000
+  precip_9
+1 0.000000
+2 5.121175
+3 0.000000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot hyetograph for the location in Louisiana</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>pcp_df1<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">time=</span><span class="fu">time</span>(pcp),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">pcp=</span><span class="fu">as.numeric</span>(loc_pcp[<span class="dv">1</span>,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)]))  <span class="co"># Select first row, exclude the first column</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pcp_df1,<span class="fu">aes</span>(<span class="at">x=</span>time,<span class="at">y=</span>pcp)) <span class="sc">+</span> </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>)<span class="sc">+</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Precipitation [mm/day]"</span>)<span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Time [Days]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch6_a_files/figure-html/6a4-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Export the extracted data as CSV</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(loc, <span class="st">"extracted_pcp2023.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

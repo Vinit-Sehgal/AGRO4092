@@ -1,0 +1,14 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Gridded Land and Climate Data
+
+```{r child="ch6_a.qmd", message = FALSE, warning = FALSE}
+
+
+```

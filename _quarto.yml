@@ -21,6 +21,7 @@ book:
     - ch2.qmd
     - ch3.qmd
     - ch5.qmd
+    - ch6.qmd
     - chN.qmd
 
 format:
