@@ -96,6 +96,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -219,6 +221,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#downloading-raster-files" id="toc-downloading-raster-files" class="nav-link" data-scroll-target="#downloading-raster-files"><span class="header-section-number">6.3.1</span> Downloading Raster files</a></li>
   <li><a href="#downloading-netcdf" id="toc-downloading-netcdf" class="nav-link" data-scroll-target="#downloading-netcdf"><span class="header-section-number">6.3.2</span> Downloading netCDF</a></li>
   </ul></li>
+  <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3"><span class="header-section-number">6.4</span> Exercise #3</a></li>
   </ul>
 </nav>
     </div>
@@ -590,9 +593,54 @@ time (days) : 2023-01-01 to 2023-12-31 </code></pre>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Export the extracted data as CSV</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(loc, <span class="st">"extracted_pcp2023.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-
-
 </section>
+</section>
+<section id="exercise-3" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="exercise-3"><span class="header-section-number">6.4</span> Exercise #3</h2>
+<p>The Harmonized Landsat Sentinel-2 (HLS) project provides consistent multiband surface reflectance (SR) data from NASA/USGS Landsat 8 and Landsat 9 satellites (using Operational Land Imager, OLI) and Europe’s Copernicus Sentinel-2A and Sentinel-2B satellites (using Multi-Spectral Instrument, MSI). These measurements provide global land observations with a 2–3 days temporal frequency at 30-meter spatial resolution. Sample rasters for band 4 (Red) and band 5 (Near-Infrared) from this resource are provided at the following location in the sample data: “./SampleData-master/raster_files/landsat/”</p>
+<p>For LANDSAT 8, the Normalized Difference Vegetation Index (a proxy for vegetation health) is calculated as:</p>
+<p><span class="math display">\[
+NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
+\]</span> For more information on the HSL products, bands and applications, please refer to: <a href="https://lpdaac.usgs.gov/data/get-started-data/collection-overview/missions/harmonized-landsat-sentinel-2-hls-overview/" class="uri">https://lpdaac.usgs.gov/data/get-started-data/collection-overview/missions/harmonized-landsat-sentinel-2-hls-overview/</a></p>
+<div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import surface reflectance bands</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>b4<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/landsat/HLS.L30.T15RYP.2024055T163211.v2.0.B04.tif"</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>b5<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"./SampleData-master/raster_files/landsat/HLS.L30.T15RYP.2024055T163211.v2.0.B05.tif"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot rasters</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(b4, <span class="at">main=</span><span class="st">"Red band"</span>,<span class="at">col=</span> <span class="fu">brewer.pal</span>(<span class="dv">11</span>,<span class="st">"BrBG"</span>))</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(b5, <span class="at">main=</span><span class="st">"NIR band"</span>,<span class="at">col=</span> <span class="fu">brewer.pal</span>(<span class="dv">11</span>,<span class="st">"BrBG"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="ch6_files/figure-html/ch6_b1-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="ch6_files/figure-html/ch6_b1-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+<p>Using the spectral band rasters provided above, complete the following objectives:</p>
+<ol type="1">
+<li><p>(10) Generate NDVI raster for the areal domain.</p></li>
+<li><p>(10) Reproject the NDVI raster to the following projection: North American Datum 1983 (NAD83, refer to Sec 3.2.8 for help)</p></li>
+<li><p>(10) Clamp the range of the NDVI to [-1,1].</p></li>
+<li><p>(10) Plot the reprojected NDVI raster and add the following locations of interest to the map:</p>
+<ul>
+<li><p>Location 1: Lon1=-90.6, Lat1= 30.4</p></li>
+<li><p>Location 2:Lon2=-90, Lat2= 30.1</p></li>
+</ul></li>
+<li><p>(10) Extract NDVI values for the two locations given above.</p></li>
+<li><p>(20) Crop the NDVI raster to the following extent and plot the cropped raster: [Xmin, Xmax, Ymin, Ymax]= [-90.5, -90.4, 30.05, 30.15]</p></li>
+<li><p>(30) Use NASA Earth Data Search (as shown in Section 6.2.6) to download Harmonized Landsat Sentinel-2 (HLS) surface reflectance for band 4 and 5 for any date and region of your choice. Repeat objectives A through C and plot the resultant NDVI raster.</p></li>
+</ol>
+
+
 </section>
 
 </main> <!-- /main -->

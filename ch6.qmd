@@ -12,3 +12,7 @@ editor:
 
 
 ```
+
+```{r child="ch6_b.qmd", message = FALSE, warning = FALSE}
+
+```

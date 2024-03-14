@@ -1,0 +1,58 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Exercise #3
+
+The Harmonized Landsat Sentinel-2 (HLS) project provides consistent multiband surface reflectance (SR) data from NASA/USGS Landsat 8 and Landsat 9 satellites (using Operational Land Imager, OLI) and Europe’s Copernicus Sentinel-2A and Sentinel-2B satellites (using Multi-Spectral Instrument, MSI).
+These measurements provide global land observations with a 2–3 days temporal frequency at 30-meter spatial resolution.
+Sample rasters for band 4 (Red) and band 5 (Near-Infrared) from this resource are provided at the following location in the sample data: "./SampleData-master/raster_files/landsat/"
+
+For LANDSAT 8, the Normalized Difference Vegetation Index (a proxy for vegetation health) is calculated as:
+
+$$
+ NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
+$$
+For more information on the HSL products, bands and applications, please refer to: <https://lpdaac.usgs.gov/data/get-started-data/collection-overview/missions/harmonized-landsat-sentinel-2-hls-overview/>
+
+```{r ch6_b1, message = FALSE, warning = FALSE}
+#| layout-ncol: 2
+
+# Import surface reflectance bands
+library(terra)
+library(RColorBrewer)
+
+b4=rast("./SampleData-master/raster_files/landsat/HLS.L30.T15RYP.2024055T163211.v2.0.B04.tif")
+b5=rast("./SampleData-master/raster_files/landsat/HLS.L30.T15RYP.2024055T163211.v2.0.B05.tif")
+
+# Plot rasters
+plot(b4, main="Red band",col= brewer.pal(11,"BrBG"))
+plot(b5, main="NIR band",col= brewer.pal(11,"BrBG"))
+```
+
+------------------------------------------------------------------------
+
+Using the spectral band rasters provided above, complete the following objectives:
+
+1.  \(10\) Generate NDVI raster for the areal domain.
+
+2.  \(10\) Reproject the NDVI raster to the following projection: North American Datum 1983 (NAD83, refer to Sec 3.2.8 for help)
+
+3.  \(10\) Clamp the range of the NDVI to \[-1,1\].
+
+4.  \(10\) Plot the reprojected NDVI raster and add the following locations of interest to the map:
+
+    -   Location 1: Lon1=-90.6, Lat1= 30.4
+
+    -   Location 2:Lon2=-90, Lat2= 30.1
+
+5.  \(10\) Extract NDVI values for the two locations given above.
+
+6.  \(20\) Crop the NDVI raster to the following extent and plot the cropped raster: \[Xmin, Xmax, Ymin, Ymax\]= \[-90.5, -90.4, 30.05, 30.15\]
+
+7.  \(30\) Use NASA Earth Data Search (as shown in Section 6.2.6) to download Harmonized Landsat Sentinel-2 (HLS) surface reflectance for band 4 and 5 for any date and region of your choice.
+    Repeat objectives A through C and plot the resultant NDVI raster.
