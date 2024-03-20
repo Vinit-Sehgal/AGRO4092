@@ -52,7 +52,34 @@ In the following sections, we will familiarize ourselves with some of these reso
 
 [![A snapshot of NOAA's Physical Sciences Lab's portal for gridded climate data access](images/clipboard-3047835026.png){width="750"}](https://psl.noaa.gov/data/gridded/tables/daily.html)
 
-This website provides several land and climate variables such as: CPC Global Unified Gauge-Based Analysis of Daily Precipitation, CPC Global Temperature, NCEP/NCAR Reanalysis, Livneh daily CONUS near-surface gridded meteorological and derived hydrometeorological data
+This website provides several land and climate variables such as: CPC Global Unified Gauge-Based Analysis of Daily Precipitation, CPC Global Temperature, NCEP/NCAR Reanalysis, Livneh daily CONUS near-surface gridded meteorological and derived hydrometeorological data.
+
+### DAYMET: Daily Gridded Weather and Climate Data for North America \[1 km x 1 km\]
+
+-   Product overview: <https://daymet.ornl.gov/>
+
+-   Data access: <https://daac.ornl.gov/cgi-bin/dataset_lister.pl?p=32>
+
+-   Data information: Refer to the User Guide provided with each dataset.
+
+![Daymet Webpage for Gridded Climate/ Weather Data Access](images/clipboard-471744230.png){width="750"}
+
+Daymet provides long-term, continuous, gridded estimates of daily weather and climatology variables at 1 km grid resolution for North America.
+The dataset is available in several forms, including monthly and annual climate summaries, in addition to the daily and/or sub-daily climate forcings: 
+
+1.  [Sub-daily Climate Forcings for Puerto Rico](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=1977)
+
+2.  [Daymet Version 4 Monthly Latency: Daily Surface Weather Data](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=1904)
+
+3.  [Annual Climate Summaries on a 1-km Grid for North America, Version 4 R1](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2130)
+
+4.  [Monthly Climate Summaries on a 1-km Grid for North America, Version 4 R1](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2131)
+
+5.  [Station-Level Inputs and Cross-Validation for North America, Version 4 R1](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2132)
+
+6.  [Daily Surface Weather Data on a 1-km Grid for North America, Version 4 R1](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2129)
+
+[![Daymet Resource for Daily, 1 km Surface Weather Data Download](images/clipboard-477261930.png){width="450"}](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2129)
 
 ### CHIRPS Global Precipitation \[\~5 km x 5km\]
 
