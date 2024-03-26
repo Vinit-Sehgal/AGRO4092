@@ -6,7 +6,7 @@ editor:
     wrap: sentence
 ---
 
-# Gridded Land and Climate Data
+# Land and Climate Data
 
 ```{r child="ch6_a.qmd", message = FALSE, warning = FALSE}
 

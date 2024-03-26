@@ -1,0 +1,98 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Raster Concatenation
+
+### Why Concatenate?
+
+```{r 7a1, message = FALSE, warning = FALSE}
+#~~~ Create and plot NDVI SpatRaster
+library(terra)
+library(cetcolor)
+
+# Location of the NDVI raster files
+ndvi_path="./SampleData-master/raster_files/NDVI/" 
+
+# List of all NDVI rasters
+ras_path=list.files(ndvi_path,    # The folder which contains the files of interest
+                pattern='*.tif',  # Specify the extention of the files to be selected
+                full.names=TRUE)  # Print full file path? Yes (TRUE) or no (FALSE)?
+
+print(ras_path)     # The folder contains 23 rasters arranges in increasing order of time 
+
+# User the file path to import raster
+r1=rast(ras_path[1])
+r2=rast(ras_path[2])
+r3=rast(ras_path[3])
+r4=rast(ras_path[4])
+
+# Concatenate the rasters i.e. arrange the rasters one after the other
+rast_ts=c(r1,r2, r3, r4)    
+nlyr(rast_ts)        
+names(rast_ts)
+
+# Plot concatenated rasters
+colpal = cetcolor::cet_pal(20, name = "r2")  
+plot(rast_ts, col=rev(colpal))
+```
+
+### Programmatic Concatenation of `rast` Objects
+
+```{r 7a2, message = FALSE, warning = FALSE}
+#~~~~~~~~~~~~~~~~~~
+# Method 1: Use lapply to create raster layer list from the raster location
+ras_list = lapply(paste(ras_path, sep = ""), rast)
+# This a list of 23 raster objects stored as individual elements.
+
+#Convert raster layer lists to Spatraster 
+ras_stack = rast(ras_list)     # Stacking all rasters as a SpatRaster 
+# This a multi-layer (23 layers in this case) SpatRaster Object.
+
+#~~~~~~~~~~~~~~~~~~
+# Method 2: Using pipes to create raster layers from the raster location
+library(tidyr) # For piping
+ras_list = ras_path %>%  purrr::map(~ rast(.x))  # Import the raster
+ras_stack = rast(ras_list)  # Convert RasterStack to RasterBrick
+
+#~~~~~~~~~~~~~~~~~~
+# Method 3: Using for loop to create raster layers from the raster location
+ras_stack=rast()
+for (nRun in 1:length(ras_path)){
+  ras_stack=c(ras_stack,rast(ras_path[[nRun]]))
+}
+
+# Check dimension of data cube
+dim(ras_stack) #[x: y: z]- 23 raster layers with 456 x 964 cells
+```
+
+## Spatial Operations on Raster Time Series
+
+### Subset
+
+```{r 7a3, message = FALSE, warning = FALSE}
+# Subset raster stack/brick (notice the double [[]] bracket and similarity to lists)
+sub_ras_stack=ras_stack[[c(1,3,5,10,12)]] #Select 1st, 3rd, 5th, 10th and 12th layers
+
+#~~ Plot first 4 elements of NDVI SpatRaster
+coastlines = vect("./SampleData-master/ne_10m_coastline/ne_10m_coastline.shp")
+
+# Function to add shapefile to the plot
+addCoastlines=function(){
+  plot(coastlines, add=TRUE)   # Add Coastline vector to existing plot
+  } 
+
+# Notice how a subset of first 4 rasters is created 
+terra::plot(sub_ras_stack[[1:4]],  # Select raster layers to plot
+     col=colpal,                   # Specify colormap
+     asp=NA,                       # Aspect ratio= NA
+     fun=addCoastlines)            # Add coastline to each layer
+```
+
+### Crop and Mask
+
+### Extract Spatial Summary and Grid Time Series

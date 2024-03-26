@@ -1,0 +1,14 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Raster Time Series and NetCDF
+
+```{r child="ch7_a.qmd", message = FALSE, warning = FALSE}
+
+
+```
