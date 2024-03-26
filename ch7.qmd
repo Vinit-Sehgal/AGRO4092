@@ -6,7 +6,7 @@ editor:
     wrap: sentence
 ---
 
-# Raster Time Series and NetCDF
+# Multilayer Rasters
 
 ```{r child="ch7_a.qmd", message = FALSE, warning = FALSE}
 

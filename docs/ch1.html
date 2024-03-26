@@ -193,8 +193,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./ch7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
   </div>
 </li>
     </ul>
@@ -503,13 +509,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 22.51244 28.88004 20.51325 22.16397 24.57558 26.01067 25.89398 28.88742
- [9] 27.78769 25.24749 26.60483 27.44583 27.27781 22.32582 29.53894 25.54629
-[17] 21.13032 29.50510 24.70682 25.71752 29.21367 21.63876 21.27127 22.85934
-[25] 23.38830 26.96780 27.72283 24.68937 25.26664 21.72238 24.75439 22.94710
-[33] 25.88174 29.37879 22.16061 24.57605 29.31584 21.03644 25.26505 26.39537
-[41] 27.14521 25.27568 25.03629 28.38753 28.94583 24.99385 27.17223 24.70137
-[49] 22.19962 25.44748</code></pre>
+<pre><code> [1] 26.24793 25.84090 25.45835 25.02813 21.48020 26.61866 27.20461 20.77080
+ [9] 27.54697 24.91383 25.43215 24.33535 29.77865 22.19697 22.43559 22.83097
+[17] 21.10405 29.38271 24.04716 20.90495 25.87417 26.53300 29.02984 21.67897
+[25] 29.28036 26.15791 24.38678 25.20788 21.31842 26.05241 28.68051 29.52023
+[33] 21.03485 23.60431 26.97174 23.01811 29.76612 28.98734 24.86752 20.53350
+[41] 22.87586 21.09073 27.57745 23.38495 25.08703 21.29087 29.44979 24.12073
+[49] 29.77011 27.49646</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -862,12 +868,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913    76.2 Jan    -3.66
-2  1913    76.2 Feb   -12.5 
-3  1913    76.2 Mar    -5.23
-4  1914    46.4 Jan    -6.27
-5  1914    46.4 Feb    -6.51
-6  1914    46.4 Mar   -10.6 </code></pre>
+1  1913   33.6  Jan   -10.2 
+2  1913   33.6  Feb   -11.8 
+3  1913   33.6  Mar    -9.64
+4  1914    7.30 Jan   -17.4 
+5  1914    7.30 Feb    -6.15
+6  1914    7.30 Mar   -12.7 </code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>

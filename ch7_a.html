@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>ch7_a</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ch7_a_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ch7_a_files/libs/quarto-html/quarto.js"></script>
+<script src="ch7_a_files/libs/quarto-html/popper.min.js"></script>
+<script src="ch7_a_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ch7_a_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ch7_a_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ch7_a_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ch7_a_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ch7_a_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ch7_a_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+<section id="raster-concatenation" class="level2">
+<h2 class="anchored" data-anchor-id="raster-concatenation">Raster Concatenation</h2>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section"><img src="images/clipboard-3007221205.png" class="img-fluid" width="750"></h3>
+</section>
+<section id="create-raster-time-series" class="level3">
+<h3 class="anchored" data-anchor-id="create-raster-time-series">Create Raster Time Series</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Create and plot NDVI SpatRaster</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cetcolor)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Location of the NDVI raster files</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>ndvi_path<span class="ot">=</span><span class="st">"./SampleData-master/raster_files/NDVI/"</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># List of all NDVI rasters</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ras_path<span class="ot">=</span><span class="fu">list.files</span>(ndvi_path,    <span class="co"># The folder which contains the files of interest</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">pattern=</span><span class="st">'*.tif'</span>,  <span class="co"># Select files with this extention</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">full.names=</span><span class="cn">TRUE</span>)  <span class="co"># Print full file path? Yes (TRUE) or no (FALSE)?</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ras_path)     <span class="co"># The folder contains 23 rasters, in increasing order of time </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-01-01.tif"
+ [2] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-01-17.tif"
+ [3] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-02-02.tif"
+ [4] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-02-18.tif"
+ [5] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-03-05.tif"
+ [6] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-03-21.tif"
+ [7] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-04-06.tif"
+ [8] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-04-22.tif"
+ [9] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-05-08.tif"
+[10] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-05-24.tif"
+[11] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-06-09.tif"
+[12] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-06-25.tif"
+[13] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-07-11.tif"
+[14] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-07-27.tif"
+[15] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-08-12.tif"
+[16] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-08-28.tif"
+[17] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-09-13.tif"
+[18] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-09-29.tif"
+[19] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-10-15.tif"
+[20] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-10-31.tif"
+[21] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-11-16.tif"
+[22] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-12-02.tif"
+[23] "./SampleData-master/raster_files/NDVI/NDVI_resamp_2016-12-18.tif"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># User the file path to import raster</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>r1<span class="ot">=</span><span class="fu">rast</span>(ras_path[<span class="dv">1</span>])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>r2<span class="ot">=</span><span class="fu">rast</span>(ras_path[<span class="dv">2</span>])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>r3<span class="ot">=</span><span class="fu">rast</span>(ras_path[<span class="dv">3</span>])</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>r4<span class="ot">=</span><span class="fu">rast</span>(ras_path[<span class="dv">4</span>])</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the rasters i.e. arrange the rasters one after the other</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>rast_ts<span class="ot">=</span><span class="fu">c</span>(r1,r2, r3, r4)    </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">nlyr</span>(rast_ts)        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast_ts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "NDVI_resamp_2016-01-01" "NDVI_resamp_2016-01-17" "NDVI_resamp_2016-02-02"
+[4] "NDVI_resamp_2016-02-18"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot concatenated rasters</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>colpal <span class="ot">=</span> cetcolor<span class="sc">::</span><span class="fu">cet_pal</span>(<span class="dv">20</span>, <span class="at">name =</span> <span class="st">"r2"</span>)  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rast_ts, <span class="at">col=</span><span class="fu">rev</span>(colpal))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch7_a_files/figure-html/7a1-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="programmatic-concatenation-of-rast-objects" class="level3">
+<h3 class="anchored" data-anchor-id="programmatic-concatenation-of-rast-objects">Programmatic Concatenation of <code>rast</code> Objects</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~~~~~~~~~~~~~~~~</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: Using for loop to create raster layers from the raster location</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Suitable for large number of rasters and avoiding memory bottleneck</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ras_stack<span class="ot">=</span><span class="fu">rast</span>()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (nRun <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(ras_path)){</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  ras_stack<span class="ot">=</span><span class="fu">c</span>(ras_stack,<span class="fu">rast</span>(ras_path[[nRun]]))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check dimension of data cube</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(ras_stack) <span class="co">#[x: y: z]- 23 raster layers with 456 x 964 cells</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 456 964  23</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~~~~~~~~~~~~~~~~</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 2: Use lapply to create raster layer list from the raster file paths</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ras_list <span class="ot">=</span> <span class="fu">lapply</span>(<span class="fu">paste</span>(ras_path, <span class="at">sep =</span> <span class="st">""</span>), rast)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># This a list of 23 raster objects stored as individual elements.</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert raster layer lists to Spatraster </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ras_stack <span class="ot">=</span> <span class="fu">rast</span>(ras_list)     <span class="co"># Stacking all rasters as a SpatRaster </span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This a multi-layer (23 layers in this case) SpatRaster Object.</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~~~~~~~~~~~~~~~~</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 3: maping the rast function on the raster file paths</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr) </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ras_list <span class="ot">=</span> purrr<span class="sc">::</span><span class="fu">map</span>(ras_path, <span class="sc">~</span> <span class="fu">rast</span>(.x))  <span class="co"># Import the rasters into a list</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>ras_stack <span class="ot">=</span> <span class="fu">rast</span>(ras_list)  <span class="co"># Convert a list of rasters to rast object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="spatial-operations-on-multilayer-raster" class="level2">
+<h2 class="anchored" data-anchor-id="spatial-operations-on-multilayer-raster">Spatial Operations on Multilayer Raster</h2>
+<section id="subset-multilayer-raster" class="level3">
+<h3 class="anchored" data-anchor-id="subset-multilayer-raster">Subset Multilayer Raster</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset raster stack/brick (notice the double [[]] bracket and similarity to lists)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sub_ras_stack<span class="ot">=</span>ras_stack[[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">12</span>)]] <span class="co">#Select 1st, 3rd, 5th, 10th and 12th layers</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ Plot first 4 elements of NDVI SpatRaster</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>coastlines <span class="ot">=</span> <span class="fu">vect</span>(<span class="st">"./SampleData-master/ne_10m_coastline/ne_10m_coastline.shp"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to add shapefile to the plot</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>addCoastlines<span class="ot">=</span><span class="cf">function</span>(){</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(coastlines, <span class="at">add=</span><span class="cn">TRUE</span>)   <span class="co"># Add Coastline vector to existing plot</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  } </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Notice how a subset of first 4 rasters is created </span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(sub_ras_stack[[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]],  <span class="co"># Select raster layers to plot</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span>colpal,                   <span class="co"># Specify colormap</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">asp=</span><span class="cn">NA</span>,                       <span class="co"># Aspect ratio= NA</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">fun=</span>addCoastlines)            <span class="co"># Add coastline to each layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch7_a_files/figure-html/7a3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="crop-and-mask" class="level3">
+<h3 class="anchored" data-anchor-id="crop-and-mask">Crop and Mask</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Names of the states to mask NDVI</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>states <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'Oklahoma'</span>,<span class="st">'Texas'</span>,<span class="st">'New Mexico'</span>, <span class="st">'Louisiana'</span>, <span class="st">'Arkansas'</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset the selected states from CONUS simple feature (sf) object</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spData)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>us_shp<span class="ot">=</span>spData<span class="sc">::</span>us_states</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset sf for selected states using the NAME feature</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>selectState <span class="ot">=</span> us_shp[(us_shp<span class="sc">$</span>NAME <span class="sc">%in%</span> states),]</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert selectState sf to vect object</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>stateVect<span class="ot">=</span> <span class="fu">vect</span>(selectState)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproject the state vector to match the CRS of the NDVI raster</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>stateVect_proj<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">project</span>(stateVect,<span class="fu">crs</span>(ras_stack))</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Raster operation</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>ndvi_crp <span class="ot">=</span> <span class="fu">crop</span>(ras_stack, <span class="fu">ext</span>(stateVect_proj))       <span class="co"># Crop raster</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>ndvi_msk <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">mask</span>(ndvi_crp,stateVect_proj)       <span class="co"># Mask</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(ndvi_msk) <span class="co">#Notice the number of layers in the masked rast</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30 53 23</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot raster and shapefile</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ndvi_msk[[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]], </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span>colpal, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">fun=</span><span class="cf">function</span>(){<span class="fu">plot</span>(stateVect_proj, <span class="at">add=</span><span class="cn">TRUE</span>)} <span class="co"># Add state borders</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>     )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch7_a_files/figure-html/7a4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="spatial-extraction" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-extraction">Spatial Extraction</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract cell values within each feature for all layers</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ndvi_state_mean <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">extract</span>(ndvi_msk,       <span class="co"># Data cube</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                         stateVect_proj,    <span class="co"># Shapefile for feature reference </span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">na.rm=</span>T)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract 'mean' statistic of cell values within each feature for all layers</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>ndvi_state_mean <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">extract</span>(ndvi_msk,  <span class="co"># Multilayer rast object</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                         stateVect_proj,    <span class="co"># Vect object of states</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun=</span>mean,          <span class="co"># Summary statistics (mean/sum/min/max)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">na.rm=</span>T )          <span class="co"># Remove NA values? </span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Try: View(ndvi_state_mean)</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Each row corresponds to one state. Columns store layer-wise mean NDVI per state</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ndvi_state_mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ID NDVI_resamp_2016-01-01 NDVI_resamp_2016-01-17 NDVI_resamp_2016-02-02
+1  1              0.5522976              0.5080151              0.4881696
+2  2              0.3818293              0.3652746              0.3635756
+3  3              0.3994706              0.3769143              0.3628214
+4  4              0.4775158              0.4626955              0.4467108
+5  5              0.1515851              0.1885286              0.1956329
+  NDVI_resamp_2016-02-18 NDVI_resamp_2016-03-05 NDVI_resamp_2016-03-21
+1              0.4899222              0.4895655              0.5495264
+2              0.3819785              0.4111656              0.4301364
+3              0.3888056              0.4115137              0.4409466
+4              0.4653435              0.4628991              0.4804158
+5              0.2090006              0.2141808              0.2182761
+  NDVI_resamp_2016-04-06 NDVI_resamp_2016-04-22 NDVI_resamp_2016-05-08
+1              0.6105156              0.6728889              0.6717543
+2              0.4858011              0.5957775              0.6227723
+3              0.4841774              0.4977419              0.4900750
+4              0.5476653              0.6672000              0.6972526
+5              0.2341186              0.2381249              0.2497053
+  NDVI_resamp_2016-05-24 NDVI_resamp_2016-06-09 NDVI_resamp_2016-06-25
+1              0.6957812              0.7140958              0.7334875
+2              0.6317198              0.6319490              0.6212515
+3              0.5081387              0.5217799              0.4975696
+4              0.7327560              0.7381307              0.7769872
+5              0.2611739              0.2605942              0.2693318
+  NDVI_resamp_2016-07-11 NDVI_resamp_2016-07-27 NDVI_resamp_2016-08-12
+1              0.7264149              0.7297604              0.7205446
+2              0.6212688              0.5903892              0.5904805
+3              0.4569178              0.4475357              0.4784838
+4              0.7936874              0.7996058              0.7991813
+5              0.2534896              0.2710826              0.2933462
+  NDVI_resamp_2016-08-28 NDVI_resamp_2016-09-13 NDVI_resamp_2016-09-29
+1              0.7327004              0.6952247              0.6563840
+2              0.5939433              0.5947148              0.5561649
+3              0.5335192              0.5370391              0.5085575
+4              0.7747568              0.7191144              0.6574943
+5              0.3281408              0.3158202              0.2957566
+  NDVI_resamp_2016-10-15 NDVI_resamp_2016-10-31 NDVI_resamp_2016-11-16
+1              0.6274066              0.6019123              0.5819281
+2              0.5264949              0.5015890              0.4637258
+3              0.4742536              0.4476652              0.4316670
+4              0.6204193              0.5829816              0.5198666
+5              0.2680033              0.2750498              0.2497373
+  NDVI_resamp_2016-12-02 NDVI_resamp_2016-12-18
+1              0.5348509              0.5075413
+2              0.3907982              0.3692964
+3              0.3791562              0.3770174
+4              0.4779205              0.4680233
+5              0.2450552              0.2306126</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="layerwise-arithmetic-operations-on-multilayer-raster" class="level2">
+<h2 class="anchored" data-anchor-id="layerwise-arithmetic-operations-on-multilayer-raster">Layerwise Arithmetic Operations on Multilayer Raster</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-3169396661.png" class="img-fluid figure-img" width="300"></p>
+</figure>
+</div>
+<section id="layerwise-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="layerwise-statistics">Layerwise Statistics</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layer-wise cell-statistics </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Layer-wise Mean</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sub_ras_stack, mean, <span class="at">na.rm=</span> T) <span class="co"># Try modal, median, min etc. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                            mean
+NDVI_resamp_2016-01-01 0.2840846
+NDVI_resamp_2016-02-02 0.2948298
+NDVI_resamp_2016-03-05 0.3057182
+NDVI_resamp_2016-05-24 0.4618550
+NDVI_resamp_2016-06-25 0.4997354</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layer-wise quantiles</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sub_ras_stack, quantile, <span class="at">probs=</span><span class="fu">c</span>(.<span class="dv">25</span>,.<span class="dv">75</span>), <span class="at">na.rm=</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             X25.      X75.
+NDVI_resamp_2016-01-01 0.07188153 0.5135894
+NDVI_resamp_2016-02-02 0.08442930 0.5177374
+NDVI_resamp_2016-03-05 0.09917563 0.5113073
+NDVI_resamp_2016-05-24 0.23671686 0.6695234
+NDVI_resamp_2016-06-25 0.26000642 0.7303487</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># User-defined statistics by defining own function</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>quant_fun <span class="ot">=</span> <span class="cf">function</span>(x) {<span class="fu">quantile</span>(x, <span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)} </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sub_ras_stack, quant_fun) <span class="co"># 25th, and 75th percentile of each layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             X25.      X75.
+NDVI_resamp_2016-01-01 0.07188153 0.5135894
+NDVI_resamp_2016-02-02 0.08442930 0.5177374
+NDVI_resamp_2016-03-05 0.09917563 0.5113073
+NDVI_resamp_2016-05-24 0.23671686 0.6695234
+NDVI_resamp_2016-06-25 0.26000642 0.7303487</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom function for mean, variance and skewness</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x){ </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  meanVal<span class="ot">=</span><span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)              <span class="co"># Mean </span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  varVal<span class="ot">=</span><span class="fu">var</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)                <span class="co"># Variance</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  skewVal<span class="ot">=</span>moments<span class="sc">::</span><span class="fu">skewness</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Skewness</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  output<span class="ot">=</span><span class="fu">c</span>(meanVal,varVal,skewVal)         <span class="co"># Combine all statistics</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(output)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"Mean"</span>, <span class="st">"Var"</span>,<span class="st">"Skew"</span>)    <span class="co"># Rename output variables</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(output)                           <span class="co"># Return output</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">global</span>(sub_ras_stack, my_fun) <span class="co"># Mean, Variance and skewness of each layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                            Mean        Var       Skew
+NDVI_resamp_2016-01-01 0.2840846 0.07224034  0.5409973
+NDVI_resamp_2016-02-02 0.2948298 0.06677124  0.5075244
+NDVI_resamp_2016-03-05 0.3057182 0.06171894  0.5018285
+NDVI_resamp_2016-05-24 0.4618550 0.05944947 -0.2721941
+NDVI_resamp_2016-06-25 0.4997354 0.06587261 -0.3392214</code></pre>
+</div>
+</div>
+</section>
+<section id="arithmetic-operations" class="level3">
+<h3 class="anchored" data-anchor-id="arithmetic-operations">Arithmetic Operations</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Arithmetic operations on SpatRaster are same as lists</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>add <span class="ot">=</span> ndvi_msk<span class="sc">+</span><span class="dv">10</span>                  <span class="co"># Add a number to raster layers</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>mult <span class="ot">=</span> ndvi_msk<span class="sc">*</span><span class="dv">5</span>                  <span class="co"># Multiply a number to raster layers</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>subset_mult <span class="ot">=</span> ndvi_msk[[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]]<span class="sc">*</span><span class="dv">10</span>   <span class="co"># Multiply a number to a subset of raster layers</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>log_ra <span class="ot">=</span> <span class="fu">log</span>(ndvi_msk)        <span class="co"># Layer-wise Log-transformation</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Data filtering based on cell-value</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Assign NA to any value less than 0.5</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Try ?terra::clamp for help and other options/uses</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>filter_rast <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">clamp</span>(ndvi_msk, <span class="at">lower=</span><span class="fl">0.5</span>, <span class="at">values=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's plot the filtered rasters</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(filter_rast[[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]], </span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">asp=</span><span class="cn">NA</span>,            <span class="co"># Aspect ratio: NA, fill to plot space</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span>colpal,        <span class="co"># Assign colormap to the plot</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">nc=</span><span class="dv">2</span>,              <span class="co"># Number of columns to arrange plots, </span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">range=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.9</span>),    <span class="co"># Set custom z range for the plots</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">fun=</span><span class="cf">function</span>(){<span class="fu">plot</span>(stateVect_proj, <span class="at">add=</span><span class="cn">TRUE</span>)} <span class="co"># Add state borders</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>)            </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch7_a_files/figure-html/7a7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics of layers using boxplots</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Type ?boxplot in console for details on the selected options below</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Based on the boxplot, can we be sure that clamping worked? </span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>dateStr <span class="ot">=</span> <span class="fu">substr</span>(<span class="fu">names</span>(ndvi_msk),<span class="dv">13</span>,<span class="dv">23</span>) <span class="co"># Substring of dates for X-axis labels</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(filter_rast, </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizontal=</span>F, </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"royalblue"</span>,<span class="at">frame=</span>F, </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">cex.axis=</span><span class="dv">1</span>, <span class="at">notch=</span>T, </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">col.axis =</span> <span class="st">"black"</span>,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">whisklty=</span><span class="dv">1</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">whiskcol=</span><span class="st">"black"</span>, <span class="at">whisklwd=</span><span class="dv">1</span>,</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">staplelwd =</span> <span class="dv">1</span>, </span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">staplecol =</span> <span class="st">"royalblue"</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">medcol =</span> <span class="st">"red"</span>,<span class="at">medlwd=</span><span class="fl">1.2</span>, </span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">col.ticks =</span> <span class="st">"black"</span>, </span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">outlier=</span>F, </span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">names=</span>dateStr) </span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>,  <span class="at">tck=</span><span class="fl">0.05</span>, <span class="at">col.axis =</span> <span class="st">"transparent"</span>, <span class="at">lwd=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch7_a_files/figure-html/7a7-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layerwise normalization to [0,1]</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Calculate minumum and maximum cell values for each layer</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>min_val <span class="ot">=</span> <span class="fu">global</span>(ndvi_msk, min, <span class="at">na.rm=</span> T) <span class="co"># Layer-wise minima</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>max_val <span class="ot">=</span> <span class="fu">global</span>(ndvi_msk, max, <span class="at">na.rm=</span> T) <span class="co"># Layer-wise maxima</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Normalize layers using respective minima and maxima</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>norm_stk<span class="ot">=</span>(ndvi_msk<span class="sc">-</span>min_val<span class="sc">$</span>min)<span class="sc">/</span>(max_val<span class="sc">$</span>max<span class="sc">-</span>min_val<span class="sc">$</span>min) </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the normalized rasters. Notice the raster values range between 0 and 1</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(norm_stk[[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]],<span class="at">col=</span>colpal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch7_a_files/figure-html/7a7-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -8,7 +8,16 @@ editor:
 
 ## Raster Concatenation
 
-### Why Concatenate?
+![](images/clipboard-3007221205.png){fig-align="center" width="550"}
+
+Concatenation (placing the objects one after the other) of rasters follow the same syntax as arrays i.e. by using `c(obj1, obj2)`.
+Concatenation of rasters can be used for, but not limited to, creating a raster time series to evaluate time-dependent variability in the spatial data.
+Here we will use the global NDVI rasters from MODIS (resampled to a coarse resolution for computational ease) to create a raster time series in the form of a multilayer `rast` object, and will demonstrate several spatial and arithmetic operations on the multilayer rasters.
+
+### Create Raster Time Series
+
+The folder `./SampleData-master/raster_files/NDVI/` contains 23 rasters of global NDVI for the year 2016, with a retrieval frequency of 16 days.
+Let us import four sample rasters and concatenate them to generate a multilayer raster.
 
 ```{r 7a1, message = FALSE, warning = FALSE}
 #~~~ Create and plot NDVI SpatRaster
@@ -20,10 +29,10 @@ ndvi_path="./SampleData-master/raster_files/NDVI/"
 
 # List of all NDVI rasters
 ras_path=list.files(ndvi_path,    # The folder which contains the files of interest
-                pattern='*.tif',  # Specify the extention of the files to be selected
+                pattern='*.tif',  # Select files with this extention
                 full.names=TRUE)  # Print full file path? Yes (TRUE) or no (FALSE)?
 
-print(ras_path)     # The folder contains 23 rasters arranges in increasing order of time 
+print(ras_path)     # The folder contains 23 rasters, in increasing order of time 
 
 # User the file path to import raster
 r1=rast(ras_path[1])
@@ -33,8 +42,8 @@ r4=rast(ras_path[4])
 
 # Concatenate the rasters i.e. arrange the rasters one after the other
 rast_ts=c(r1,r2, r3, r4)    
-nlyr(rast_ts)        
-names(rast_ts)
+nlyr(rast_ts)            # Number of layers in the multilayer raster
+names(rast_ts)           # Names of the raster layers
 
 # Plot concatenated rasters
 colpal = cetcolor::cet_pal(20, name = "r2")  
@@ -43,24 +52,17 @@ plot(rast_ts, col=rev(colpal))
 
 ### Programmatic Concatenation of `rast` Objects
 
+Concatenation method shown above can be good for a few rasters.
+However, in the case of a long time series, this method could be cumbersome.
+In such cases, we can write a small script to concatenate the rasters in to a multilayer `rast` object.
+We will first explore the use of loops- which will concatenate each `rast` layer sequentially.
+This method may take longer, but helps to avoid memory bottleneck when a very large number of rasters are simultaneously processed (the threshold may depend on the system memory and processor).
+In contrast, `lapply` and `map` vectorize the operation of creating the `rast` object for concatenation, and maybe faster for a moderate number of files (again, depends on the system configuration).
+
 ```{r 7a2, message = FALSE, warning = FALSE}
 #~~~~~~~~~~~~~~~~~~
-# Method 1: Use lapply to create raster layer list from the raster location
-ras_list = lapply(paste(ras_path, sep = ""), rast)
-# This a list of 23 raster objects stored as individual elements.
-
-#Convert raster layer lists to Spatraster 
-ras_stack = rast(ras_list)     # Stacking all rasters as a SpatRaster 
-# This a multi-layer (23 layers in this case) SpatRaster Object.
-
-#~~~~~~~~~~~~~~~~~~
-# Method 2: Using pipes to create raster layers from the raster location
-library(tidyr) # For piping
-ras_list = ras_path %>%  purrr::map(~ rast(.x))  # Import the raster
-ras_stack = rast(ras_list)  # Convert RasterStack to RasterBrick
-
-#~~~~~~~~~~~~~~~~~~
-# Method 3: Using for loop to create raster layers from the raster location
+# Method 1: Using for loop to create raster layers from the raster location
+#~~ Suitable for large number of rasters and avoiding memory bottleneck
 ras_stack=rast()
 for (nRun in 1:length(ras_path)){
   ras_stack=c(ras_stack,rast(ras_path[[nRun]]))
@@ -68,11 +70,30 @@ for (nRun in 1:length(ras_path)){
 
 # Check dimension of data cube
 dim(ras_stack) #[x: y: z]- 23 raster layers with 456 x 964 cells
+
+#~~~~~~~~~~~~~~~~~~
+# Method 2: Use lapply to create raster layer list from the raster file paths
+ras_list = lapply(paste(ras_path, sep = ""), rast)
+# This a list of 23 raster objects stored as individual elements.
+
+# Convert raster layer lists to Spatraster 
+ras_stack = rast(ras_list)     # Stacking all rasters as a SpatRaster 
+# This a multi-layer (23 layers in this case) SpatRaster Object.
+
+#~~~~~~~~~~~~~~~~~~
+# Method 3: maping the rast function on the raster file paths
+library(purrr) 
+ras_list = purrr::map(ras_path, ~ rast(.x))  # Import the rasters into a list
+ras_stack = rast(ras_list)  # Convert a list of rasters to rast object
 ```
 
-## Spatial Operations on Raster Time Series
+## Spatial Operations on Multilayer Raster
 
-### Subset
+### Subset Multilayer Raster
+
+Subsetting multilayer rasters (i.e. creating of smaller subset of layers) follows the same syntax we would use to subset a list.
+Notice the double square bracket i.e. `[[ ]]` we use to subset raster layers.
+When generating a spatial plot of multilayer rasters using `terra::plot`, to add vector boundaries to all plot layers, we need to define a custom function to add the object to each layer.
 
 ```{r 7a3, message = FALSE, warning = FALSE}
 # Subset raster stack/brick (notice the double [[]] bracket and similarity to lists)
@@ -95,4 +116,148 @@ terra::plot(sub_ras_stack[[1:4]],  # Select raster layers to plot
 
 ### Crop and Mask
 
-### Extract Spatial Summary and Grid Time Series
+Cropping and masking a multilater raster follows the same format as that of a single raster we learned in Sec 5.3.
+
+```{r 7a4, message = FALSE, warning = FALSE}
+# Names of the states to mask NDVI
+states = c('Oklahoma','Texas','New Mexico', 'Louisiana', 'Arkansas')
+
+# Subset the selected states from CONUS simple feature (sf) object
+library(sf)
+library(spData)
+us_shp=spData::us_states
+
+# Subset sf for selected states using the NAME feature
+selectState = us_shp[(us_shp$NAME %in% states),]
+
+# Convert selectState sf to vect object
+stateVect= vect(selectState)
+
+# Reproject the state vector to match the CRS of the NDVI raster
+stateVect_proj=terra::project(stateVect,crs(ras_stack))
+
+# Raster operation
+ndvi_crp = crop(ras_stack, ext(stateVect_proj))       # Crop raster
+ndvi_msk = terra::mask(ndvi_crp,stateVect_proj)       # Mask
+
+dim(ndvi_msk) #Notice the number of layers in the masked rast
+
+# Plot raster and shapefile
+plot(ndvi_msk[[1:4]], 
+     col=colpal, 
+     fun=function(){plot(stateVect_proj, add=TRUE)} # Add state borders
+     )
+```
+
+### Spatial Extraction
+
+Similar to single-band raster operation shown in Sec. 5.5.1.2, this operation can be executed using `terra::extract`.
+However, the output will contain values from all layers in the multiband raster.
+
+```{r 7a5, message = FALSE, warning = FALSE}
+# Extract cell values within each feature for all layers
+ndvi_state_mean = terra::extract(ndvi_msk,       # Data cube
+                         stateVect_proj,    # Shapefile for feature reference 
+                         na.rm=T)
+
+# Extract 'mean' statistic of cell values within each feature for all layers
+ndvi_state_mean = terra::extract(ndvi_msk,  # Multilayer rast object
+                         stateVect_proj,    # Vect object of states
+                         fun=mean,          # Summary statistics (mean/sum/min/max)
+                         na.rm=T )          # Remove NA values? 
+
+# Try: View(ndvi_state_mean)
+#~~~ Each row corresponds to one state. Columns store layer-wise mean NDVI per state
+head(ndvi_state_mean)
+```
+
+## Layerwise Arithmetic Operations on Multilayer Raster
+
+![](images/clipboard-3169396661.png){fig-align="center" width="450"}
+
+### Layerwise Statistics
+
+Similar to what we learned in Sec. 4.2 Raster Statistics, we can use the `global` function to obtain summary statistics of the multilayer raster.
+Here the operation will yield the desired statistic for each constituent layer.
+
+```{r 7a6, message = FALSE, warning = FALSE}
+# Layer-wise cell-statistics 
+# Layer-wise Mean
+global(sub_ras_stack, mean, na.rm= T) # Try modal, median, min etc. 
+
+# Layer-wise quantiles
+global(sub_ras_stack, quantile, probs=c(.25,.75), na.rm= T)
+
+# User-defined statistics by defining own function
+quant_fun = function(x) {quantile(x, probs = c(0.25, 0.75), na.rm=TRUE)} 
+global(sub_ras_stack, quant_fun) # 25th, and 75th percentile of each layer
+
+# Custom function for mean, variance and skewness
+my_fun = function(x){ 
+  meanVal=mean(x, na.rm=TRUE)              # Mean 
+  varVal=var(x, na.rm=TRUE)                # Variance
+  skewVal=moments::skewness(x, na.rm=TRUE) # Skewness
+  output=c(meanVal,varVal,skewVal)         # Combine all statistics
+  names(output)=c("Mean", "Var","Skew")    # Rename output variables
+  return(output)                           # Return output
+} 
+
+global(sub_ras_stack, my_fun) # Mean, Variance and skewness of each layer
+```
+
+### Arithmetic Operations
+
+Again, this operation is similar to the operations on a single-band rasters, except the operation is carried out for each constituent layer simultaneously.
+Let's explore some examples.
+
+```{r 7a7, message = FALSE, warning = FALSE}
+# Arithmetic operations on SpatRaster are same as lists
+add = ndvi_msk+10                  # Add a number to raster layers
+mult = ndvi_msk*5                  # Multiply a number to raster layers
+subset_mult = ndvi_msk[[1:3]]*10   # Multiply a number to a subset of raster layers
+log_ra = log(ndvi_msk)        # Layer-wise Log-transformation
+
+# Data filtering based on cell-value
+#~~~ Assign NA to any value less than 0.5
+#~~~ Try ?terra::clamp for help and other options/uses
+filter_rast = terra::clamp(ndvi_msk, lower=0.5, values=FALSE)
+
+# Let's plot the filtered rasters
+plot(filter_rast[[1:4]], 
+     asp=NA,            # Aspect ratio: NA, fill to plot space
+     col=colpal,        # Assign colormap to the plot
+     nc=2,              # Number of columns to arrange plots, 
+     range=c(0,0.9),    # Set custom z range for the plots
+     fun=function(){plot(stateVect_proj, add=TRUE)} # Add state borders
+)            
+
+# Summary statistics of layers using boxplots
+#~~~ Type ?boxplot in console for details on the selected options below
+#~~~ Based on the boxplot, can we be sure that clamping worked? 
+
+dateStr = substr(names(ndvi_msk),13,23) # Substring of dates for X-axis labels
+boxplot(filter_rast, 
+        horizontal=F, 
+        col = "royalblue",frame=F, 
+        cex.axis=1, notch=T, 
+        col.axis = "black",
+        whisklty=1,
+        whiskcol="black", whisklwd=1,
+        staplelwd = 1, 
+        staplecol = "royalblue",
+        medcol = "red",medlwd=1.2, 
+        col.ticks = "black", 
+        outlier=F, 
+        names=dateStr) 
+axis(1,  tck=0.05, col.axis = "transparent", lwd=1)
+
+# Layerwise normalization to [0,1]
+#~~~ Calculate minumum and maximum cell values for each layer
+min_val = global(ndvi_msk, min, na.rm= T) # Layer-wise minima
+max_val = global(ndvi_msk, max, na.rm= T) # Layer-wise maxima
+#~~~ Normalize layers using respective minima and maxima
+norm_stk=(ndvi_msk-min_val$min)/(max_val$max-min_val$min) 
+
+# Plot the normalized rasters. Notice the raster values range between 0 and 1
+plot(norm_stk[[1:4]],col=colpal)
+```

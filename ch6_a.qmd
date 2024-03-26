@@ -346,12 +346,14 @@ r1=rast("lat3031_lon-90-89.tif")
 # Fetch shapefile for Louisiana from spData package
 LAvct=vect(spData::us_states[spData::us_states$NAME=="Louisiana",])
 
-# Plot downloaded raster against the map of Louisiana
+# Plot downloaded raster against the map of Louisiana. Note that the raster fits 1x1 grid
 plot(LAvct, col="gray90")
 plot(r1, range=c(0,100), add=TRUE)
+grid()
 
-# Crop raster to smaller extent
-r1crp=crop(r1, ext(c(-91,-90.8,30,30.2)))
+# Crop raster to smaller region of interest for easy visualization
+#~~~ We will crop raster to a user-defined extent
+r1crp=crop(r1, ext(c(-91,-90.8,30,30.2)))   
 
 # Explore a smaller subset of the dataset
 #~~~ Can you identify the Mississipi flood-plain using the clay percentage? 
@@ -410,4 +412,5 @@ r_mos=mosaic(r1,r2,r3,r4, fun="mean")
 plot(LAvct, main="Clay % [0-5 cm depth]",axes=FALSE, col="gray90")
 plot(r_mos, range=c(0,100), add=TRUE)
 plot(LAvct, add=TRUE)
+grid()
 ```
