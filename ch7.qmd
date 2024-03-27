@@ -6,7 +6,7 @@ editor:
     wrap: sentence
 ---
 
-# Multilayer Rasters
+# Multilayer Rasters: Layer–wise Operations
 
 ```{r child="ch7_a.qmd", message = FALSE, warning = FALSE}
 

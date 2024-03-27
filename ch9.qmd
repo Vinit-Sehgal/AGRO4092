@@ -1,0 +1,288 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Parallel Geospatial Computing
+
+Many computations in R can be made faster by the use of parallel computation.
+Generally, parallel computation is the simultaneous execution of different pieces of a larger computation across multiple computing processors or cores.
+The basic idea is that if you can execute a computation in X seconds on a single processor, then you should be able to execute it in X/n seconds on n processors.
+
+Such a speed-up might not possible because of overhead and various barriers to splitting up a problem into n pieces, but it is often possible to come close in simple problems.
+For more details read: <https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra>.
+
+```{r 9a1, message = FALSE, warning = FALSE}
+library(terra)
+
+# Import SMAP soil moisture NetCDF to the workspace
+SMAPrast = rast("./SampleData-master/SMAP_L3_USA.nc")
+
+# Cell-wise mean of all layers
+meanSMAP = mean(SMAPrast, na.rm=TRUE)
+
+# Plot spatial map for mean soil moisture
+library(spData)
+us_shp = vect(us_states)
+
+plot(meanSMAP)                        
+plot(us_shp, add=TRUE)     
+```
+
+## Cell–wise Parallel Computing
+
+![](images/clipboard-3787324268.png){fig-align="center" width="500"}
+
+### Apply custom function to pixel time series
+
+Once we have imported the netCDF file as `rast` object, we will apply a slightly modified version of previously used function `my_fun` (from Ch 8) for calculating mean, variance and skewness for time series data for each cell in parallel.
+We will use `terra::app` function to apply `my_fun` on SpatRaster in parallel.
+
+For seamless implementation of function in parallel mode, care must be taken that all necessary are accessible to ALL cores and error exceptions are handles appropriately.
+We will modify `my_fun` slightly to highlight what it means in practice.
+
+1.  We will convert input `x` to a numeric array
+
+2.  We will remove `NA` values from dataset before calculation
+
+3.  We will use `minSamp` to fix minimum sample counts for calculation
+
+4.  We will use `tryCatch` to handle error exceptions
+
+The basic rules to avoid errors: (a) checking that inputs are correct, (b) avoiding non-standard evaluation, and (c) avoiding functions that can return different types of output.
+
+```{r 9a2, message = FALSE, warning = FALSE}
+#~~ We will make some changes in the custom function for mean, variance and skewness
+minSamp = 50                           # Minimum assured samples for statistics
+
+my_fun = function(x, minSamp, na.rm=TRUE){    
+  smTS=as.numeric(as.vector(x))     # Convert dataset to numeric array
+  smTS=as.numeric(na.omit(smTS))    # Omit NA values 
+  
+  # Implement function with trycatch for catching exception 
+  tryCatch(if(length(smTS)>minSamp) {      # Apply minimum sample filter
+  
+  ######## OPERATION BEGINS #############    
+  meanVal=mean(smTS, na.rm=TRUE)              # Mean 
+  varVal=var(smTS, na.rm=TRUE)                # Variance
+  skewVal=moments::skewness(smTS, na.rm=TRUE) # Skewness
+  output=c(meanVal,varVal,skewVal)            # Combine all statistics
+  return(output)                              # Return output
+  ######## OPERATION ENDS #############    
+
+  } else {
+    return(rep(NA,3))                         # If conditions !=TRUE, return array with NA
+  },error =function(e){return(rep(NA, 3))})   # If Error== TRUE, return array with NA
+}
+
+
+# Apply function to all grids in parallel
+library(tictoc)
+tic()
+stat_brk = app(SMAPrast, 
+               my_fun, 
+               minSamp = 50,                                          # Minimum assured samples for statistics
+               cores =parallel::detectCores(logical = FALSE) - 1)     # Leave one core for housekeeping
+
+# Beware while using detectCores(). 
+# The argument logical = FALSE returns the number of physical cores.
+# logical = TRUE returns the number of available hardware threads. 
+
+
+names(stat_brk)=c("Mean", "Variance", "Skewness")      # Add layer names
+toc()
+
+# Plot statistics
+library(cetcolor)
+colpal = cetcolor::cet_pal(20, name = "r2")  
+plot(stat_brk, col=colpal)
+```
+
+### Best practices for large-scale parallel operations
+
+Error handling is the art of debugging unexpected problems in your code.
+One easy solution when looping through customized functions is to include `print()` messages after each major operation which can help indicate where the error might be happening.
+
+Furthermore when dealing with large spatial data:
+
+1.  Try parallel operation on a smaller region before mounting large jobs for computation.
+    Pixel-wise implementation of the function can help identify errors in the code.
+    Convert the cropped region into a data frame and apply function to time series of each cell.
+    If your code throws error, troubleshoot carefully for the series which generates the error.
+
+```{r 9a3, message = FALSE, warning = FALSE}
+library(terra)
+e <- ext( c(-110,-108, 35,37) )   # Sample 2X2 degree domain
+p <- as.polygons(e)
+crs(p) <- "EPSG:4326"
+
+# Use this polygon to crop and mask the larger SpatRaster
+```
+
+2.  Use `tryCatch` **carefully** as it may suppress legitimate errors as well, generating spurious results.
+    Test the codes for smaller region without `tryCatch` to test the robustness of your codes.
+
+Remember, parallel computing may have some overheads upon creation and closing of clusters.
+A significant improvement in computing times using parallel techniques would be visible for large jobs.
+
+## Layer–wise Parallel Computing
+
+![](images/clipboard-1723748174.png){fig-align="center" width="750"}
+
+We will convert Spatraster to a list of rasters and then we will apply `my_fun` to each element of the list in parallel using `future_lapply`.
+Beware while using `detectCores()`.
+The argument `logical = FALSE` returns the number of physical cores and `logical = TRUE` returns the number of available hardware threads.
+
+```{r 9a4, message = FALSE, warning = FALSE}
+# Convert Spatraster to a list of rasters
+rasList=as.list(SMAPrast[[1:10]])           #What will happen if we pass rast(rasList)?
+length(rasList)
+
+# Custom function to be implemented on each layer
+my_fun = function(x){                
+  x=as.numeric(values(x))                  # Create vector of numeric values of SpatRaster
+  meanVal=base::mean(x, na.rm=TRUE)        # Mean 
+  varVal=stats::var(x, na.rm=TRUE)         # Variance
+  skewVal=moments::skewness(x, na.rm=TRUE) # Skewness
+  output=c(meanVal,varVal,skewVal)         # Combine all statistics
+  return(output)                           # Return output
+} 
+
+# Test the function for one raster
+my_fun(rasList[[1]])
+
+# Apply function in parallel for all layers
+library(parallel) 
+library(future.apply) 
+library(future)
+library(tictoc)
+
+# A multisession future: employ max core-1 for processing
+future::plan(multicore, workers = detectCores(logical = FALSE) - 1)
+
+# Deploy function in parallel 
+tic()
+outStat= future_lapply(rasList, my_fun)
+toc()
+
+# Check output for one layer
+# outStat[[2]]
+```
+
+## Block–wise Parallel Computing
+
+![](images/clipboard-3165518732.png){fig-align="center" width="750"}
+
+In this section we will use a shapefile to extract cell values from a SpatRaster as a list using `exact_extract`.
+Summary statistics will be calculated in parallel using `my_fun` for dataset for each feature.
+Function `exactextractr::exact_extract` is faster and more suited for large applications compared to `terra::extract`.
+Although both perform similar operation with little changes in output format.
+
+```{r 9a5, message = FALSE, warning = FALSE}
+#~ Extract feature data as data frame
+library(exactextractr)
+library(sf)
+library(sp)
+
+featureData=exact_extract(SMAPrast,  # Raster brick 
+                st_as_sf(us_shp),    # Convert shapefile to sf (simple feature)
+                force_df = FALSE,    # Output as a data.frame?
+                include_xy = FALSE,  # Include cell lat-long in output?
+                fun = NULL,          # Specify the function to apply for each feature extracted data
+                progress = TRUE)     # Progressbar
+
+length(featureData) # Same as feature count in CONUS? i.e. nrow(conus) 
+
+# Lets try out data for Louisiana
+which(us_shp$NAME=="Louisiana")  # Find feature number for Louisiana
+# View(featureData[[10]])        # View the extracted data frame
+nrow(featureData[[10]])          # No. pixels within selected feature
+```
+
+Each row in `featureData[[10]]` is the time series of cell values which fall within the boundary of feature number 10, i.e.
+Louisiana.
+Since `exact_extract` function provides `coverage_fraction` for each pixel in the output, we will make some minor change in the `my_fun` function to remove this variable before calculating the statistics.
+
+```{r 9a6, message = FALSE, warning = FALSE}
+# Extract SM time series for first pixel by removing percentage fraction
+cellTS=as.numeric(featureData[[10]][1,1:nlyr(SMAPrast)])
+
+# Plot time time series for the selected feature
+plot(cellTS, type="l", xlab="Time", ylab="Soil moisture")
+
+#~~ We will make another small change in the custom function for mean, variance and skewness
+minSamp=50   # Minimum assured samples for statistics
+
+my_fun = function(x, na.rm=TRUE){    
+  xDF=data.frame(x)                  # Convert list to data frame
+  xDF=xDF[ , !(names(xDF) %in% 'coverage_fraction')] # Remove coverage_fraction column
+  xData=as.vector(as.matrix(xDF))    # Convert data.frame to 1-D matrix
+  smTS=as.numeric(na.omit(xData))    # Omit NA values                   
+  
+  # Implement function with trycatch for catching exception 
+  tryCatch(if(length(smTS)>minSamp) {      # Apply minimum sample filter
+  
+  ######## OPERATION BEGINS #############    
+  meanVal=mean(smTS, na.rm=TRUE)              # Mean 
+  varVal=var(smTS, na.rm=TRUE)                # Variance
+  skewVal=moments::skewness(smTS, na.rm=TRUE) # Skewness
+  output=c(meanVal,varVal,skewVal)         # Combine all statistics
+  return(output)                           # Return output
+  ######## OPERATION ENDS #############    
+
+  } else {
+    return(rep(NA,3))   # If conditions !=TRUE, return array with NA
+  },error =function(e){return(rep(NA, 3))}) # If Error== TRUE, return array with NA
+}
+```
+
+Let’s apply `my_fun` to extracted data for each feature.
+
+```{r 9a7, message = FALSE, warning = FALSE}
+# Test the function for one block
+my_fun(featureData[[10]])
+
+# Apply function in parallel for all layers
+library(parallel) 
+library(snow)
+library(future.apply) 
+library(future)
+
+future::plan(multisession, workers = detectCores(logical = FALSE) - 1)
+outStat= future_lapply(featureData, my_fun)
+
+# Test output for one feature
+outStat[[10]]  # Is this the same as before?
+
+# Extract each summary stats for all features from the output list  
+FeatureMean=sapply(outStat,"[[",1)  # Extract mean for all features
+FeatureVar=sapply(outStat,"[[",2)   # Extract variance for all features
+FeatureSkew=sapply(outStat,"[[",3)  # Extract skewness for all features
+
+# Let's place mean statistics as an attribute to the shapefile
+us_shp$meanSM=FeatureMean
+
+# Plot mean soil moisture map for CONUS 
+library(rcartocolor)
+library(ggplot2)
+library(sf)
+library(sp)
+
+mean_map=ggplot() + 
+  geom_sf(data = st_as_sf(us_shp), # CONUS shp as sf object (simple feature)
+          aes(fill = meanSM)) +   # Plot fill color= mean soil moisture
+  scale_fill_carto_c(palette = "BluYl",     # Using carto color palette
+                     name = "Mean SM",      # Legend name
+                     na.value = "#e9e9e9",  # Fill values for NA 
+                     direction = 1)+        # To invert color, use -1
+  coord_sf(crs = 2163)+   # Reprojecting polygon 4326 or 3083 
+  theme_void() +          # Plot theme. Try: theme_bw
+  theme(legend.position = c(0.2, 0.1),  
+        legend.direction = "horizontal",
+        legend.key.width = unit(5, "mm"),
+        legend.key.height = unit(4, "mm"))
+mean_map
+```

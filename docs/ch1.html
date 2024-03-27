@@ -194,13 +194,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch7.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Layer–wise Operations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Cell–wise Operations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Parallel Geospatial Computing</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
   </div>
 </li>
     </ul>
@@ -509,13 +521,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 26.24793 25.84090 25.45835 25.02813 21.48020 26.61866 27.20461 20.77080
- [9] 27.54697 24.91383 25.43215 24.33535 29.77865 22.19697 22.43559 22.83097
-[17] 21.10405 29.38271 24.04716 20.90495 25.87417 26.53300 29.02984 21.67897
-[25] 29.28036 26.15791 24.38678 25.20788 21.31842 26.05241 28.68051 29.52023
-[33] 21.03485 23.60431 26.97174 23.01811 29.76612 28.98734 24.86752 20.53350
-[41] 22.87586 21.09073 27.57745 23.38495 25.08703 21.29087 29.44979 24.12073
-[49] 29.77011 27.49646</code></pre>
+<pre><code> [1] 21.61932 22.31503 27.09991 28.70082 21.99117 28.90911 23.72101 27.94784
+ [9] 21.09603 22.94702 22.57518 20.66911 25.30602 20.74444 26.41832 20.08478
+[17] 23.50487 25.06033 28.42765 21.19159 24.65764 25.74122 25.58642 24.44981
+[25] 28.58344 21.57681 24.54581 25.74838 27.48414 21.23763 28.75348 24.97941
+[33] 27.62362 20.06987 26.10926 21.70499 29.36664 22.39710 25.69743 28.87646
+[41] 28.35164 24.84805 21.95838 21.34270 23.20312 25.87127 21.68276 20.11071
+[49] 24.87970 26.70053</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -868,12 +880,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913   33.6  Jan   -10.2 
-2  1913   33.6  Feb   -11.8 
-3  1913   33.6  Mar    -9.64
-4  1914    7.30 Jan   -17.4 
-5  1914    7.30 Feb    -6.15
-6  1914    7.30 Mar   -12.7 </code></pre>
+1  1913    52.3 Jan   -15.4 
+2  1913    52.3 Feb   -10.6 
+3  1913    52.3 Mar    -3.45
+4  1914    25.8 Jan    -8.82
+5  1914    25.8 Feb    -5.35
+6  1914    25.8 Mar    -2.77</code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>

@@ -59,4 +59,4 @@ Using the spectral band rasters provided above, complete the following objective
     \[HINT: Create a vector using the extent and use it for cropping\]
 
 7.  \(30\) Use NASA Earth Data Search (as shown in Section 6.2.6) to download Harmonized Landsat Sentinel-2 (HLS) surface reflectance for band 4 and 5 for any date and region of your choice.
-    Repeat objectives A through C and plot the resultant NDVI raster.
+    Repeat objectives 1 through 3 and plot the resultant NDVI raster.

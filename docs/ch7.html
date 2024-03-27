@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>R for Spatial Analysis &amp; Visualization - 7&nbsp; Multilayer Rasters</title>
+<title>R for Spatial Analysis &amp; Visualization - 7&nbsp; Multilayer Rasters: Layer–wise Operations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./chN.html" rel="next">
+<link href="./ch8.html" rel="next">
 <link href="./ch6.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -108,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch7.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch7.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Layer–wise Operations</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -121,7 +121,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters</span></h1>
+      <h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Layer–wise Operations</span></h1>
                       </div>
   </div>
     
@@ -191,13 +191,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch7.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Layer–wise Operations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Cell–wise Operations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Parallel Geospatial Computing</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
   </div>
 </li>
     </ul>
@@ -210,21 +222,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#raster-concatenation" id="toc-raster-concatenation" class="nav-link active" data-scroll-target="#raster-concatenation"><span class="header-section-number">7.1</span> Raster Concatenation</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">7.1</span> Introduction</a></li>
+  <li><a href="#raster-concatenation" id="toc-raster-concatenation" class="nav-link" data-scroll-target="#raster-concatenation"><span class="header-section-number">7.2</span> Raster Concatenation</a>
   <ul class="collapse">
-  <li><a href="#create-raster-time-series" id="toc-create-raster-time-series" class="nav-link" data-scroll-target="#create-raster-time-series"><span class="header-section-number">7.1.1</span> Create Raster Time Series</a></li>
-  <li><a href="#programmatic-concatenation-of-rast-objects" id="toc-programmatic-concatenation-of-rast-objects" class="nav-link" data-scroll-target="#programmatic-concatenation-of-rast-objects"><span class="header-section-number">7.1.2</span> Programmatic Concatenation of <code>rast</code> Objects</a></li>
+  <li><a href="#create-raster-time-series" id="toc-create-raster-time-series" class="nav-link" data-scroll-target="#create-raster-time-series"><span class="header-section-number">7.2.1</span> Create Raster Time Series</a></li>
+  <li><a href="#programmatic-concatenation-of-rast-objects" id="toc-programmatic-concatenation-of-rast-objects" class="nav-link" data-scroll-target="#programmatic-concatenation-of-rast-objects"><span class="header-section-number">7.2.2</span> Programmatic Concatenation of <code>rast</code> Objects</a></li>
   </ul></li>
-  <li><a href="#spatial-operations-on-multilayer-raster" id="toc-spatial-operations-on-multilayer-raster" class="nav-link" data-scroll-target="#spatial-operations-on-multilayer-raster"><span class="header-section-number">7.2</span> Spatial Operations on Multilayer Raster</a>
+  <li><a href="#spatial-operations-on-multilayer-raster" id="toc-spatial-operations-on-multilayer-raster" class="nav-link" data-scroll-target="#spatial-operations-on-multilayer-raster"><span class="header-section-number">7.3</span> Spatial Operations on Multilayer Raster</a>
   <ul class="collapse">
-  <li><a href="#subset-multilayer-raster" id="toc-subset-multilayer-raster" class="nav-link" data-scroll-target="#subset-multilayer-raster"><span class="header-section-number">7.2.1</span> Subset Multilayer Raster</a></li>
-  <li><a href="#crop-and-mask" id="toc-crop-and-mask" class="nav-link" data-scroll-target="#crop-and-mask"><span class="header-section-number">7.2.2</span> Crop and Mask</a></li>
-  <li><a href="#spatial-extraction" id="toc-spatial-extraction" class="nav-link" data-scroll-target="#spatial-extraction"><span class="header-section-number">7.2.3</span> Spatial Extraction</a></li>
+  <li><a href="#subset-multilayer-raster" id="toc-subset-multilayer-raster" class="nav-link" data-scroll-target="#subset-multilayer-raster"><span class="header-section-number">7.3.1</span> Subset Multilayer Raster</a></li>
+  <li><a href="#crop-and-mask" id="toc-crop-and-mask" class="nav-link" data-scroll-target="#crop-and-mask"><span class="header-section-number">7.3.2</span> Crop and Mask</a></li>
+  <li><a href="#spatial-extraction" id="toc-spatial-extraction" class="nav-link" data-scroll-target="#spatial-extraction"><span class="header-section-number">7.3.3</span> Spatial Extraction</a></li>
   </ul></li>
-  <li><a href="#layerwise-arithmetic-operations-on-multilayer-raster" id="toc-layerwise-arithmetic-operations-on-multilayer-raster" class="nav-link" data-scroll-target="#layerwise-arithmetic-operations-on-multilayer-raster"><span class="header-section-number">7.3</span> Layerwise Arithmetic Operations on Multilayer Raster</a>
+  <li><a href="#layerwise-statisticalarithmetic-operations-on-multilayer-raster" id="toc-layerwise-statisticalarithmetic-operations-on-multilayer-raster" class="nav-link" data-scroll-target="#layerwise-statisticalarithmetic-operations-on-multilayer-raster"><span class="header-section-number">7.4</span> Layer–wise Statistical/Arithmetic Operations on Multilayer Raster</a>
   <ul class="collapse">
-  <li><a href="#layerwise-statistics" id="toc-layerwise-statistics" class="nav-link" data-scroll-target="#layerwise-statistics"><span class="header-section-number">7.3.1</span> Layerwise Statistics</a></li>
-  <li><a href="#arithmetic-operations" id="toc-arithmetic-operations" class="nav-link" data-scroll-target="#arithmetic-operations"><span class="header-section-number">7.3.2</span> Arithmetic Operations</a></li>
+  <li><a href="#layerwise-statistics" id="toc-layerwise-statistics" class="nav-link" data-scroll-target="#layerwise-statistics"><span class="header-section-number">7.4.1</span> Layer–wise Statistics</a></li>
+  <li><a href="#layerwise-arithmetic-operations" id="toc-layerwise-arithmetic-operations" class="nav-link" data-scroll-target="#layerwise-arithmetic-operations"><span class="header-section-number">7.4.2</span> Layer–wise Arithmetic Operations</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -235,16 +248,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="raster-concatenation" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="raster-concatenation"><span class="header-section-number">7.1</span> Raster Concatenation</h2>
+<section id="introduction" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">7.1</span> Introduction</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2345725788.png" class="img-fluid figure-img" width="450"></p>
+</figure>
+</div>
+</section>
+<section id="raster-concatenation" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="raster-concatenation"><span class="header-section-number">7.2</span> Raster Concatenation</h2>
+<p>Concatenation (placing the objects one after the other) of rasters follow the same syntax as arrays i.e.&nbsp;by using <code>c(obj1, obj2)</code>. Concatenation of rasters can be used for, but not limited to, creating a raster time series to evaluate time-dependent variability in the spatial data. Here we will use the global NDVI rasters from MODIS (resampled to a coarse resolution for computational ease) to create a raster time series in the form of a multilayer <code>rast</code> object, and will demonstrate several spatial and arithmetic operations on the multilayer rasters.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-3007221205.png" class="img-fluid figure-img" width="550"></p>
 </figure>
 </div>
-<p>Concatenation (placing the objects one after the other) of rasters follow the same syntax as arrays i.e.&nbsp;by using <code>c(obj1, obj2)</code>. Concatenation of rasters can be used for, but not limited to, creating a raster time series to evaluate time-dependent variability in the spatial data. Here we will use the global NDVI rasters from MODIS (resampled to a coarse resolution for computational ease) to create a raster time series in the form of a multilayer <code>rast</code> object, and will demonstrate several spatial and arithmetic operations on the multilayer rasters.</p>
-<section id="create-raster-time-series" class="level3" data-number="7.1.1">
-<h3 data-number="7.1.1" class="anchored" data-anchor-id="create-raster-time-series"><span class="header-section-number">7.1.1</span> Create Raster Time Series</h3>
+<section id="create-raster-time-series" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="create-raster-time-series"><span class="header-section-number">7.2.1</span> Create Raster Time Series</h3>
 <p>The folder <code>./SampleData-master/raster_files/NDVI/</code> contains 23 rasters of global NDVI for the year 2016, with a retrieval frequency of 16 days. Let us import four sample rasters and concatenate them to generate a multilayer raster.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ Create and plot NDVI SpatRaster</span></span>
@@ -310,8 +331,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="programmatic-concatenation-of-rast-objects" class="level3" data-number="7.1.2">
-<h3 data-number="7.1.2" class="anchored" data-anchor-id="programmatic-concatenation-of-rast-objects"><span class="header-section-number">7.1.2</span> Programmatic Concatenation of <code>rast</code> Objects</h3>
+<section id="programmatic-concatenation-of-rast-objects" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="programmatic-concatenation-of-rast-objects"><span class="header-section-number">7.2.2</span> Programmatic Concatenation of <code>rast</code> Objects</h3>
 <p>Concatenation method shown above can be good for a few rasters. However, in the case of a long time series, this method could be cumbersome. In such cases, we can write a small script to concatenate the rasters in to a multilayer <code>rast</code> object. We will first explore the use of loops- which will concatenate each <code>rast</code> layer sequentially. This method may take longer, but helps to avoid memory bottleneck when a very large number of rasters are simultaneously processed (the threshold may depend on the system memory and processor). In contrast, <code>lapply</code> and <code>map</code> vectorize the operation of creating the <code>rast</code> object for concatenation, and maybe faster for a moderate number of files (again, depends on the system configuration).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~~~~~~~~~~~~~~~~</span></span>
@@ -340,14 +361,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 3: maping the rast function on the raster file paths</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr) </span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ras_list <span class="ot">=</span> purrr<span class="sc">::</span><span class="fu">map</span>(ras_path, <span class="sc">~</span> <span class="fu">rast</span>(.x))  <span class="co"># Import the rasters into a list</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>ras_stack <span class="ot">=</span> <span class="fu">rast</span>(ras_list)  <span class="co"># Convert a list of rasters to rast object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>ras_stack <span class="ot">=</span> <span class="fu">rast</span>(ras_list)                   <span class="co"># Convert a list of rasters to rast object</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Export concatenated rasters as a netCDF</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">writeCDF</span>(ras_stack,                        <span class="co"># SpatRaster</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>         <span class="fu">file.path</span>(<span class="st">"NDVI.nc"</span>),                    <span class="co"># Output filename</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">overwrite=</span><span class="cn">TRUE</span>,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">varname=</span><span class="st">"NDVI"</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">unit=</span><span class="st">"[-]"</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">longname=</span><span class="st">"Global MODIS NDVI, 2016, 16_day, 36KM"</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">zname=</span><span class="st">'time'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
-<section id="spatial-operations-on-multilayer-raster" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="spatial-operations-on-multilayer-raster"><span class="header-section-number">7.2</span> Spatial Operations on Multilayer Raster</h2>
-<section id="subset-multilayer-raster" class="level3" data-number="7.2.1">
-<h3 data-number="7.2.1" class="anchored" data-anchor-id="subset-multilayer-raster"><span class="header-section-number">7.2.1</span> Subset Multilayer Raster</h3>
+<section id="spatial-operations-on-multilayer-raster" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="spatial-operations-on-multilayer-raster"><span class="header-section-number">7.3</span> Spatial Operations on Multilayer Raster</h2>
+<section id="subset-multilayer-raster" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="subset-multilayer-raster"><span class="header-section-number">7.3.1</span> Subset Multilayer Raster</h3>
 <p>Subsetting multilayer rasters (i.e.&nbsp;creating of smaller subset of layers) follows the same syntax we would use to subset a list. Notice the double square bracket i.e.&nbsp;<code>[[ ]]</code> we use to subset raster layers. When generating a spatial plot of multilayer rasters using <code>terra::plot</code>, to add vector boundaries to all plot layers, we need to define a custom function to add the object to each layer.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset raster stack/brick (notice the double [[]] bracket and similarity to lists)</span></span>
@@ -371,8 +401,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="crop-and-mask" class="level3" data-number="7.2.2">
-<h3 data-number="7.2.2" class="anchored" data-anchor-id="crop-and-mask"><span class="header-section-number">7.2.2</span> Crop and Mask</h3>
+<section id="crop-and-mask" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="crop-and-mask"><span class="header-section-number">7.3.2</span> Crop and Mask</h3>
 <p>Cropping and masking a multilater raster follows the same format as that of a single raster we learned in Sec 5.3.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Names of the states to mask NDVI</span></span>
@@ -410,8 +440,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="spatial-extraction" class="level3" data-number="7.2.3">
-<h3 data-number="7.2.3" class="anchored" data-anchor-id="spatial-extraction"><span class="header-section-number">7.2.3</span> Spatial Extraction</h3>
+<section id="spatial-extraction" class="level3" data-number="7.3.3">
+<h3 data-number="7.3.3" class="anchored" data-anchor-id="spatial-extraction"><span class="header-section-number">7.3.3</span> Spatial Extraction</h3>
 <p>Similar to single-band raster operation shown in Sec. 5.5.1.2, this operation can be executed using <code>terra::extract</code>. However, the output will contain values from all layers in the multiband raster.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract cell values within each feature for all layers</span></span>
@@ -481,15 +511,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="layerwise-arithmetic-operations-on-multilayer-raster" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="layerwise-arithmetic-operations-on-multilayer-raster"><span class="header-section-number">7.3</span> Layerwise Arithmetic Operations on Multilayer Raster</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/clipboard-3169396661.png" class="img-fluid figure-img" width="450"></p>
-</figure>
-</div>
-<section id="layerwise-statistics" class="level3" data-number="7.3.1">
-<h3 data-number="7.3.1" class="anchored" data-anchor-id="layerwise-statistics"><span class="header-section-number">7.3.1</span> Layerwise Statistics</h3>
+<section id="layerwise-statisticalarithmetic-operations-on-multilayer-raster" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="layerwise-statisticalarithmetic-operations-on-multilayer-raster"><span class="header-section-number">7.4</span> Layer–wise Statistical/Arithmetic Operations on Multilayer Raster</h2>
+<section id="layerwise-statistics" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="layerwise-statistics"><span class="header-section-number">7.4.1</span> Layer–wise Statistics</h3>
 <p>Similar to what we learned in Sec. 4.2 Raster Statistics, we can use the <code>global</code> function to obtain summary statistics of the multilayer raster. Here the operation will yield the desired statistic for each constituent layer.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layer-wise cell-statistics </span></span>
@@ -545,8 +570,8 @@ NDVI_resamp_2016-06-25 0.4997354 0.06587261 -0.3392214</code></pre>
 </div>
 </div>
 </section>
-<section id="arithmetic-operations" class="level3" data-number="7.3.2">
-<h3 data-number="7.3.2" class="anchored" data-anchor-id="arithmetic-operations"><span class="header-section-number">7.3.2</span> Arithmetic Operations</h3>
+<section id="layerwise-arithmetic-operations" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="layerwise-arithmetic-operations"><span class="header-section-number">7.4.2</span> Layer–wise Arithmetic Operations</h3>
 <p>Again, this operation is similar to the operations on a single-band rasters, except the operation is carried out for each constituent layer simultaneously. Let’s explore some examples.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Arithmetic operations on SpatRaster are same as lists</span></span>
@@ -852,8 +877,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./chN.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch8.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Cell–wise Operations</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

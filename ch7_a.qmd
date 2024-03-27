@@ -6,13 +6,17 @@ editor:
     wrap: sentence
 ---
 
-## Raster Concatenation
+## Introduction
 
-![](images/clipboard-3007221205.png){fig-align="center" width="550"}
+![](images/clipboard-2345725788.png){fig-align="center" width="450"}
+
+## Raster Concatenation
 
 Concatenation (placing the objects one after the other) of rasters follow the same syntax as arrays i.e. by using `c(obj1, obj2)`.
 Concatenation of rasters can be used for, but not limited to, creating a raster time series to evaluate time-dependent variability in the spatial data.
 Here we will use the global NDVI rasters from MODIS (resampled to a coarse resolution for computational ease) to create a raster time series in the form of a multilayer `rast` object, and will demonstrate several spatial and arithmetic operations on the multilayer rasters.
+
+![](images/clipboard-3007221205.png){fig-align="center" width="550"}
 
 ### Create Raster Time Series
 
@@ -84,7 +88,16 @@ ras_stack = rast(ras_list)     # Stacking all rasters as a SpatRaster
 # Method 3: maping the rast function on the raster file paths
 library(purrr) 
 ras_list = purrr::map(ras_path, ~ rast(.x))  # Import the rasters into a list
-ras_stack = rast(ras_list)  # Convert a list of rasters to rast object
+ras_stack = rast(ras_list)                   # Convert a list of rasters to rast object
+
+# Export concatenated rasters as a netCDF
+terra::writeCDF(ras_stack,                        # SpatRaster
+         file.path("NDVI.nc"),                    # Output filename
+         overwrite=TRUE,
+         varname="NDVI",
+         unit="[-]",
+         longname="Global MODIS NDVI, 2016, 16_day, 36KM",
+         zname='time')
 ```
 
 ## Spatial Operations on Multilayer Raster
@@ -171,11 +184,9 @@ ndvi_state_mean = terra::extract(ndvi_msk,  # Multilayer rast object
 head(ndvi_state_mean)
 ```
 
-## Layerwise Arithmetic Operations on Multilayer Raster
+## Layer–wise Statistical/Arithmetic Operations on Multilayer Raster
 
-![](images/clipboard-3169396661.png){fig-align="center" width="450"}
-
-### Layerwise Statistics
+### Layer–wise Statistics
 
 Similar to what we learned in Sec. 4.2 Raster Statistics, we can use the `global` function to obtain summary statistics of the multilayer raster.
 Here the operation will yield the desired statistic for each constituent layer.
@@ -205,7 +216,7 @@ my_fun = function(x){
 global(sub_ras_stack, my_fun) # Mean, Variance and skewness of each layer
 ```
 
-### Arithmetic Operations
+### Layer–wise Arithmetic Operations
 
 Again, this operation is similar to the operations on a single-band rasters, except the operation is carried out for each constituent layer simultaneously.
 Let's explore some examples.

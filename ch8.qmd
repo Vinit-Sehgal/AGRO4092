@@ -1,0 +1,14 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Multilayer Rasters: Cell–wise Operations
+
+```{r child="ch8_a.qmd", message = FALSE, warning = FALSE}
+
+
+```
