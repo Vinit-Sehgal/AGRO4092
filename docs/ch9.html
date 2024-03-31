@@ -222,13 +222,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#cellwise-parallel-computing" id="toc-cellwise-parallel-computing" class="nav-link active" data-scroll-target="#cellwise-parallel-computing"><span class="header-section-number">9.1</span> Cell–wise Parallel Computing</a>
+  <li><a href="#cellwise-operation" id="toc-cellwise-operation" class="nav-link active" data-scroll-target="#cellwise-operation"><span class="header-section-number">9.1</span> Cell–wise Operation</a>
   <ul class="collapse">
   <li><a href="#apply-custom-function-to-pixel-time-series" id="toc-apply-custom-function-to-pixel-time-series" class="nav-link" data-scroll-target="#apply-custom-function-to-pixel-time-series"><span class="header-section-number">9.1.1</span> Apply custom function to pixel time series</a></li>
   <li><a href="#best-practices-for-large-scale-parallel-operations" id="toc-best-practices-for-large-scale-parallel-operations" class="nav-link" data-scroll-target="#best-practices-for-large-scale-parallel-operations"><span class="header-section-number">9.1.2</span> Best practices for large-scale parallel operations</a></li>
   </ul></li>
-  <li><a href="#layerwise-parallel-computing" id="toc-layerwise-parallel-computing" class="nav-link" data-scroll-target="#layerwise-parallel-computing"><span class="header-section-number">9.2</span> Layer–wise Parallel Computing</a></li>
-  <li><a href="#blockwise-parallel-computing" id="toc-blockwise-parallel-computing" class="nav-link" data-scroll-target="#blockwise-parallel-computing"><span class="header-section-number">9.3</span> Block–wise Parallel Computing</a></li>
+  <li><a href="#cellwise-operation-on-two-multilayer-rasters" id="toc-cellwise-operation-on-two-multilayer-rasters" class="nav-link" data-scroll-target="#cellwise-operation-on-two-multilayer-rasters"><span class="header-section-number">9.2</span> Cell–wise Operation On Two Multilayer Rasters</a></li>
+  <li><a href="#layerwise-parallel-computing" id="toc-layerwise-parallel-computing" class="nav-link" data-scroll-target="#layerwise-parallel-computing"><span class="header-section-number">9.3</span> Layer–wise Parallel Computing</a></li>
+  <li><a href="#blockwise-parallel-computing" id="toc-blockwise-parallel-computing" class="nav-link" data-scroll-target="#blockwise-parallel-computing"><span class="header-section-number">9.4</span> Block–wise Parallel Computing</a></li>
   </ul>
 </nav>
     </div>
@@ -240,6 +241,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>Many computations in R can be made faster by the use of parallel computation. Generally, parallel computation is the simultaneous execution of different pieces of a larger computation across multiple computing processors or cores. The basic idea is that if you can execute a computation in X seconds on a single processor, then you should be able to execute it in X/n seconds on n processors.</p>
 <p>Such a speed-up might not possible because of overhead and various barriers to splitting up a problem into n pieces, but it is often possible to come close in simple problems. For more details read: <a href="https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra" class="uri">https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra</a>.</p>
+<p>In this chapter we will try several examples of the cell-wise, layer-wise and block-wise implementation of custom functions in parallel. Let us start by first importing surface soil moisture from NASA’s SMAP satellite from the netCDF provided with the sample dataset.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -259,66 +261,60 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="ch9_files/figure-html/9a1-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<section id="cellwise-parallel-computing" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="cellwise-parallel-computing"><span class="header-section-number">9.1</span> Cell–wise Parallel Computing</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/clipboard-3787324268.png" class="img-fluid figure-img" width="500"></p>
-</figure>
-</div>
+<section id="cellwise-operation" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="cellwise-operation"><span class="header-section-number">9.1</span> Cell–wise Operation</h2>
 <section id="apply-custom-function-to-pixel-time-series" class="level3" data-number="9.1.1">
 <h3 data-number="9.1.1" class="anchored" data-anchor-id="apply-custom-function-to-pixel-time-series"><span class="header-section-number">9.1.1</span> Apply custom function to pixel time series</h3>
+<p><img src="images/clipboard-1143469546.png" class="img-fluid" width="550"></p>
 <p>Once we have imported the netCDF file as <code>rast</code> object, we will apply a slightly modified version of previously used function <code>my_fun</code> (from Ch 8) for calculating mean, variance and skewness for time series data for each cell in parallel. We will use&nbsp;<code>terra::app</code>&nbsp;function to apply&nbsp;<code>my_fun</code> on SpatRaster in parallel.</p>
 <p>For seamless implementation of function in parallel mode, care must be taken that all necessary are accessible to ALL cores and error exceptions are handles appropriately. We will modify <code>my_fun</code> slightly to highlight what it means in practice.</p>
 <ol type="1">
 <li><p>We will convert input <code>x</code> to a numeric array</p></li>
 <li><p>We will remove <code>NA</code> values from dataset before calculation</p></li>
-<li><p>We will use <code>minSamp</code> to fix minimum sample counts for calculation</p></li>
+<li><p>We will use <code>minSamp</code> to fix minimum sample counts for calculation. If the number of observations for a pixel are less than <code>minSamp</code>, the grid is skipped.</p></li>
 <li><p>We will use <code>tryCatch</code> to handle error exceptions</p></li>
 </ol>
 <p>The basic rules to avoid errors: (a) checking that inputs are correct, (b) avoiding non-standard evaluation, and (c) avoiding functions that can return different types of output.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ We will make some changes in the custom function for mean, variance and skewness</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>minSamp <span class="ot">=</span> <span class="dv">50</span>                           <span class="co"># Minimum assured samples for statistics</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x, minSamp, <span class="at">na.rm=</span><span class="cn">TRUE</span>){    </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  smTS<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">as.vector</span>(x))     <span class="co"># Convert dataset to numeric array</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  smTS<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">na.omit</span>(smTS))    <span class="co"># Omit NA values </span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Implement function with trycatch for catching exception </span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(<span class="cf">if</span>(<span class="fu">length</span>(smTS)<span class="sc">&gt;</span>minSamp) {      <span class="co"># Apply minimum sample filter</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION BEGINS #############    </span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  meanVal<span class="ot">=</span><span class="fu">mean</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)              <span class="co"># Mean </span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  varVal<span class="ot">=</span><span class="fu">var</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)                <span class="co"># Variance</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  skewVal<span class="ot">=</span>moments<span class="sc">::</span><span class="fu">skewness</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Skewness</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  output<span class="ot">=</span><span class="fu">c</span>(meanVal,varVal,skewVal)            <span class="co"># Combine all statistics</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(output)                              <span class="co"># Return output</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION ENDS #############    </span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>,<span class="dv">3</span>))                         <span class="co"># If conditions !=TRUE, return array with NA</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  },<span class="at">error =</span><span class="cf">function</span>(e){<span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span>))})   <span class="co"># If Error== TRUE, return array with NA</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x, minSamp){    </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  smTS<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">as.vector</span>(x))     <span class="co"># Convert dataset to numeric array</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  smTS<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">na.omit</span>(smTS))    <span class="co"># Omit NA values </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Implement function with trycatch for catching exception </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(<span class="cf">if</span>(<span class="fu">length</span>(smTS)<span class="sc">&gt;</span>minSamp) {      <span class="co"># Apply minimum sample filter</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION BEGINS #############    </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  meanVal<span class="ot">=</span><span class="fu">mean</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)              <span class="co"># Mean </span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  varVal<span class="ot">=</span><span class="fu">var</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)                <span class="co"># Variance</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  skewVal<span class="ot">=</span>moments<span class="sc">::</span><span class="fu">skewness</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Skewness</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  output<span class="ot">=</span><span class="fu">c</span>(meanVal,varVal,skewVal)            <span class="co"># Combine all statistics</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(output)                              <span class="co"># Return output</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION ENDS #############    </span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>,<span class="dv">3</span>))                         <span class="co"># If conditions !=TRUE, return array with NA</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  },<span class="at">error =</span><span class="cf">function</span>(e){<span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span>))})   <span class="co"># If Error== TRUE, return array with NA</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function to all grids in parallel</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>stat_brk <span class="ot">=</span> <span class="fu">app</span>(SMAPrast, </span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>               my_fun, </span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>               <span class="at">minSamp =</span> <span class="dv">50</span>,                                          <span class="co"># Minimum assured samples for statistics</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>               <span class="at">cores =</span>parallel<span class="sc">::</span><span class="fu">detectCores</span>(<span class="at">logical =</span> <span class="cn">FALSE</span>) <span class="sc">-</span> <span class="dv">1</span>)     <span class="co"># Leave one core for housekeeping</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Beware while using detectCores(). </span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># The argument logical = FALSE returns the number of physical cores.</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># logical = TRUE returns the number of available hardware threads. </span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stat_brk)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"Mean"</span>, <span class="st">"Variance"</span>, <span class="st">"Skewness"</span>)      <span class="co"># Add layer names</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function to all grids in parallel</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>stat_brk <span class="ot">=</span> <span class="fu">app</span>(SMAPrast, </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>               my_fun, </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>               <span class="at">minSamp =</span> <span class="dv">50</span>,                                          <span class="co"># Minimum assured samples for statistics</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>               <span class="at">cores =</span>parallel<span class="sc">::</span><span class="fu">detectCores</span>(<span class="at">logical =</span> <span class="cn">FALSE</span>) <span class="sc">-</span> <span class="dv">1</span>)     <span class="co"># Leave one core for housekeeping</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Beware while using detectCores(). </span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># The argument logical = FALSE returns the number of physical cores.</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># logical = TRUE returns the number of available hardware threads. </span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stat_brk)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"Mean"</span>, <span class="st">"Variance"</span>, <span class="st">"Skewness"</span>)      <span class="co"># Add layer names</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>4.8 sec elapsed</code></pre>
+<pre><code>6.22 sec elapsed</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot statistics</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cetcolor)</span>
@@ -332,76 +328,126 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="best-practices-for-large-scale-parallel-operations" class="level3" data-number="9.1.2">
 <h3 data-number="9.1.2" class="anchored" data-anchor-id="best-practices-for-large-scale-parallel-operations"><span class="header-section-number">9.1.2</span> Best practices for large-scale parallel operations</h3>
 <p>Error handling is the art of debugging unexpected problems in your code. One easy solution when looping through customized functions is to include <code>print()</code> messages after each major operation which can help indicate where the error might be happening.</p>
-<p>Furthermore when dealing with large spatial data:</p>
+<p>When working with large spatial data, the following the steps listed below can be very helpful:</p>
+<blockquote class="blockquote">
 <ol type="1">
-<li>Try parallel operation on a smaller region before mounting large jobs for computation. Pixel-wise implementation of the function can help identify errors in the code. Convert the cropped region into a data frame and apply function to time series of each cell. If your code throws error, troubleshoot carefully for the series which generates the error.</li>
-</ol>
+<li><p>Check if the function works as expected by testing it first on a sample series extracted (using <code>terra::extract</code> function) for a test location from the multilayer raster. For example, for a sample location with Long=-100, and Lat=35 (in decimal degrees) we can extract a time series for soil moisture and test the custom function as follows:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">ext</span>( <span class="fu">c</span>(<span class="sc">-</span><span class="dv">110</span>,<span class="sc">-</span><span class="dv">108</span>, <span class="dv">35</span>,<span class="dv">37</span>) )   <span class="co"># Sample 2X2 degree domain</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">as.polygons</span>(e)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(p) <span class="ot">&lt;-</span> <span class="st">"EPSG:4326"</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use this polygon to crop and mask the larger SpatRaster</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Location with Long=-100, and Lat=35 (in decimal degrees) extract time series </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ts_sample<span class="ot">=</span>terra<span class="sc">::</span><span class="fu">extract</span>(SMAPrast, <span class="fu">cbind</span>(<span class="sc">-</span><span class="dv">100</span>,<span class="dv">35</span>))  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Does it generate three numeric values as expected? </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">my_fun</span>(ts_sample, <span class="at">minSamp=</span><span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.139086710 0.002358918 0.554885498</code></pre>
 </div>
-<ol start="2" type="1">
+</div></li>
+<li><p>Try parallel operation on a smaller region before mounting large jobs for cpmputing. Pixel-wise implementation of the function can help identify errors in the code. Convert the cropped region into a data frame and apply function to time series of each cell. If your code throws error, troubleshoot carefully for the series which generates the error.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)   </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">ext</span>( <span class="fu">c</span>(<span class="sc">-</span><span class="dv">110</span>,<span class="sc">-</span><span class="dv">108</span>, <span class="dv">35</span>,<span class="dv">37</span>) )   <span class="co"># Sample 2X2 degree domain   </span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">as.polygons</span>(e)   </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(p) <span class="ot">&lt;-</span> <span class="st">"EPSG:4326"</span>             <span class="co"># Use this polygon to crop and mask the larger SpatRaster</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ol>
+<!-- -->
+<ol start="3" type="1">
 <li>Use <code>tryCatch</code> <strong>carefully</strong> as it may suppress legitimate errors as well, generating spurious results. Test the codes for smaller region without <code>tryCatch</code> to test the robustness of your codes.</li>
 </ol>
+</blockquote>
 <p>Remember, parallel computing may have some overheads upon creation and closing of clusters. A significant improvement in computing times using parallel techniques would be visible for large jobs.</p>
 </section>
 </section>
-<section id="layerwise-parallel-computing" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="layerwise-parallel-computing"><span class="header-section-number">9.2</span> Layer–wise Parallel Computing</h2>
+<section id="cellwise-operation-on-two-multilayer-rasters" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="cellwise-operation-on-two-multilayer-rasters"><span class="header-section-number">9.2</span> Cell–wise Operation On Two Multilayer Rasters</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2268304266.png" class="img-fluid figure-img" width="750"></p>
+</figure>
+</div>
+<p>We will use modeled daily evapotranspiration (ET) and maximum daily temperature (Tmax) from NOAA-Physical Sciences Lab’s repository for the year 2011 to find the correlation between ET and Tmax at each grid over CONUS. This dataset is available in NetCDF format (<code>tmax.2011.nc</code> and <code>et.2011.nc</code>). Due to sifficient availability of moisture in humid and sub-humid climates, an increase in temperature is matched with a corresponding increase in evapotranspiration (hence, positive correlation). In contrast, in arid and semi-arid regions, general scarcity of moisture restricts cooling of the surface by evaporation or transpiration. Hence, larger fraction of incoming radiation is used up to heat up the land surface. This shows up as near zero or negative correlation between temperature and evapotranspiration in our analysis. This forms the basis of terrestrial energy balance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open access path of the daily ET and Tmax .nc files for the year 2011</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tmax_path <span class="ot">=</span> <span class="st">"https://downloads.psl.noaa.gov//Datasets/livneh/metvars/tmax.2011.nc"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>et_path <span class="ot">=</span> <span class="st">"https://downloads.psl.noaa.gov//Datasets/livneh/fluxvars/et.2011.nc"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Download multilayer rasters from the NOAA-PSL servers</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> tmax_path, <span class="at">method=</span><span class="st">"curl"</span>, <span class="at">destfile =</span> <span class="st">"tmax.2011.nc"</span>) </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> et_path, <span class="at">method=</span><span class="st">"curl"</span>, <span class="at">destfile =</span> <span class="st">"et.2011.nc"</span>) </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Custon function for correlation between time series from ET and Tmax multilayer rasters</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ arg: "pairwise.complete.obs" ignores NA values in either dataset</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>corfun<span class="ot">=</span><span class="cf">function</span> (x, y) {</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">cor</span>(x, y, <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Import netCDFs as multilayer rasters</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>tmax<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"tmax.2011.nc"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>et<span class="ot">=</span><span class="fu">rast</span>(<span class="st">"et.2011.nc"</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Pixelwise correlation between daily ET and Tmax</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>xcor <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">xapp</span>(et, tmax, <span class="at">fun=</span> corfun)     </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot map of the correlation </span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(xcor, <span class="at">main=</span><span class="st">" Correlation: ET vs Tmax"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch9_files/figure-html/9a4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="layerwise-parallel-computing" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="layerwise-parallel-computing"><span class="header-section-number">9.3</span> Layer–wise Parallel Computing</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-1723748174.png" class="img-fluid figure-img" width="750"></p>
 </figure>
 </div>
-<p>We will convert Spatraster to a list of rasters and then we will apply <code>my_fun</code> to each element of the list in parallel using <code>future_lapply</code>. Beware while using <code>detectCores()</code>. The argument <code>logical = FALSE</code> returns the number of physical cores and <code>logical = TRUE</code> returns the number of available hardware threads.</p>
+<p>We will convert SpatRaster to a list of rasters and then we will apply <code>my_fun</code> to each element of the list in parallel using <code>future_lapply</code>. Beware while using <code>detectCores()</code>. The argument <code>logical = FALSE</code> returns the number of physical cores and <code>logical = TRUE</code> returns the number of available hardware threads.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Spatraster to a list of rasters</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>rasList<span class="ot">=</span><span class="fu">as.list</span>(SMAPrast[[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]])           <span class="co">#What will happen if we pass rast(rasList)?</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rasList)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Spatraster to a list of rasters</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>rasList<span class="ot">=</span><span class="fu">as.list</span>(SMAPrast[[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]])           <span class="co"># What will happen if we pass rast(rasList)?</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rasList)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 10</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom function to be implemented on each layer</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x){                </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">values</span>(x))                  <span class="co"># Create vector of numeric values of SpatRaster</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  meanVal<span class="ot">=</span>base<span class="sc">::</span><span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)        <span class="co"># Mean </span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  varVal<span class="ot">=</span>stats<span class="sc">::</span><span class="fu">var</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)         <span class="co"># Variance</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  skewVal<span class="ot">=</span>moments<span class="sc">::</span><span class="fu">skewness</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Skewness</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  output<span class="ot">=</span><span class="fu">c</span>(meanVal,varVal,skewVal)         <span class="co"># Combine all statistics</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(output)                           <span class="co"># Return output</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Test the function for one raster</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">my_fun</span>(rasList[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom function to be implemented on each layer</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x){                </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">values</span>(x))                  <span class="co"># Create vector of numeric values of SpatRaster</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  meanVal<span class="ot">=</span>base<span class="sc">::</span><span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)        <span class="co"># Mean </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  varVal<span class="ot">=</span>stats<span class="sc">::</span><span class="fu">var</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)         <span class="co"># Variance</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  skewVal<span class="ot">=</span>moments<span class="sc">::</span><span class="fu">skewness</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Skewness</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  output<span class="ot">=</span><span class="fu">c</span>(meanVal,varVal,skewVal)         <span class="co"># Combine all statistics</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(output)                           <span class="co"># Return output</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Test the function for one raster</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">my_fun</span>(rasList[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NaN  NA NaN</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function in parallel for all layers</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel) </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future.apply) </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># A multisession future: employ max core-1 for processing</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(multicore, <span class="at">workers =</span> <span class="fu">detectCores</span>(<span class="at">logical =</span> <span class="cn">FALSE</span>) <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Deploy function in parallel </span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>outStat<span class="ot">=</span> <span class="fu">future_lapply</span>(rasList, my_fun)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function in parallel for all layers</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel) </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future.apply) </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create worker nodes with shared environment  </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#~~~ employ max core-1 for processing</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(multicore, <span class="at">workers =</span> <span class="fu">detectCores</span>(<span class="at">logical =</span> <span class="cn">FALSE</span>) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Deploy function in parallel </span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>outStat<span class="ot">=</span> <span class="fu">future_lapply</span>(rasList, my_fun)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>22.31 sec elapsed</code></pre>
+<pre><code>20.6 sec elapsed</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check output for one layer</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># outStat[[2]]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check output for one layer</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># outStat[[2]]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="blockwise-parallel-computing" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="blockwise-parallel-computing"><span class="header-section-number">9.3</span> Block–wise Parallel Computing</h2>
+<section id="blockwise-parallel-computing" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="blockwise-parallel-computing"><span class="header-section-number">9.4</span> Block–wise Parallel Computing</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/clipboard-3165518732.png" class="img-fluid figure-img" width="750"></p>
@@ -409,17 +455,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>In this section we will use a shapefile to extract cell values from a SpatRaster as a list using&nbsp;<code>exact_extract</code>. Summary statistics will be calculated in parallel using <code>my_fun</code> for dataset for each feature. Function <code>exactextractr::exact_extract</code> is faster and more suited for large applications compared to <code>terra::extract</code>. Although both perform similar operation with little changes in output format.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~ Extract feature data as data frame</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(exactextractr)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sp)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>featureData<span class="ot">=</span><span class="fu">exact_extract</span>(SMAPrast,  <span class="co"># Raster brick </span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">st_as_sf</span>(us_shp),    <span class="co"># Convert shapefile to sf (simple feature)</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">force_df =</span> <span class="cn">FALSE</span>,    <span class="co"># Output as a data.frame?</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">include_xy =</span> <span class="cn">FALSE</span>,  <span class="co"># Include cell lat-long in output?</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">fun =</span> <span class="cn">NULL</span>,          <span class="co"># Specify the function to apply for each feature extracted data</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">progress =</span> <span class="cn">TRUE</span>)     <span class="co"># Progressbar</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~ Extract feature data as data frame</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(exactextractr)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sp)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>featureData<span class="ot">=</span><span class="fu">exact_extract</span>(SMAPrast,  <span class="co"># Raster brick </span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">st_as_sf</span>(us_shp),    <span class="co"># Convert shapefile to sf (simple feature)</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">force_df =</span> <span class="cn">FALSE</span>,    <span class="co"># Output as a data.frame?</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">include_xy =</span> <span class="cn">FALSE</span>,  <span class="co"># Include cell lat-long in output?</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">fun =</span> <span class="cn">NULL</span>,          <span class="co"># Specify the function to apply for each feature extracted data</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">progress =</span> <span class="cn">TRUE</span>)     <span class="co"># Progressbar</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
   |                                                                            
@@ -523,107 +569,111 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   |                                                                            
   |======================================================================| 100%</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(featureData) <span class="co"># Same as feature count in CONUS? i.e. nrow(conus) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(featureData) <span class="co"># Same as feature count in CONUS? i.e. nrow(conus) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 49</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets try out data for Louisiana</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(us_shp<span class="sc">$</span>NAME<span class="sc">==</span><span class="st">"Louisiana"</span>)  <span class="co"># Find feature number for Louisiana</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets try out data for Louisiana</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(us_shp<span class="sc">$</span>NAME<span class="sc">==</span><span class="st">"Louisiana"</span>)  <span class="co"># Find feature number for Louisiana</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 10</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View(featureData[[10]])        # View the extracted data frame</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(featureData[[<span class="dv">10</span>]])          <span class="co"># No. pixels within selected feature</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View(featureData[[10]])        # View the extracted data frame</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(featureData[[<span class="dv">10</span>]])          <span class="co"># No. pixels within selected feature</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 146</code></pre>
 </div>
 </div>
 <p>Each row in <code>featureData[[10]]</code> is the time series of cell values which fall within the boundary of feature number 10, i.e. Louisiana. Since <code>exact_extract</code> function provides <code>coverage_fraction</code> for each pixel in the output, we will make some minor change in the <code>my_fun</code> function to remove this variable before calculating the statistics.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract SM time series for first pixel by removing percentage fraction</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>cellTS<span class="ot">=</span><span class="fu">as.numeric</span>(featureData[[<span class="dv">10</span>]][<span class="dv">1</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">nlyr</span>(SMAPrast)])</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot time time series for the selected feature</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cellTS, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, <span class="at">ylab=</span><span class="st">"Soil moisture"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract SM time series for first pixel by removing percentage fraction</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>cellTS<span class="ot">=</span><span class="fu">as.numeric</span>(featureData[[<span class="dv">10</span>]][<span class="dv">1</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">nlyr</span>(SMAPrast)])</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot time time series for the selected feature</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cellTS, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, <span class="at">ylab=</span><span class="st">"Soil moisture"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="ch9_files/figure-html/9a6-1.png" class="img-fluid" width="672"></p>
+<p><img src="ch9_files/figure-html/9a7-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ We will make another small change in the custom function for mean, variance and skewness</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>minSamp<span class="ot">=</span><span class="dv">50</span>   <span class="co"># Minimum assured samples for statistics</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>){    </span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  xDF<span class="ot">=</span><span class="fu">data.frame</span>(x)                  <span class="co"># Convert list to data frame</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  xDF<span class="ot">=</span>xDF[ , <span class="sc">!</span>(<span class="fu">names</span>(xDF) <span class="sc">%in%</span> <span class="st">'coverage_fraction'</span>)] <span class="co"># Remove coverage_fraction column</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  xData<span class="ot">=</span><span class="fu">as.vector</span>(<span class="fu">as.matrix</span>(xDF))    <span class="co"># Convert data.frame to 1-D matrix</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  smTS<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">na.omit</span>(xData))    <span class="co"># Omit NA values                   </span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Implement function with trycatch for catching exception </span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(<span class="cf">if</span>(<span class="fu">length</span>(smTS)<span class="sc">&gt;</span>minSamp) {      <span class="co"># Apply minimum sample filter</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION BEGINS #############    </span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  meanVal<span class="ot">=</span><span class="fu">mean</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)              <span class="co"># Mean </span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  varVal<span class="ot">=</span><span class="fu">var</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)                <span class="co"># Variance</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  skewVal<span class="ot">=</span>moments<span class="sc">::</span><span class="fu">skewness</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Skewness</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  output<span class="ot">=</span><span class="fu">c</span>(meanVal,varVal,skewVal)         <span class="co"># Combine all statistics</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(output)                           <span class="co"># Return output</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION ENDS #############    </span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>,<span class="dv">3</span>))   <span class="co"># If conditions !=TRUE, return array with NA</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  },<span class="at">error =</span><span class="cf">function</span>(e){<span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span>))}) <span class="co"># If Error== TRUE, return array with NA</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ We will make another small change in the custom function for mean, variance and skewness</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x, <span class="at">minSamp =</span><span class="dv">50</span>, <span class="at">na.rm=</span><span class="cn">TRUE</span>){    </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  xDF<span class="ot">=</span><span class="fu">data.frame</span>(x)                  <span class="co"># Convert list to data frame</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  xDF<span class="ot">=</span>xDF[ , <span class="sc">!</span>(<span class="fu">names</span>(xDF) <span class="sc">%in%</span> <span class="st">'coverage_fraction'</span>)] <span class="co"># Remove coverage_fraction column</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  xData<span class="ot">=</span><span class="fu">as.vector</span>(<span class="fu">as.matrix</span>(xDF))    <span class="co"># Convert data.frame to 1-D matrix</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  smTS<span class="ot">=</span><span class="fu">as.numeric</span>(<span class="fu">na.omit</span>(xData))    <span class="co"># Omit NA values                   </span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Implement function with trycatch for catching exception </span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(<span class="cf">if</span>(<span class="fu">length</span>(smTS)<span class="sc">&gt;</span>minSamp) {      <span class="co"># Apply minimum sample filter</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION BEGINS #############    </span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  meanVal<span class="ot">=</span><span class="fu">mean</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)              <span class="co"># Mean </span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  varVal<span class="ot">=</span><span class="fu">var</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>)                <span class="co"># Variance</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  skewVal<span class="ot">=</span>moments<span class="sc">::</span><span class="fu">skewness</span>(smTS, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="co"># Skewness</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  output<span class="ot">=</span><span class="fu">c</span>(meanVal,varVal,skewVal)         <span class="co"># Combine all statistics</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(output)                           <span class="co"># Return output</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="do">######## OPERATION ENDS #############    </span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>,<span class="dv">3</span>))   <span class="co"># If conditions !=TRUE, return array with NA</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  },<span class="at">error =</span><span class="cf">function</span>(e){<span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span>))}) <span class="co"># If Error== TRUE, return array with NA</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s apply <code>my_fun</code> to extracted data for each feature.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test the function for one block</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">my_fun</span>(featureData[[<span class="dv">10</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test the function for one block</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">my_fun</span>(featureData[[<span class="dv">10</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  0.37738906  0.00616663 -0.38568026</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function in parallel for all layers</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel) </span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(snow)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future.apply) </span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="fu">detectCores</span>(<span class="at">logical =</span> <span class="cn">FALSE</span>) <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>outStat<span class="ot">=</span> <span class="fu">future_lapply</span>(featureData, my_fun)</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Test output for one feature</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>outStat[[<span class="dv">10</span>]]  <span class="co"># Is this the same as before?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function in parallel for all layers</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel) </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(snow)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future.apply) </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify argument minSamp to be passed along to all nodes </span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>minSamp<span class="ot">=</span><span class="dv">50</span>   <span class="co"># Minimum assured samples for statistics</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create worker nodes with shared environment  </span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="fu">detectCores</span>(<span class="at">logical =</span> <span class="cn">FALSE</span>) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function in parallel</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>outStat<span class="ot">=</span> <span class="fu">future_lapply</span>(featureData, my_fun)</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Test output for one feature</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>outStat[[<span class="dv">10</span>]]  <span class="co"># Is this the same as before?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  0.37738906  0.00616663 -0.38568026</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract each summary stats for all features from the output list  </span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>FeatureMean<span class="ot">=</span><span class="fu">sapply</span>(outStat,<span class="st">"[["</span>,<span class="dv">1</span>)  <span class="co"># Extract mean for all features</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>FeatureVar<span class="ot">=</span><span class="fu">sapply</span>(outStat,<span class="st">"[["</span>,<span class="dv">2</span>)   <span class="co"># Extract variance for all features</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>FeatureSkew<span class="ot">=</span><span class="fu">sapply</span>(outStat,<span class="st">"[["</span>,<span class="dv">3</span>)  <span class="co"># Extract skewness for all features</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's place mean statistics as an attribute to the shapefile</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>us_shp<span class="sc">$</span>meanSM<span class="ot">=</span>FeatureMean</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot mean soil moisture map for CONUS </span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rcartocolor)</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sp)</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>mean_map<span class="ot">=</span><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> <span class="fu">st_as_sf</span>(us_shp), <span class="co"># CONUS shp as sf object (simple feature)</span></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>          <span class="fu">aes</span>(<span class="at">fill =</span> meanSM)) <span class="sc">+</span>   <span class="co"># Plot fill color= mean soil moisture</span></span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_carto_c</span>(<span class="at">palette =</span> <span class="st">"BluYl"</span>,     <span class="co"># Using carto color palette</span></span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">name =</span> <span class="st">"Mean SM"</span>,      <span class="co"># Legend name</span></span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">na.value =</span> <span class="st">"#e9e9e9"</span>,  <span class="co"># Fill values for NA </span></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">direction =</span> <span class="dv">1</span>)<span class="sc">+</span>        <span class="co"># To invert color, use -1</span></span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="dv">2163</span>)<span class="sc">+</span>   <span class="co"># Reprojecting polygon 4326 or 3083 </span></span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span>          <span class="co"># Plot theme. Try: theme_bw</span></span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.1</span>),  </span>
-<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.direction =</span> <span class="st">"horizontal"</span>,</span>
-<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.width =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"mm"</span>),</span>
-<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.height =</span> <span class="fu">unit</span>(<span class="dv">4</span>, <span class="st">"mm"</span>))</span>
-<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>mean_map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract each summary stats for all features from the output list  </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>FeatureMean<span class="ot">=</span><span class="fu">sapply</span>(outStat,<span class="st">"[["</span>,<span class="dv">1</span>)  <span class="co"># Extract mean for all features</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>FeatureVar<span class="ot">=</span><span class="fu">sapply</span>(outStat,<span class="st">"[["</span>,<span class="dv">2</span>)   <span class="co"># Extract variance for all features</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>FeatureSkew<span class="ot">=</span><span class="fu">sapply</span>(outStat,<span class="st">"[["</span>,<span class="dv">3</span>)  <span class="co"># Extract skewness for all features</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's place mean statistics as an attribute to the shapefile</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>us_shp<span class="sc">$</span>meanSM<span class="ot">=</span>FeatureMean</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot mean soil moisture map for CONUS </span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rcartocolor)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sp)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>mean_map<span class="ot">=</span><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> <span class="fu">st_as_sf</span>(us_shp), <span class="co"># CONUS shp as sf object (simple feature)</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>          <span class="fu">aes</span>(<span class="at">fill =</span> meanSM)) <span class="sc">+</span>   <span class="co"># Plot fill color= mean soil moisture</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_carto_c</span>(<span class="at">palette =</span> <span class="st">"BluYl"</span>,     <span class="co"># Using carto color palette</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">name =</span> <span class="st">"Mean SM"</span>,      <span class="co"># Legend name</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">na.value =</span> <span class="st">"#e9e9e9"</span>,  <span class="co"># Fill values for NA </span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">direction =</span> <span class="dv">1</span>)<span class="sc">+</span>        <span class="co"># To invert color, use -1</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="dv">2163</span>)<span class="sc">+</span>   <span class="co"># Reprojecting polygon 4326 or 3083 </span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span>          <span class="co"># Plot theme. Try: theme_bw</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.1</span>),  </span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.direction =</span> <span class="st">"horizontal"</span>,</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.width =</span> <span class="fu">unit</span>(<span class="dv">5</span>, <span class="st">"mm"</span>),</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.height =</span> <span class="fu">unit</span>(<span class="dv">4</span>, <span class="st">"mm"</span>))</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>mean_map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="ch9_files/figure-html/9a7-1.png" class="img-fluid" width="672"></p>
+<p><img src="ch9_files/figure-html/9a8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 

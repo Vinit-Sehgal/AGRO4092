@@ -304,7 +304,7 @@ We will use the `terra::mosaic` function to generate a mosaic of several smaller
 This function requires the user to specify the summary function ("sum", "mean", "median", "min", or "max") to be applied on the overlapping pixels from 2 or more rasters.
 Let us download some more rasters from POLARIS and *mosaic* them together.
 
-!["Beware of the dog" mosaic (Pompeii, Casa di Orfeo) is made of several constituent pieces.](images/clipboard-3087017181.png){alt="\"Beware of the dog\" mosaic (Pompeii, Casa di Orfeo) is made of several constituent pieces." width="300"}
+!["Beware of the dog" mosaic (Pompeii, Casa di Orfeo) is made of several constituent pieces.](images/clipboard-3087017181.png){width="300"}
 
 ```{r 6a4, message = FALSE, warning = FALSE}
 # Links to soil texture rasters 
