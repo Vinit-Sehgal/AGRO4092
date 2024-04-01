@@ -299,7 +299,7 @@ mapview(r1crp,                           # Raster to be plotted
 ```
 
 We note that the raster files in POLARIS are available for a 1x1 areal domain.
-For an analysis for a large spatial extent, multiple smaller rasters can be stitched together to generate a larger mosaic of rasters.
+For an analysis for a large spatial extent, multiple smaller rasters can be "stitched" together to generate a larger mosaic of rasters.
 We will use the `terra::mosaic` function to generate a mosaic of several smaller rasters of percentage clay content in 0-5 cm soil profile in Southeastern Louisiana.
 This function requires the user to specify the summary function ("sum", "mean", "median", "min", or "max") to be applied on the overlapping pixels from 2 or more rasters.
 Let us download some more rasters from POLARIS and *mosaic* them together.
@@ -347,6 +347,28 @@ plot(LAvct, add=TRUE)
 grid()
 ```
 
+For easy post processing access, its a good practice to save the processed dataset on disc as either a raster or netCDF.
+
+```{r 6a4b, message = FALSE, warning = FALSE}
+# Export raster to disc
+terra::writeRaster(r_mos, "clayPct.tif",
+                overwrite=TRUE) # Overwrite if the file already exists?
+
+# Or export as netCDF
+terra::writeCDF(r_mos, "clayPct.nc", 
+                overwrite=TRUE) # Overwrite if the file already exists?
+
+
+# Optional: Add more information to the exported netCDF
+# terra::writeCDF(r_mos,             # SpatRaster to export
+#          "clayPct.nc",             # Output filename
+#          varname="clayPCT",        # Short name of the variable
+#          unit="%",                 # Variable units
+#          longname="Clay Percentage, 0-5 cm, POLARIS", # Long name of the variable
+#          zname='[-]')              # Z-var name (None, since we export a single layer)
+
+```
+
 ### Downloading netCDF
 
 We will now download a netCDF of global daily precipitation for the year 2023 from CHIRPS, accessible through the link: [https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf/p05/chirps-v2.0.2023.days_p05.nc]{.underline}
@@ -377,3 +399,7 @@ plot(pcp[[100]])   # Same as pcp[[which(time(pcp)=="2023-04-10")]]
 plot(worldSHP, add=TRUE)
 points(latlon, pch=19, col="red")
 ```
+
+------------------------------------------------------------------------
+
+![](images/clipboard-3916603117.png){fig-align="center" width="600"}

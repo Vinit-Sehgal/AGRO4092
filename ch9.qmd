@@ -8,11 +8,15 @@ editor:
 
 # Parallel Geospatial Computing
 
-Many computations in R can be made faster by the use of parallel computation.
-Generally, parallel computation is the simultaneous execution of different pieces of a larger computation across multiple computing processors or cores.
-The basic idea is that if you can execute a computation in X seconds on a single processor, then you should be able to execute it in X/n seconds on n processors.
+Computing operations in R can be made faster by the use of parallel computation.
+Generally, parallel computation is the simultaneous execution of different pieces of a larger operations across multiple computing processors or cores.
+Imagine, if you can execute an operation in X seconds on a single processor, would you be able to divide the processing time by *n* if you divide the task between *n* processors?
+The answer is.....almost.
 
-Such a speed-up might not possible because of overhead and various barriers to splitting up a problem into n pieces, but it is often possible to come close in simple problems.
+Parallel processing comes with overhead computing costs associated with several processors/nodes interacting with each other over shared memory.
+So, for smaller datasets, the increment in computing performance using parallel processing will be minimal (if not negative).
+The real difference in computing performance is apparent in the case or large datasets.
+
 For more details read: <https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra>.
 
 In this chapter we will try several examples of the cell-wise, layer-wise and block-wise implementation of custom functions in parallel.
@@ -39,7 +43,7 @@ plot(us_shp, add=TRUE)
 
 ### Apply custom function to pixel time series
 
-![](images/clipboard-1143469546.png){width="550"}
+![](images/clipboard-1143469546.png){fig-align="center" width="550"}
 
 Once we have imported the netCDF file as `rast` object, we will apply a slightly modified version of previously used function `my_fun` (from Ch 8) for calculating mean, variance and skewness for time series data for each cell in parallel.
 We will use `terra::app` function to apply `my_fun` on SpatRaster in parallel.
@@ -47,14 +51,14 @@ We will use `terra::app` function to apply `my_fun` on SpatRaster in parallel
 For seamless implementation of function in parallel mode, care must be taken that all necessary are accessible to ALL cores and error exceptions are handles appropriately.
 We will modify `my_fun` slightly to highlight what it means in practice.
 
-1.  We will convert input `x` to a numeric array
-
-2.  We will remove `NA` values from dataset before calculation
-
-3.  We will use `minSamp` to fix minimum sample counts for calculation.
-    If the number of observations for a pixel are less than `minSamp`, the grid is skipped.
-
-4.  We will use `tryCatch` to handle error exceptions
+> 1.  We will convert input `x` to a numeric array
+>
+> 2.  We will remove `NA` values from dataset before calculation
+>
+> 3.  We will use `minSamp` to fix minimum sample counts for calculation.
+>     If the number of observations for a pixel are less than `minSamp`, the grid is skipped.
+>
+> 4.  We will use `tryCatch` to handle error exceptions
 
 The basic rules to avoid errors: (a) checking that inputs are correct, (b) avoiding non-standard evaluation, and (c) avoiding functions that can return different types of output.
 
@@ -110,7 +114,8 @@ One easy solution when looping through customized functions is to include `print
 
 When working with large spatial data, the following the steps listed below can be very helpful:
 
-> 1.  Check if the function works as expected by testing it first on a sample series extracted (using `terra::extract` function) for a test location from the multilayer raster. For example, for a sample location with Long=-100, and Lat=35 (in decimal degrees) we can extract a time series for soil moisture and test the custom function as follows:
+> 1.  Check if the function works as expected by testing it first on a sample series extracted (using `terra::extract` function) for a test location from the multilayer raster.
+>     For example, for a sample location with Long=-100, and Lat=35 (in decimal degrees) we can extract a time series for soil moisture and test the custom function as follows:
 >
 >     ```{r 9a3a, message = FALSE, warning = FALSE}
 >     # Location with Long=-100, and Lat=35 (in decimal degrees) extract time series 
@@ -120,7 +125,10 @@ When working with large spatial data, the following the steps listed below can b
 >     my_fun(ts_sample, minSamp=50)
 >     ```
 >
-> 2.  Try parallel operation on a smaller region before mounting large jobs for cpmputing. Pixel-wise implementation of the function can help identify errors in the code. Convert the cropped region into a data frame and apply function to time series of each cell. If your code throws error, troubleshoot carefully for the series which generates the error.
+> 2.  Try parallel operation on a smaller region before mounting large jobs for cpmputing.
+>     Pixel-wise implementation of the function can help identify errors in the code.
+>     Convert the cropped region into a data frame and apply function to time series of each cell.
+>     If your code throws error, troubleshoot carefully for the series which generates the error.
 >
 >     ```{r 9a3b, message = FALSE, warning = FALSE}
 >     library(terra)   
@@ -129,10 +137,8 @@ When working with large spatial data, the following the steps listed below can b
 >     crs(p) <- "EPSG:4326"             # Use this polygon to crop and mask the larger SpatRaster
 >     ```
 >
-> ```{=html}
-> <!-- -->
-> ```
-> 3.  Use `tryCatch` **carefully** as it may suppress legitimate errors as well, generating spurious results. Test the codes for smaller region without `tryCatch` to test the robustness of your codes.
+> 3.  Use `tryCatch` **carefully** as it may suppress legitimate errors as well, generating spurious results.
+>     Test the codes for smaller region without `tryCatch` to test the robustness of your codes.
 
 Remember, parallel computing may have some overheads upon creation and closing of clusters.
 A significant improvement in computing times using parallel techniques would be visible for large jobs.
@@ -143,8 +149,8 @@ A significant improvement in computing times using parallel techniques would be 
 
 We will use modeled daily evapotranspiration (ET) and maximum daily temperature (Tmax) from NOAA-Physical Sciences Lab's repository for the year 2011 to find the correlation between ET and Tmax at each grid over CONUS.
 This dataset is available in NetCDF format (`tmax.2011.nc` and `et.2011.nc`).
-Due to sifficient availability of moisture in humid and sub-humid climates, an increase in temperature is matched with a corresponding increase in evapotranspiration (hence, positive correlation).
-In contrast, in arid and semi-arid regions, general scarcity of moisture restricts cooling of the surface by evaporation or transpiration.
+Due to sufficient availability of moisture in humid and sub-humid climates, an increase in temperature is matched with a corresponding increase in evapotranspiration (hence, positive correlation).
+In contrast, in arid and semi-arid regions, general scarcity of moisture restricts cooling of the surface by evaporation.
 Hence, larger fraction of incoming radiation is used up to heat up the land surface.
 This shows up as near zero or negative correlation between temperature and evapotranspiration in our analysis.
 This forms the basis of terrestrial energy balance.
@@ -184,6 +190,10 @@ Beware while using `detectCores()`.
 The argument `logical = FALSE` returns the number of physical cores and `logical = TRUE` returns the number of available hardware threads.
 
 ```{r 9a5, message = FALSE, warning = FALSE}
+library(terra)
+# Import SMAP soil moisture NetCDF to the workspace
+SMAPrast = rast("./SampleData-master/SMAP_L3_USA.nc")
+
 # Convert Spatraster to a list of rasters
 rasList=as.list(SMAPrast[[1:10]])           # What will happen if we pass rast(rasList)?
 length(rasList)
@@ -199,7 +209,7 @@ my_fun = function(x){
 } 
 
 # Test the function for one raster
-my_fun(rasList[[1]])
+my_fun(rasList[[10]])
 
 # Apply function in parallel for all layers
 library(parallel) 
@@ -338,3 +348,7 @@ mean_map=ggplot() +
         legend.key.height = unit(4, "mm"))
 mean_map
 ```
+
+------------------------------------------------------------------------
+
+![](images/clipboard-2382276931.png){fig-align="center" width="600"}

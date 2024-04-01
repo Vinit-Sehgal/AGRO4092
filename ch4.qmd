@@ -55,8 +55,6 @@ plot(density(na.omit(x)), main=" ", xlab="",
      col="cyan4", lwd=3)
 ```
 
-Exercise:
-
 1.  Taking examples of any two USCRN stations across contrasting hydroclimates, compare and contrast any two recorded variables using time series plots, probability density distribution histograms and scatter plots. Select any year of your liking for the analysis.
 
 2.  Select two seasons for each elected variable and demonstrate the seasonal variability in the records for summer (MAMJJA) and winter (SONDJF) seasons using any two types of multivariate plots.

@@ -10,9 +10,4 @@ editor:
 
 ```{r child="ch6_a.qmd", message = FALSE, warning = FALSE}
 
-
-```
-
-```{r child="ch6_b.qmd", message = FALSE, warning = FALSE}
-
 ```

@@ -1,0 +1,119 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Practice Exercises
+
+## Flash Cards
+
+![](images/clipboard-1173129154.png){width="600"}
+
+![](images/clipboard-3124773382.png){width="600"}
+
+![](images/clipboard-430065762.png){width="600"}
+
+![](images/clipboard-136714138.png){width="629"}
+
+```{r child="ch4.qmd", message = FALSE, warning = FALSE}
+
+```
+
+## Exercise #2
+
+Use the raster files in *SampleData-master/SMAPL4_rasters* folder, perform the tasks as listed below:
+
+-   Task 1: Write a user-defined function to count the number of pixels within the range \[0.3, 0.4\] for 20211213.
+    Use `global` to implement your function.
+    Pass the specified range as an input argument to the function.
+
+-   Task 2: Compared to 20211213, what is the percentage change in 20211215 for the pixels within the \[0.3, 0.4\] range?
+
+-   Task 3: Make a multivariate plot (2 or more variables on the same axis) comparing the density distribution of soil moisture for 20211213 and 20211215?
+
+```{r child="ch6_b.qmd", message = FALSE, warning = FALSE}
+
+```
+
+## Exercise #4
+
+Soil moisture is an important hydrological variable with strong linkages to crop health and yield.
+Satellites such as NASA's SMAP and ESA's SMOS provide soil moisture information for the surface profile (0-5 cm).
+However, temporal variability in the surface soil moisture gets attenuated and dampened as water infiltrates through the soil layers.
+This is followed by evapotranspirative losses to the atmosphere from the rootzone.
+The time delay in surface soil moisture and evapotranspiration variability indicates several critical aspects of ecosystem functioning, terrestrial water and energy balance and soil hydraulic processes.
+
+In this exercise, we will simulate the attenuation and dampening effect on the surface soil moisture using a *moving average filter* and study how increasing smoothing of surface soil moisture correlates with the variability in evapotranspiration.
+We will use simulated gridded surface soil moisture and evapotranspiration from VIC land surface model for the year 2011.
+
+------------------------------------------------------------------------
+
+1.  Download CONUS-wide daily simulated soil moisture (`soilmoist.2011.nc`) and evapotranspiration (`et.2011.nc`) for the year 2011 from NOAA-PSL's servers. using the following file location:
+
+    `sm_path = "https://downloads.psl.noaa.gov//Datasets/livneh/fluxvars/soilmoist.2011.nc"`
+
+    `et_path = "https://downloads.psl.noaa.gov//Datasets/livneh/fluxvars/et.2011.nc"`
+
+```{=html}
+<!-- -->
+```
+2.  Import the downloaded netCDFs to workspace as spatRasters. Print the time stamp and variable names of the two spatRasters using `terra::time()` and `terra::names()` functions. You will notice that `et.2011.nc` has one raster layer for each day. `soilmoist.2011.nc` contains three raster layers (one for each soil profile level) per day.
+
+```{=html}
+<!-- -->
+```
+3.  Create a new multilayer spatRaster for raster layers for soil profile level 1. (Hint: using `substr()` on the layer `names()` from `soilmoist.2011.nc`, subset the layers with lev= "1" in their name)
+
+```{=html}
+<!-- -->
+```
+4.  Create a polygon with with extent: `xmin=255, xmax=265, ymin=40, ymax=48`.
+
+    a\) Plot a map of level 1 soil moisture for day 10 and overlay the polygon on the map.
+
+    b\) Crop evapotranspiration and soil moisture spatRasters to the spatial polygon.
+
+    c\) Plot the raster layers for day 10 from the cropped evapotranspiration and soil moisture SpatRasters.
+
+![](images/clipboard-4251555621.png){fig-align="center" width="450"}
+
+5.  If *smTS* is the soil moisture time series, and *Tagg* is the time-period of moving average, the function generates a right aligned rolling mean (moving average) of the time series. NA is used as fill values for the first *Tagg*-1 cells of the output.
+
+    `zoo::rollmean(smTS, Tagg, fill=NA, align = "right")`
+
+    Create and report a custom function for applying the moving average on a time series with the following components:
+
+    a\) Two input arguments:
+
+    *i) `minSamp`* (minimum number of samples in a time series)
+
+    *ii) `Tagg`* (time period of aggregation)
+
+    b\) Error exception using trycatch, where the function returns NA series for the pixel where error occurs.
+
+6.  For a point of interest at Lon=260, Lat=45:
+
+    a)  Extract a sample time series from level 1 soil moisture
+    b)  Apply the custom function made in the previous step to the sample time series.
+    c)  Generate soil moisture moving average for the selected location with for four *Tagg* values, 7, 15, 30 and 45 days. Keep *minSamp* fixed at 100.
+    d)  Plot the extracted level 1 soil moisture time series for the point of interest. Overlay aggregated time series at *Tagg*=7, 15, 30, 45 on the same x-axis. Comment on the relationship between *Tagg* and time series smoothing.
+
+![](images/clipboard-713405122.png){fig-align="center" width="450"}
+
+7.  Apply the custom moving average function in parallel on each grid of the cropped multilayer soil moisture SpatRaster (from step 4) with *Tagg*=7, 15, 30, 45. Keep *minSamp* fixed at 100. Use all-but-one available system cores for parallel computing.
+
+8.  If x and y are two time series, then the following operation gives the Pearson's correlation between the two datasets:
+
+    `cor(x, y, use = "pairwise.complete.obs")`
+
+    Using a custom function, calculate cell-wise correlation between evapotranspiration and moving averaged level 1 soil moisture for *Tagg*=7, 15, 30 and 45. (Hint: ?terra::xapp)
+
+9.  Create a multilayer raster by concatenating the output rasters from Step 8.
+
+    a)  Plot the multilayer rasters of grid-wise correlation between evapotranspiration and level 1 soil moisture with *Tagg* =7, 15, 30 and 45. Fix legend range as (0,1).
+    b)  Using `global()` function on the concatenated rasters, calculate and report the layer-wise median correlation between evapotranspiration and moving averaged level 1 soil moisture for the areal domain.
+
+![](images/clipboard-3789126346.png){fig-align="center" width="550"}

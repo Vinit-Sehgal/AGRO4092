@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./chN.html" rel="next">
+<link href="./ch10.html" rel="next">
 <link href="./ch8.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -208,8 +208,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./ch10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
   </div>
 </li>
     </ul>
@@ -239,8 +245,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>Many computations in R can be made faster by the use of parallel computation. Generally, parallel computation is the simultaneous execution of different pieces of a larger computation across multiple computing processors or cores. The basic idea is that if you can execute a computation in X seconds on a single processor, then you should be able to execute it in X/n seconds on n processors.</p>
-<p>Such a speed-up might not possible because of overhead and various barriers to splitting up a problem into n pieces, but it is often possible to come close in simple problems. For more details read: <a href="https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra" class="uri">https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra</a>.</p>
+<p>Computing operations in R can be made faster by the use of parallel computation. Generally, parallel computation is the simultaneous execution of different pieces of a larger operations across multiple computing processors or cores. Imagine, if you can execute an operation in X seconds on a single processor, would you be able to divide the processing time by <em>n</em> if you divide the task between <em>n</em> processors? The answer is…..almost.</p>
+<p>Parallel processing comes with overhead computing costs associated with several processors/nodes interacting with each other over shared memory. So, for smaller datasets, the increment in computing performance using parallel processing will be minimal (if not negative). The real difference in computing performance is apparent in the case or large datasets.</p>
+<p>For more details read: <a href="https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra" class="uri">https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra</a>.</p>
 <p>In this chapter we will try several examples of the cell-wise, layer-wise and block-wise implementation of custom functions in parallel. Let us start by first importing surface soil moisture from NASA’s SMAP satellite from the netCDF provided with the sample dataset.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
@@ -265,15 +272,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="9.1" class="anchored" data-anchor-id="cellwise-operation"><span class="header-section-number">9.1</span> Cell–wise Operation</h2>
 <section id="apply-custom-function-to-pixel-time-series" class="level3" data-number="9.1.1">
 <h3 data-number="9.1.1" class="anchored" data-anchor-id="apply-custom-function-to-pixel-time-series"><span class="header-section-number">9.1.1</span> Apply custom function to pixel time series</h3>
-<p><img src="images/clipboard-1143469546.png" class="img-fluid" width="550"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-1143469546.png" class="img-fluid figure-img" width="550"></p>
+</figure>
+</div>
 <p>Once we have imported the netCDF file as <code>rast</code> object, we will apply a slightly modified version of previously used function <code>my_fun</code> (from Ch 8) for calculating mean, variance and skewness for time series data for each cell in parallel. We will use&nbsp;<code>terra::app</code>&nbsp;function to apply&nbsp;<code>my_fun</code> on SpatRaster in parallel.</p>
 <p>For seamless implementation of function in parallel mode, care must be taken that all necessary are accessible to ALL cores and error exceptions are handles appropriately. We will modify <code>my_fun</code> slightly to highlight what it means in practice.</p>
+<blockquote class="blockquote">
 <ol type="1">
 <li><p>We will convert input <code>x</code> to a numeric array</p></li>
 <li><p>We will remove <code>NA</code> values from dataset before calculation</p></li>
 <li><p>We will use <code>minSamp</code> to fix minimum sample counts for calculation. If the number of observations for a pixel are less than <code>minSamp</code>, the grid is skipped.</p></li>
 <li><p>We will use <code>tryCatch</code> to handle error exceptions</p></li>
 </ol>
+</blockquote>
 <p>The basic rules to avoid errors: (a) checking that inputs are correct, (b) avoiding non-standard evaluation, and (c) avoiding functions that can return different types of output.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#~~ We will make some changes in the custom function for mean, variance and skewness</span></span>
@@ -314,7 +327,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stat_brk)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"Mean"</span>, <span class="st">"Variance"</span>, <span class="st">"Skewness"</span>)      <span class="co"># Add layer names</span></span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>6.22 sec elapsed</code></pre>
+<pre><code>4.82 sec elapsed</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot statistics</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cetcolor)</span>
@@ -349,10 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">as.polygons</span>(e)   </span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(p) <span class="ot">&lt;-</span> <span class="st">"EPSG:4326"</span>             <span class="co"># Use this polygon to crop and mask the larger SpatRaster</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></li>
-</ol>
-<!-- -->
-<ol start="3" type="1">
-<li>Use <code>tryCatch</code> <strong>carefully</strong> as it may suppress legitimate errors as well, generating spurious results. Test the codes for smaller region without <code>tryCatch</code> to test the robustness of your codes.</li>
+<li><p>Use <code>tryCatch</code> <strong>carefully</strong> as it may suppress legitimate errors as well, generating spurious results. Test the codes for smaller region without <code>tryCatch</code> to test the robustness of your codes.</p></li>
 </ol>
 </blockquote>
 <p>Remember, parallel computing may have some overheads upon creation and closing of clusters. A significant improvement in computing times using parallel techniques would be visible for large jobs.</p>
@@ -365,7 +375,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/clipboard-2268304266.png" class="img-fluid figure-img" width="750"></p>
 </figure>
 </div>
-<p>We will use modeled daily evapotranspiration (ET) and maximum daily temperature (Tmax) from NOAA-Physical Sciences Lab’s repository for the year 2011 to find the correlation between ET and Tmax at each grid over CONUS. This dataset is available in NetCDF format (<code>tmax.2011.nc</code> and <code>et.2011.nc</code>). Due to sifficient availability of moisture in humid and sub-humid climates, an increase in temperature is matched with a corresponding increase in evapotranspiration (hence, positive correlation). In contrast, in arid and semi-arid regions, general scarcity of moisture restricts cooling of the surface by evaporation or transpiration. Hence, larger fraction of incoming radiation is used up to heat up the land surface. This shows up as near zero or negative correlation between temperature and evapotranspiration in our analysis. This forms the basis of terrestrial energy balance.</p>
+<p>We will use modeled daily evapotranspiration (ET) and maximum daily temperature (Tmax) from NOAA-Physical Sciences Lab’s repository for the year 2011 to find the correlation between ET and Tmax at each grid over CONUS. This dataset is available in NetCDF format (<code>tmax.2011.nc</code> and <code>et.2011.nc</code>). Due to sufficient availability of moisture in humid and sub-humid climates, an increase in temperature is matched with a corresponding increase in evapotranspiration (hence, positive correlation). In contrast, in arid and semi-arid regions, general scarcity of moisture restricts cooling of the surface by evaporation. Hence, larger fraction of incoming radiation is used up to heat up the land surface. This shows up as near zero or negative correlation between temperature and evapotranspiration in our analysis. This forms the basis of terrestrial energy balance.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open access path of the daily ET and Tmax .nc files for the year 2011</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tmax_path <span class="ot">=</span> <span class="st">"https://downloads.psl.noaa.gov//Datasets/livneh/metvars/tmax.2011.nc"</span></span>
@@ -404,9 +414,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>We will convert SpatRaster to a list of rasters and then we will apply <code>my_fun</code> to each element of the list in parallel using <code>future_lapply</code>. Beware while using <code>detectCores()</code>. The argument <code>logical = FALSE</code> returns the number of physical cores and <code>logical = TRUE</code> returns the number of available hardware threads.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Spatraster to a list of rasters</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>rasList<span class="ot">=</span><span class="fu">as.list</span>(SMAPrast[[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]])           <span class="co"># What will happen if we pass rast(rasList)?</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rasList)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Import SMAP soil moisture NetCDF to the workspace</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>SMAPrast <span class="ot">=</span> <span class="fu">rast</span>(<span class="st">"./SampleData-master/SMAP_L3_USA.nc"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Spatraster to a list of rasters</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>rasList<span class="ot">=</span><span class="fu">as.list</span>(SMAPrast[[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]])           <span class="co"># What will happen if we pass rast(rasList)?</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rasList)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 10</code></pre>
 </div>
@@ -421,9 +435,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>} </span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Test the function for one raster</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">my_fun</span>(rasList[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">my_fun</span>(rasList[[<span class="dv">10</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] NaN  NA NaN</code></pre>
+<pre><code>[1] 0.19304984 0.01375684 0.65087480</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function in parallel for all layers</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel) </span>
@@ -440,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>outStat<span class="ot">=</span> <span class="fu">future_lapply</span>(rasList, my_fun)</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>20.6 sec elapsed</code></pre>
+<pre><code>22.21 sec elapsed</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check output for one layer</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># outStat[[2]]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -675,6 +689,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <p><img src="ch9_files/figure-html/9a8-1.png" class="img-fluid" width="672"></p>
 </div>
+</div>
+<hr>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-2382276931.png" class="img-fluid figure-img" width="600"></p>
+</figure>
 </div>
 
 
@@ -921,8 +941,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./chN.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch10.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

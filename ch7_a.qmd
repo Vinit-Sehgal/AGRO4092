@@ -63,7 +63,7 @@ We will first explore the use of loops- which will concatenate each `rast` layer
 This method may take longer, but helps to avoid memory bottleneck when a very large number of rasters are simultaneously processed (the threshold may depend on the system memory and processor).
 In contrast, `lapply` and `map` vectorize the operation of creating the `rast` object for concatenation, and maybe faster for a moderate number of files (again, depends on the system configuration).
 
-```{r 7a2, message = FALSE, warning = FALSE}
+```{r 7a2a, message = FALSE, warning = FALSE}
 #~~~~~~~~~~~~~~~~~~
 # Method 1: Using for loop to create raster layers from the raster location
 #~~ Suitable for large number of rasters and avoiding memory bottleneck
@@ -90,15 +90,23 @@ library(purrr)
 ras_list = purrr::map(ras_path, ~ rast(.x))  # Import the rasters into a list
 ras_stack = rast(ras_list)                   # Convert a list of rasters to rast object
 
-# Export concatenated rasters as a netCDF
-terra::writeCDF(ras_stack,                        # SpatRaster
-         file.path("NDVI.nc"),                    # Output filename
-         overwrite=TRUE,
-         varname="NDVI",
-         unit="[-]",
-         longname="Global MODIS NDVI, 2016, 16_day, 36KM",
-         zname='time')
+dim(ras_stack) #[x: y: z]- 23 raster layers with 456 x 964 cells
 ```
+
+> **Computing Counsel**: Exporting concatenated rasters as a netCDF is a convenient time-saving measure.
+> We can use `terra::writeCDF` to export SpatRaster object as `netCDF`.
+> This allows the multilayer raster to be imported directly to the workspace and avoid repeating the steps in the preceeding section.
+>
+> ```{r 7a2b, message = FALSE, warning = FALSE}
+> # Export concatenated rasters as a netCDF
+> terra::writeCDF(ras_stack,                 # SpatRaster
+>          file.path("NDVI.nc"),             # Output filename
+>          overwrite=TRUE,
+>          varname="NDVI",
+>          unit="[-]",
+>          longname="Global MODIS NDVI, 2016, 16_day, 36KM",
+>          zname='time')
+> ```
 
 ## Spatial Operations on Multilayer Raster
 
