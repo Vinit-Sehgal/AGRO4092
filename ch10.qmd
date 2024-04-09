@@ -24,7 +24,7 @@ editor:
 
 ## Exercise #2
 
-Use the raster files in *SampleData-master/SMAPL4_rasters* folder, perform the tasks as listed below:
+Use the raster files in *SampleData-master/SMAPL4_rasters* folder, and perform the tasks as listed below:
 
 -   Task 1: Write a user-defined function to count the number of pixels within the range \[0.3, 0.4\] for 20211213.
     Use `global` to implement your function.
@@ -40,6 +40,62 @@ Use the raster files in *SampleData-master/SMAPL4_rasters* folder, perform the t
 
 ## Exercise #4
 
+Imagine that a federal agency is interested in understanding the impacts of land conservation practices to improve carbon sequestration in the soil.
+The agency has selected two potential Carbon Sequestration Testbed (CST) sites across Louisiana.
+Using the observations of hydrometeorological, land practice, and vegetation datasets collected from these locations, the agency is interested in developing a physics-based ecohydrology model to mimic the interactions between soil, plants, and atmosphere at these test beds.
+This will help develop predictive models to estimate the effects of various management practices on the carbon sequestration potential in soil.
+
+```{r 4a, message = FALSE, warning = FALSE}
+library(terra)
+library(mapview)
+
+# Import vector for Louisiana 
+LAvct=vect(spData::us_states[spData::us_states$NAME=="Louisiana",])
+
+# Spatial attributes of the test polygons
+lon = c(-89.9, -90.2, -90.2,-93,-92.8, -93.1)
+lat = c(30.8, 30.8, 30.5,32, 32.2, 32.4)
+id=c(1, 1, 1, 2, 2, 2)
+
+# Combine attributes by columns
+lonlat = cbind(id, lon, lat)
+
+# Create polygons using the point locations as vertices
+#~~~ CRS of the LA vect is assigned to the new vector
+CSTpoly = vect(lonlat, type="polygons",crs=crs(LAvct))
+
+# Add polygon id to the vector geometry
+CSTpoly$CST=c(1,2)
+
+# Plot map of Louisiana with overlaying CST polygons
+mapview(LAvct, alpha.regions = 0.1) + 
+  mapview(CSTpoly, zcol ="CST", col.regions = c("blue", "red"))
+
+```
+
+------------------------------------------------------------------------
+
+To develop these ecohydrology models, the agency needs your assistance in collecting high-resolution soil texture dataset for the Louisiana CSTs.
+You know from Ch 6 that soil texture data is available through POLARIS at \[30m X 30m\] spatial resolution for 6 soil depths (0-5 cm, 5-15 cm, 15-30 cm, 30-60 cm, 60-100 cm and 100-200 cm. So, for this exercise, you will generate the maps of mean percent clay content for 0-100 cm soil profile for the two CSTs by taking the arithmetic average of the clay percent in each layer between 0-100 cm depth. Access the mean clay content data from: <http://hydrology.cee.duke.edu/POLARIS/PROPERTIES/v1.0/clay/mean/>.
+
+For each CST, follow the following steps:
+
+1.  \(10\) Use R code to download the *.tif* files for the areal domain encompassing the polygon for 0-5 cm soil profile.
+
+2.  \(15\) Combine the rasters using the mosaic function.
+
+3.  \(15\) Crop and mask the mosaic raster to the polygon extent and shape.
+
+4.  \(20\) Repeat for other soil profiles.
+
+5.  \(20\) Take cell-wise arithmetic average of the mean soil percentage for the layers.
+
+6.  \(10\) Plot the raster (mean soil percentage for 0-100 cm) for the CST.
+
+7.  \(10\) Export the raster.
+
+## Exercise #5
+
 Soil moisture is an important hydrological variable with strong linkages to crop health and yield.
 Satellites such as NASA's SMAP and ESA's SMOS provide soil moisture information for the surface profile (0-5 cm).
 However, temporal variability in the surface soil moisture gets attenuated and dampened as water infiltrates through the soil layers.
@@ -51,25 +107,23 @@ We will use simulated gridded surface soil moisture and evapotranspiration from 
 
 ------------------------------------------------------------------------
 
-1.  Download CONUS-wide daily simulated soil moisture (`soilmoist.2011.nc`) and evapotranspiration (`et.2011.nc`) for the year 2011 from NOAA-PSL's servers. using the following file location:
+1.  Download CONUS-wide daily simulated soil moisture (`soilmoist.2011.nc`) and evapotranspiration (`et.2011.nc`) for the year 2011 from NOAA-PSL's servers.
+    using the following file location:
 
     `sm_path = "https://downloads.psl.noaa.gov//Datasets/livneh/fluxvars/soilmoist.2011.nc"`
 
     `et_path = "https://downloads.psl.noaa.gov//Datasets/livneh/fluxvars/et.2011.nc"`
 
-```{=html}
 <!-- -->
-```
+
 2.  Import the downloaded netCDFs to workspace as spatRasters. Print the time stamp and variable names of the two spatRasters using `terra::time()` and `terra::names()` functions. You will notice that `et.2011.nc` has one raster layer for each day. `soilmoist.2011.nc` contains three raster layers (one for each soil profile level) per day.
 
-```{=html}
 <!-- -->
-```
+
 3.  Create a new multilayer spatRaster for raster layers for soil profile level 1. (Hint: using `substr()` on the layer `names()` from `soilmoist.2011.nc`, subset the layers with lev= "1" in their name)
 
-```{=html}
 <!-- -->
-```
+
 4.  Create a polygon with with extent: `xmin=255, xmax=265, ymin=40, ymax=48`.
 
     a\) Plot a map of level 1 soil moisture for day 10 and overlay the polygon on the map.
@@ -80,7 +134,8 @@ We will use simulated gridded surface soil moisture and evapotranspiration from 
 
 ![](images/clipboard-4251555621.png){fig-align="center" width="450"}
 
-5.  If *smTS* is the soil moisture time series, and *Tagg* is the time-period of moving average, the function generates a right aligned rolling mean (moving average) of the time series. NA is used as fill values for the first *Tagg*-1 cells of the output.
+5.  If *smTS* is the soil moisture time series, and *Tagg* is the time-period of moving average, the function generates a right aligned rolling mean (moving average) of the time series.
+    NA is used as fill values for the first *Tagg*-1 cells of the output.
 
     `zoo::rollmean(smTS, Tagg, fill=NA, align = "right")`
 
@@ -103,13 +158,16 @@ We will use simulated gridded surface soil moisture and evapotranspiration from 
 
 ![](images/clipboard-713405122.png){fig-align="center" width="450"}
 
-7.  Apply the custom moving average function in parallel on each grid of the cropped multilayer soil moisture SpatRaster (from step 4) with *Tagg*=7, 15, 30, 45. Keep *minSamp* fixed at 100. Use all-but-one available system cores for parallel computing.
+7.  Apply the custom moving average function in parallel on each grid of the cropped multilayer soil moisture SpatRaster (from step 4) with *Tagg*=7, 15, 30, 45.
+    Keep *minSamp* fixed at 100.
+    Use all-but-one available system cores for parallel computing.
 
 8.  If x and y are two time series, then the following operation gives the Pearson's correlation between the two datasets:
 
     `cor(x, y, use = "pairwise.complete.obs")`
 
-    Using a custom function, calculate cell-wise correlation between evapotranspiration and moving averaged level 1 soil moisture for *Tagg*=7, 15, 30 and 45. (Hint: ?terra::xapp)
+    Using a custom function, calculate cell-wise correlation between evapotranspiration and moving averaged level 1 soil moisture for *Tagg*=7, 15, 30 and 45.
+    (Hint: ?terra::xapp)
 
 9.  Create a multilayer raster by concatenating the output rasters from Step 8.
 

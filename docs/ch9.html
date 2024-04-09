@@ -245,7 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>Computing operations in R can be made faster by the use of parallel computation. Generally, parallel computation is the simultaneous execution of different pieces of a larger operations across multiple computing processors or cores. Imagine, if you can execute an operation in X seconds on a single processor, would you be able to divide the processing time by <em>n</em> if you divide the task between <em>n</em> processors? The answer is…..almost.</p>
+<p>Spatial operations in R can be made faster by using parallel processing. Generally, parallel computation is the simultaneous execution of different pieces of a larger operation across multiple computing processors or cores. Imagine if you can execute an operation in X seconds on a single processor. Would you be able to divide the processing time by n if you divide the task between n processors? The answer is…almost.</p>
 <p>Parallel processing comes with overhead computing costs associated with several processors/nodes interacting with each other over shared memory. So, for smaller datasets, the increment in computing performance using parallel processing will be minimal (if not negative). The real difference in computing performance is apparent in the case or large datasets.</p>
 <p>For more details read: <a href="https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra" class="uri">https://www.linkedin.com/pulse/thinking-parallel-high-performance-computing-hpc-debasish-mishra</a>.</p>
 <p>In this chapter we will try several examples of the cell-wise, layer-wise and block-wise implementation of custom functions in parallel. Let us start by first importing surface soil moisture from NASA’s SMAP satellite from the netCDF provided with the sample dataset.</p>
@@ -327,7 +327,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stat_brk)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"Mean"</span>, <span class="st">"Variance"</span>, <span class="st">"Skewness"</span>)      <span class="co"># Add layer names</span></span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>4.82 sec elapsed</code></pre>
+<pre><code>5.48 sec elapsed</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot statistics</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cetcolor)</span>
@@ -454,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>outStat<span class="ot">=</span> <span class="fu">future_lapply</span>(rasList, my_fun)</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>22.21 sec elapsed</code></pre>
+<pre><code>21.28 sec elapsed</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check output for one layer</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># outStat[[2]]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

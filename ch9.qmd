@@ -8,10 +8,11 @@ editor:
 
 # Parallel Geospatial Computing
 
-Computing operations in R can be made faster by the use of parallel computation.
-Generally, parallel computation is the simultaneous execution of different pieces of a larger operations across multiple computing processors or cores.
-Imagine, if you can execute an operation in X seconds on a single processor, would you be able to divide the processing time by *n* if you divide the task between *n* processors?
-The answer is.....almost.
+Spatial operations in R can be made faster by using parallel processing.
+Generally, parallel computation is the simultaneous execution of different pieces of a larger operation across multiple computing processors or cores.
+Imagine if you can execute an operation in X seconds on a single processor.
+Would you be able to divide the processing time by n if you divide the task between n processors?
+The answer is...almost.
 
 Parallel processing comes with overhead computing costs associated with several processors/nodes interacting with each other over shared memory.
 So, for smaller datasets, the increment in computing performance using parallel processing will be minimal (if not negative).
@@ -120,7 +121,7 @@ When working with large spatial data, the following the steps listed below can b
 >     ```{r 9a3a, message = FALSE, warning = FALSE}
 >     # Location with Long=-100, and Lat=35 (in decimal degrees) extract time series 
 >     ts_sample=terra::extract(SMAPrast, cbind(-100,35))  
->
+>     >
 >     # Does it generate three numeric values as expected? 
 >     my_fun(ts_sample, minSamp=50)
 >     ```
