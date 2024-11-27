@@ -26,6 +26,7 @@ book:
     - ch8.qmd
     - ch9.qmd
     - ch10.qmd
+    - ch11_a.qmd
     - chN.qmd
 
 format:
