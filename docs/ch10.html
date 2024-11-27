@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>R for Spatial Analysis &amp; Visualization - 10&nbsp; Practice Exercises</title>
+<title>10&nbsp; Practice Exercises – R for Spatial Analysis &amp; Visualization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./chN.html" rel="next">
+<link href="./ch11.html" rel="next">
 <link href="./ch9.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -75,13 +75,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,50 +99,98 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
-
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
 <script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+
 <link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+
 <script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+
 <link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+
 <script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+
 <script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+
 <link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+
 <script src="site_libs/leaflet-binding-2.2.1/leaflet.js"></script>
+
 <script src="site_libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+
 <script src="site_libs/leaflet-providers-plugin-2.2.1/leaflet-providers-plugin.js"></script>
+
 <link href="site_libs/HomeButton-0.0.1/home-button.css" rel="stylesheet">
+
 <script src="site_libs/HomeButton-0.0.1/home-button.js"></script>
+
 <script src="site_libs/HomeButton-0.0.1/easy-button-src.min.js"></script>
+
 <script src="site_libs/clipboard-0.0.1/setClipboardText.js"></script>
+
 <link href="site_libs/mapviewCSS-0.0.1/mapview-popup.css" rel="stylesheet">
+
 <link href="site_libs/mapviewCSS-0.0.1/mapview.css" rel="stylesheet">
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Practice Exercises</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch10.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Practice Exercises</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -158,12 +215,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">R for Spatial Analysis &amp; Visualization</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/vinit-sehgal/AGRO4092" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/vinit-sehgal/AGRO4092" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
     </div>
       </div>
@@ -236,14 +293,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./ch11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Field Soil Water Balance</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -265,12 +328,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+
 <section id="flash-cards" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="flash-cards"><span class="header-section-number">10.1</span> Flash Cards</h2>
-<p><img src="images/clipboard-1173129154.png" class="img-fluid" width="600"></p>
-<p><img src="images/clipboard-3124773382.png" class="img-fluid" width="600"></p>
-<p><img src="images/clipboard-430065762.png" class="img-fluid" width="600"></p>
-<p><img src="images/clipboard-136714138.png" class="img-fluid" width="629"></p>
+<p><a href="images/clipboard-1173129154.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/clipboard-1173129154.png" class="img-fluid" width="600"></a></p>
+<p><a href="images/clipboard-3124773382.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/clipboard-3124773382.png" class="img-fluid" width="600"></a></p>
+<p><a href="images/clipboard-430065762.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/clipboard-430065762.png" class="img-fluid" width="600"></a></p>
+<p><a href="images/clipboard-136714138.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/clipboard-136714138.png" class="img-fluid" width="629"></a></p>
 </section>
 <section id="exercise-1" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="exercise-1"><span class="header-section-number">10.2</span> Exercise #1</h2>
@@ -297,7 +361,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable_styling</span>(dataTable,<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="table-responsive">
-<table class="table table-striped table-hover table-condensed table-sm small" data-quarto-postprocess="true">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
 <th style="text-align: right;" data-quarto-table-cell-role="th">WBANNO</th>
@@ -519,7 +583,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Notice the variables provided in the dataset. As an example, we can plots soil moisture data from a depth of 20 cm for this station for our reference:</p>
-<div>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample plot for soil moisture</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span>CRNdat<span class="sc">$</span>SOIL_MOISTURE_20_DAILY</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -528,29 +591,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"cyan4"</span>, <span class="at">lwd=</span><span class="dv">3</span>)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(<span class="fu">na.omit</span>(x)), <span class="at">main=</span><span class="st">" "</span>, <span class="at">xlab=</span><span class="st">""</span>, </span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"cyan4"</span>, <span class="at">lwd=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="fig-density" class="cell quarto-layout-panel">
-<figure class="figure">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
-<div id="fig-density-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ch10_files/figure-html/fig-density-1.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></p>
-<figcaption class="figure-caption">(a) Time series of SM</figcaption>
+<div id="fig-density" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-density" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-density-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-density-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="ch10_files/figure-html/fig-density-1.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;10.1&nbsp;(a): Time series of SM"><img src="ch10_files/figure-html/fig-density-1.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-density-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Time series of SM
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
-<div id="fig-density-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="ch10_files/figure-html/fig-density-2.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></p>
-<figcaption class="figure-caption">(b) SM kernel density</figcaption>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-density" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-density-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-density-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="ch10_files/figure-html/fig-density-2.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;10.1&nbsp;(b): SM kernel density"><img src="ch10_files/figure-html/fig-density-2.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-density-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) SM kernel density
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p></p><figcaption class="figure-caption">Figure&nbsp;10.1: Soil moisture values at the selected USCRN station</figcaption><p></p>
-</figure>
 </div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.1: Soil moisture values at the selected USCRN station
+</figcaption>
+</figure>
 </div>
 <ol type="1">
 <li><p>Taking examples of any two USCRN stations across contrasting hydroclimates, compare and contrast any two recorded variables using time series plots, probability density distribution histograms and scatter plots. Select any year of your liking for the analysis.</p></li>
@@ -573,7 +647,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span class="math display">\[
 NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
 \]</span> For more information on the HSL products, bands and applications, please refer to: <a href="https://lpdaac.usgs.gov/data/get-started-data/collection-overview/missions/harmonized-landsat-sentinel-2-hls-overview/" class="uri">https://lpdaac.usgs.gov/data/get-started-data/collection-overview/missions/harmonized-landsat-sentinel-2-hls-overview/</a></p>
-<div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import surface reflectance bands</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
@@ -584,14 +657,13 @@ NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot rasters</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(b4, <span class="at">main=</span><span class="st">"Red band"</span>,<span class="at">col=</span> <span class="fu">brewer.pal</span>(<span class="dv">11</span>,<span class="st">"BrBG"</span>))</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(b5, <span class="at">main=</span><span class="st">"NIR band"</span>,<span class="at">col=</span> <span class="fu">brewer.pal</span>(<span class="dv">11</span>,<span class="st">"BrBG"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="ch10_files/figure-html/ch6_b1-1.png" class="img-fluid" width="672"></p>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><a href="ch10_files/figure-html/ch6_b1-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="ch10_files/figure-html/ch6_b1-1.png" class="img-fluid" width="672"></a></p>
 </div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="ch10_files/figure-html/ch6_b1-2.png" class="img-fluid" width="672"></p>
-</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><a href="ch10_files/figure-html/ch6_b1-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="ch10_files/figure-html/ch6_b1-2.png" class="img-fluid" width="672"></a></p>
 </div>
 </div>
 </div>
@@ -640,9 +712,8 @@ NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">mapview</span>(LAvct, <span class="at">alpha.regions =</span> <span class="fl">0.1</span>) <span class="sc">+</span> </span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mapview</span>(CSTpoly, <span class="at">zcol =</span><span class="st">"CST"</span>, <span class="at">col.regions =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-
-<div class="leaflet html-widget html-fill-item" id="htmlwidget-91cffa71e864f4b30ab3" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-91cffa71e864f4b30ab3">{"x":{"options":{"minZoom":1,"maxZoom":52,"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"preferCanvas":false,"bounceAtZoomLimits":false,"maxBounds":[[[-90,-370]],[[90,370]]]},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron","CartoDB.Positron","CartoDB.Positron",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["CartoDB.DarkMatter","CartoDB.DarkMatter","CartoDB.DarkMatter",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenStreetMap","OpenStreetMap","OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["Esri.WorldImagery","Esri.WorldImagery","Esri.WorldImagery",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenTopoMap","OpenTopoMap","OpenTopoMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"createMapPane","args":["polygon",420]},{"method":"addPolygons","args":[[[[{"lng":[-92.017827,-91.848242,-91.71324,-91.768263,-91.846463,-92.015139,-92.017827],"lat":[29.590962,29.627124,29.55551,29.490362,29.479308,29.561328,29.590962]}],[{"lng":[-94.042964,-92.796533,-91.951958,-91.166073,-91.21283699999999,-91.14500200000001,-91.165328,-91.063946,-91.152699,-91.11600799999999,-91.029606,-91.00450600000001,-90.893653,-90.994293,-91.04650700000001,-91.164171,-91.16282200000001,-91.053175,-91.075908,-91.18831,-91.20101,-91.345714,-91.395715,-91.51581,-91.51857800000001,-91.62599400000001,-91.564397,-91.625118,-91.060213,-90.38053600000001,-89.75264199999999,-89.756333,-89.84580099999999,-89.76813300000001,-89.68340999999999,-89.629727,-89.61705600000001,-89.52450399999999,-89.617542,-89.683712,-89.857558,-89.692004,-89.598129,-89.58136,-89.49406399999999,-89.31545300000001,-89.46759900000001,-89.583336,-89.68109200000001,-89.528429,-89.487308,-89.312085,-89.115104,-89.06661699999999,-89.146953,-89.142866,-89.343751,-89.482844,-89.639663,-89.842641,-90.22358699999999,-90.304275,-90.39399899999999,-90.527253,-90.723185,-90.85997,-90.96127799999999,-91.094015,-91.278792,-91.334885,-91.217827,-91.329624,-91.357613,-91.46096300000001,-91.55353700000001,-91.625114,-91.621512,-91.737253,-91.853987,-91.889118,-92.200076,-92.10824599999999,-92.25185999999999,-92.323465,-92.615098,-92.94749299999999,-93.17693,-93.475252,-93.74194799999999,-93.837971,-93.92274399999999,-93.85514000000001,-93.786935,-93.720805,-93.697748,-93.714319,-93.758554,-93.697828,-93.727844,-93.621093,-93.554057,-93.56778799999999,-93.516943,-93.600308,-93.62034300000001,-93.725925,-93.81858200000001,-93.822598,-93.90955700000001,-94.04272,-94.042964],"lat":[33.019219,33.014836,33.007428,33.004106,32.922104,32.84287,32.751301,32.702926,32.640757,32.48314,32.433542,32.368144,32.328095,32.213768,32.241149,32.196888,32.132694,32.124237,32.016828,31.960958,31.909159,31.842861,31.644165,31.530894,31.275283,31.116896,31.038965,30.999167,30.998953,30.999872,31.001853,30.943498,30.707314,30.51502,30.451793,30.339287,30.227495,30.180753,30.156422,30.076018,30.004439,29.868722,29.881409,29.994722,30.040972,29.923208,29.699019,29.652834,29.534487,29.454702,29.393346,29.388038,29.252901,29.090714,29.051659,28.991623,29.052906,29.215053,29.290531,29.318823,29.085075,29.266161,29.299019,29.304051,29.135971,29.094961,29.180817,29.187711,29.247776,29.298775,29.396437,29.426615,29.512991,29.469961,29.632766,29.626195,29.735429,29.74937,29.707618,29.836023,29.72571,29.613667,29.539354,29.531497,29.585561,29.708777,29.770487,29.769242,29.736343,29.690619,29.818808,29.864099,29.99058,30.053043,30.152944,30.294282,30.387077,30.443838,30.57407,30.695159,30.824941,30.888302,31.023662,31.176158,31.271025,31.504092,31.554826,31.773559,31.893144,31.999265,33.019219]}]]],null,"LAvct",{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"pane":"polygon","stroke":true,"color":"#333333","weight":0.5,"opacity":0.9,"fill":true,"fillColor":"#6666FF","fillOpacity":0.1,"smoothFactor":1,"noClip":false},"<div class='scrollableContainer'><table class=mapview-popup id='popup'><tr class='coord'><td><\/td><th><b>Feature ID&emsp;<\/b><\/th><td>1&emsp;<\/td><\/tr><tr><td>1<\/td><th>GEOID&emsp;<\/th><td>22&emsp;<\/td><\/tr><tr><td>2<\/td><th>NAME&emsp;<\/th><td>Louisiana&emsp;<\/td><\/tr><tr><td>3<\/td><th>REGION&emsp;<\/th><td>South&emsp;<\/td><\/tr><tr><td>4<\/td><th>AREA&emsp;<\/th><td>122345.762695332&emsp;<\/td><\/tr><tr><td>5<\/td><th>total_pop_10&emsp;<\/th><td>4429940&emsp;<\/td><\/tr><tr><td>6<\/td><th>total_pop_15&emsp;<\/th><td>4625253&emsp;<\/td><\/tr><tr><td>7<\/td><th>geometry&emsp;<\/th><td>sfc_MULTIPOLYGON&emsp;<\/td><\/tr><\/table><\/div>",{"maxWidth":800,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"closeOnClick":true,"className":""},"1",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},{"stroke":true,"weight":1,"opacity":0.9,"fillOpacity":0.14,"bringToFront":false,"sendToBack":false}]},{"method":"addScaleBar","args":[{"maxWidth":100,"metric":true,"imperial":true,"updateWhenIdle":true,"position":"bottomleft"}]},{"method":"addHomeButton","args":[-94.042964,28.991623,-89.06661699999999,33.019219,true,"LAvct","Zoom to LAvct","<strong> LAvct <\/strong>","bottomright"]},{"method":"addLegend","args":[{"colors":["#6666FF"],"labels":["LAvct"],"na_color":null,"na_label":"NA","opacity":1,"position":"topright","type":"factor","title":"","extra":null,"layerId":null,"className":"info legend","group":"LAvct"}]},{"method":"addPolygons","args":[[[[{"lng":[-89.90000000000001,-90.2,-90.2,-89.90000000000001],"lat":[30.8,30.8,30.5,30.8]}]],[[{"lng":[-93,-92.8,-93.09999999999999,-93],"lat":[32,32.2,32.4,32]}]]],null,"CSTpoly - CST",{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"pane":"polygon","stroke":true,"color":"#333333","weight":0.5,"opacity":[0.9,0.9],"fill":true,"fillColor":["#0000FF","#FF0000"],"fillOpacity":[0.6,0.6],"smoothFactor":1,"noClip":false},["<div class='scrollableContainer'><table class=mapview-popup id='popup'><tr class='coord'><td><\/td><th><b>Feature ID&emsp;<\/b><\/th><td>1&emsp;<\/td><\/tr><tr><td>1<\/td><th>CST&emsp;<\/th><td>1&emsp;<\/td><\/tr><tr><td>2<\/td><th>geometry&emsp;<\/th><td>sfc_POLYGON&emsp;<\/td><\/tr><\/table><\/div>","<div class='scrollableContainer'><table class=mapview-popup id='popup'><tr class='coord'><td><\/td><th><b>Feature ID&emsp;<\/b><\/th><td>2&emsp;<\/td><\/tr><tr><td>1<\/td><th>CST&emsp;<\/th><td>2&emsp;<\/td><\/tr><tr><td>2<\/td><th>geometry&emsp;<\/th><td>sfc_POLYGON&emsp;<\/td><\/tr><\/table><\/div>"],{"maxWidth":800,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"closeOnClick":true,"className":""},["1","2"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},{"stroke":true,"weight":1,"opacity":0.9,"fillOpacity":0.84,"bringToFront":false,"sendToBack":false}]},{"method":"addHomeButton","args":[-93.09999999999999,30.5,-89.90000000000001,32.4,true,"CSTpoly - CST","Zoom to CSTpoly - CST","<strong> CSTpoly - CST <\/strong>","bottomright"]},{"method":"addLayersControl","args":[["CartoDB.Positron","CartoDB.DarkMatter","OpenStreetMap","Esri.WorldImagery","OpenTopoMap"],["LAvct","CSTpoly - CST"],{"collapsed":true,"autoZIndex":true,"position":"topleft"}]},{"method":"addLegend","args":[{"colors":["#0000FF","#FF0000"],"labels":["1","2"],"na_color":null,"na_label":"NA","opacity":1,"position":"topright","type":"factor","title":"CSTpoly - CST","extra":null,"layerId":null,"className":"info legend","group":"CSTpoly - CST"}]},{"method":"addHomeButton","args":[-94.042964,28.991623,-89.06661699999999,33.019219,true,null,"Zoom to full extent","<strong>Zoom full<\/strong>","bottomleft"]}],"limits":{"lat":[28.991623,33.019219],"lng":[-94.042964,-89.06661699999999]},"fitBounds":[28.991623,-94.042964,33.019219,-89.06661699999999,[]]},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n      function(el, x, data) {\n      // get the leaflet map\n      var map = this; //HTMLWidgets.find('#' + el.id);\n      // we need a new div element because we have to handle\n      // the mouseover output separately\n      // debugger;\n      function addElement () {\n      // generate new div Element\n      var newDiv = $(document.createElement('div'));\n      // append at end of leaflet htmlwidget container\n      $(el).append(newDiv);\n      //provide ID and style\n      newDiv.addClass('lnlt');\n      newDiv.css({\n      'position': 'relative',\n      'bottomleft':  '0px',\n      'background-color': 'rgba(255, 255, 255, 0.7)',\n      'box-shadow': '0 0 2px #bbb',\n      'background-clip': 'padding-box',\n      'margin': '0',\n      'padding-left': '5px',\n      'color': '#333',\n      'font': '9px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif',\n      'z-index': '700',\n      });\n      return newDiv;\n      }\n\n\n      // check for already existing lnlt class to not duplicate\n      var lnlt = $(el).find('.lnlt');\n\n      if(!lnlt.length) {\n      lnlt = addElement();\n\n      // grab the special div we generated in the beginning\n      // and put the mousmove output there\n\n      map.on('mousemove', function (e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                           ' lon: ' + (e.latlng.lng).toFixed(5) +\n                           ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                           ' | zoom: ' + map.getZoom() +\n                           ' | x: ' + L.CRS.EPSG3857.project(e.latlng).x.toFixed(0) +\n                           ' | y: ' + L.CRS.EPSG3857.project(e.latlng).y.toFixed(0) +\n                           ' | epsg: 3857 ' +\n                           ' | proj4: +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs ');\n      } else {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      }\n      });\n\n      // remove the lnlt div when mouse leaves map\n      map.on('mouseout', function (e) {\n      var strip = document.querySelector('.lnlt');\n      if( strip !==null) strip.remove();\n      });\n\n      };\n\n      //$(el).keypress(67, function(e) {\n      map.on('preclick', function(e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      var txt = document.querySelector('.lnlt').textContent;\n      console.log(txt);\n      //txt.innerText.focus();\n      //txt.select();\n      setClipboardText('\"' + txt + '\"');\n      }\n      });\n\n      }\n      ).call(this.getMap(), el, x, data);\n}","data":null},{"code":"function(el, x, data) {\n  return (function(el,x,data){\n           var map = this;\n\n           map.on('keypress', function(e) {\n               console.log(e.originalEvent.code);\n               var key = e.originalEvent.code;\n               if (key === 'KeyE') {\n                   var bb = this.getBounds();\n                   var txt = JSON.stringify(bb);\n                   console.log(txt);\n\n                   setClipboardText('\\'' + txt + '\\'');\n               }\n           })\n        }).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-43b2b98d5f2d67606346" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-43b2b98d5f2d67606346">{"x":{"options":{"minZoom":1,"maxZoom":52,"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"preferCanvas":false,"bounceAtZoomLimits":false,"maxBounds":[[[-90,-370]],[[90,370]]]},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron","CartoDB.Positron","CartoDB.Positron",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["CartoDB.DarkMatter","CartoDB.DarkMatter","CartoDB.DarkMatter",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenStreetMap","OpenStreetMap","OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["Esri.WorldImagery","Esri.WorldImagery","Esri.WorldImagery",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"addProviderTiles","args":["OpenTopoMap","OpenTopoMap","OpenTopoMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false,"pane":"tilePane"}]},{"method":"createMapPane","args":["polygon",420]},{"method":"addPolygons","args":[[[[{"lng":[-92.017827,-91.848242,-91.71324,-91.768263,-91.846463,-92.015139,-92.017827],"lat":[29.590962,29.627124,29.55551,29.490362,29.479308,29.561328,29.590962]}],[{"lng":[-94.042964,-92.796533,-91.951958,-91.166073,-91.21283699999999,-91.14500200000001,-91.165328,-91.063946,-91.152699,-91.11600799999999,-91.029606,-91.00450600000001,-90.893653,-90.994293,-91.04650700000001,-91.164171,-91.16282200000001,-91.053175,-91.075908,-91.18831,-91.20101,-91.345714,-91.395715,-91.51581,-91.51857800000001,-91.62599400000001,-91.564397,-91.625118,-91.060213,-90.38053600000001,-89.75264199999999,-89.756333,-89.84580099999999,-89.76813300000001,-89.68340999999999,-89.629727,-89.61705600000001,-89.52450399999999,-89.617542,-89.683712,-89.857558,-89.692004,-89.598129,-89.58136,-89.49406399999999,-89.31545300000001,-89.46759900000001,-89.583336,-89.68109200000001,-89.528429,-89.487308,-89.312085,-89.115104,-89.06661699999999,-89.146953,-89.142866,-89.343751,-89.482844,-89.639663,-89.842641,-90.22358699999999,-90.304275,-90.39399899999999,-90.527253,-90.723185,-90.85997,-90.96127799999999,-91.094015,-91.278792,-91.334885,-91.217827,-91.329624,-91.357613,-91.46096300000001,-91.55353700000001,-91.625114,-91.621512,-91.737253,-91.853987,-91.889118,-92.200076,-92.10824599999999,-92.25185999999999,-92.323465,-92.615098,-92.94749299999999,-93.17693,-93.475252,-93.74194799999999,-93.837971,-93.92274399999999,-93.85514000000001,-93.786935,-93.720805,-93.697748,-93.714319,-93.758554,-93.697828,-93.727844,-93.621093,-93.554057,-93.56778799999999,-93.516943,-93.600308,-93.62034300000001,-93.725925,-93.81858200000001,-93.822598,-93.90955700000001,-94.04272,-94.042964],"lat":[33.019219,33.014836,33.007428,33.004106,32.922104,32.84287,32.751301,32.702926,32.640757,32.48314,32.433542,32.368144,32.328095,32.213768,32.241149,32.196888,32.132694,32.124237,32.016828,31.960958,31.909159,31.842861,31.644165,31.530894,31.275283,31.116896,31.038965,30.999167,30.998953,30.999872,31.001853,30.943498,30.707314,30.51502,30.451793,30.339287,30.227495,30.180753,30.156422,30.076018,30.004439,29.868722,29.881409,29.994722,30.040972,29.923208,29.699019,29.652834,29.534487,29.454702,29.393346,29.388038,29.252901,29.090714,29.051659,28.991623,29.052906,29.215053,29.290531,29.318823,29.085075,29.266161,29.299019,29.304051,29.135971,29.094961,29.180817,29.187711,29.247776,29.298775,29.396437,29.426615,29.512991,29.469961,29.632766,29.626195,29.735429,29.74937,29.707618,29.836023,29.72571,29.613667,29.539354,29.531497,29.585561,29.708777,29.770487,29.769242,29.736343,29.690619,29.818808,29.864099,29.99058,30.053043,30.152944,30.294282,30.387077,30.443838,30.57407,30.695159,30.824941,30.888302,31.023662,31.176158,31.271025,31.504092,31.554826,31.773559,31.893144,31.999265,33.019219]}]]],null,"LAvct",{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"pane":"polygon","stroke":true,"color":"#333333","weight":0.5,"opacity":0.9,"fill":true,"fillColor":"#6666FF","fillOpacity":0.1,"smoothFactor":1,"noClip":false},"<div class='scrollableContainer'><table class=mapview-popup id='popup'><tr class='coord'><td><\/td><th><b>Feature ID&emsp;<\/b><\/th><td>1&emsp;<\/td><\/tr><tr><td>1<\/td><th>GEOID&emsp;<\/th><td>22&emsp;<\/td><\/tr><tr><td>2<\/td><th>NAME&emsp;<\/th><td>Louisiana&emsp;<\/td><\/tr><tr><td>3<\/td><th>REGION&emsp;<\/th><td>South&emsp;<\/td><\/tr><tr><td>4<\/td><th>AREA&emsp;<\/th><td>122345.762695332&emsp;<\/td><\/tr><tr><td>5<\/td><th>total_pop_10&emsp;<\/th><td>4429940&emsp;<\/td><\/tr><tr><td>6<\/td><th>total_pop_15&emsp;<\/th><td>4625253&emsp;<\/td><\/tr><tr><td>7<\/td><th>geometry&emsp;<\/th><td>sfc_MULTIPOLYGON&emsp;<\/td><\/tr><\/table><\/div>",{"maxWidth":800,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"closeOnClick":true,"className":""},"1",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},{"stroke":true,"weight":1,"opacity":0.9,"fillOpacity":0.14,"bringToFront":false,"sendToBack":false}]},{"method":"addScaleBar","args":[{"maxWidth":100,"metric":true,"imperial":true,"updateWhenIdle":true,"position":"bottomleft"}]},{"method":"addHomeButton","args":[-94.042964,28.991623,-89.06661699999999,33.019219,true,"LAvct","Zoom to LAvct","<strong> LAvct <\/strong>","bottomright"]},{"method":"addLegend","args":[{"colors":["#6666FF"],"labels":["LAvct"],"na_color":null,"na_label":"NA","opacity":1,"position":"topright","type":"factor","title":"","extra":null,"layerId":null,"className":"info legend","group":"LAvct"}]},{"method":"addPolygons","args":[[[[{"lng":[-89.90000000000001,-90.2,-90.2,-89.90000000000001],"lat":[30.8,30.8,30.5,30.8]}]],[[{"lng":[-93,-92.8,-93.09999999999999,-93],"lat":[32,32.2,32.4,32]}]]],null,"CSTpoly - CST",{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}},"pane":"polygon","stroke":true,"color":"#333333","weight":0.5,"opacity":[0.9,0.9],"fill":true,"fillColor":["#0000FF","#FF0000"],"fillOpacity":[0.6,0.6],"smoothFactor":1,"noClip":false},["<div class='scrollableContainer'><table class=mapview-popup id='popup'><tr class='coord'><td><\/td><th><b>Feature ID&emsp;<\/b><\/th><td>1&emsp;<\/td><\/tr><tr><td>1<\/td><th>CST&emsp;<\/th><td>1&emsp;<\/td><\/tr><tr><td>2<\/td><th>geometry&emsp;<\/th><td>sfc_POLYGON&emsp;<\/td><\/tr><\/table><\/div>","<div class='scrollableContainer'><table class=mapview-popup id='popup'><tr class='coord'><td><\/td><th><b>Feature ID&emsp;<\/b><\/th><td>2&emsp;<\/td><\/tr><tr><td>1<\/td><th>CST&emsp;<\/th><td>2&emsp;<\/td><\/tr><tr><td>2<\/td><th>geometry&emsp;<\/th><td>sfc_POLYGON&emsp;<\/td><\/tr><\/table><\/div>"],{"maxWidth":800,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"closeOnClick":true,"className":""},["1","2"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},{"stroke":true,"weight":1,"opacity":0.9,"fillOpacity":0.84,"bringToFront":false,"sendToBack":false}]},{"method":"addHomeButton","args":[-93.09999999999999,30.5,-89.90000000000001,32.4,true,"CSTpoly - CST","Zoom to CSTpoly - CST","<strong> CSTpoly - CST <\/strong>","bottomright"]},{"method":"addLayersControl","args":[["CartoDB.Positron","CartoDB.DarkMatter","OpenStreetMap","Esri.WorldImagery","OpenTopoMap"],["LAvct","CSTpoly - CST"],{"collapsed":true,"autoZIndex":true,"position":"topleft"}]},{"method":"addLegend","args":[{"colors":["#0000FF","#FF0000"],"labels":["1","2"],"na_color":null,"na_label":"NA","opacity":1,"position":"topright","type":"factor","title":"CSTpoly - CST","extra":null,"layerId":null,"className":"info legend","group":"CSTpoly - CST"}]},{"method":"addHomeButton","args":[-94.042964,28.991623,-89.06661699999999,33.019219,true,null,"Zoom to full extent","<strong>Zoom full<\/strong>","bottomleft"]}],"limits":{"lat":[28.991623,33.019219],"lng":[-94.042964,-89.06661699999999]},"fitBounds":[28.991623,-94.042964,33.019219,-89.06661699999999,[]]},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n      function(el, x, data) {\n      // get the leaflet map\n      var map = this; //HTMLWidgets.find('#' + el.id);\n      // we need a new div element because we have to handle\n      // the mouseover output separately\n      // debugger;\n      function addElement () {\n      // generate new div Element\n      var newDiv = $(document.createElement('div'));\n      // append at end of leaflet htmlwidget container\n      $(el).append(newDiv);\n      //provide ID and style\n      newDiv.addClass('lnlt');\n      newDiv.css({\n      'position': 'relative',\n      'bottomleft':  '0px',\n      'background-color': 'rgba(255, 255, 255, 0.7)',\n      'box-shadow': '0 0 2px #bbb',\n      'background-clip': 'padding-box',\n      'margin': '0',\n      'padding-left': '5px',\n      'color': '#333',\n      'font': '9px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif',\n      'z-index': '700',\n      });\n      return newDiv;\n      }\n\n\n      // check for already existing lnlt class to not duplicate\n      var lnlt = $(el).find('.lnlt');\n\n      if(!lnlt.length) {\n      lnlt = addElement();\n\n      // grab the special div we generated in the beginning\n      // and put the mousmove output there\n\n      map.on('mousemove', function (e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                           ' lon: ' + (e.latlng.lng).toFixed(5) +\n                           ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                           ' | zoom: ' + map.getZoom() +\n                           ' | x: ' + L.CRS.EPSG3857.project(e.latlng).x.toFixed(0) +\n                           ' | y: ' + L.CRS.EPSG3857.project(e.latlng).y.toFixed(0) +\n                           ' | epsg: 3857 ' +\n                           ' | proj4: +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs ');\n      } else {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      }\n      });\n\n      // remove the lnlt div when mouse leaves map\n      map.on('mouseout', function (e) {\n      var strip = document.querySelector('.lnlt');\n      if( strip !==null) strip.remove();\n      });\n\n      };\n\n      //$(el).keypress(67, function(e) {\n      map.on('preclick', function(e) {\n      if (e.originalEvent.ctrlKey) {\n      if (document.querySelector('.lnlt') === null) lnlt = addElement();\n      lnlt.text(\n                      ' lon: ' + (e.latlng.lng).toFixed(5) +\n                      ' | lat: ' + (e.latlng.lat).toFixed(5) +\n                      ' | zoom: ' + map.getZoom() + ' ');\n      var txt = document.querySelector('.lnlt').textContent;\n      console.log(txt);\n      //txt.innerText.focus();\n      //txt.select();\n      setClipboardText('\"' + txt + '\"');\n      }\n      });\n\n      }\n      ).call(this.getMap(), el, x, data);\n}","data":null},{"code":"function(el, x, data) {\n  return (function(el,x,data){\n           var map = this;\n\n           map.on('keypress', function(e) {\n               console.log(e.originalEvent.code);\n               var key = e.originalEvent.code;\n               if (key === 'KeyE') {\n                   var bb = this.getBounds();\n                   var txt = JSON.stringify(bb);\n                   console.log(txt);\n\n                   setClipboardText('\\'' + txt + '\\'');\n               }\n           })\n        }).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
 </div>
 </div>
 <hr>
@@ -685,7 +756,7 @@ NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-4251555621.png" class="img-fluid figure-img" width="450"></p>
+<p><a href="images/clipboard-4251555621.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="images/clipboard-4251555621.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="450"></a></p>
 </figure>
 </div>
 <ol start="5" type="1">
@@ -706,7 +777,7 @@ NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-713405122.png" class="img-fluid figure-img" width="450"></p>
+<p><a href="images/clipboard-713405122.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="images/clipboard-713405122.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="450"></a></p>
 </figure>
 </div>
 <ol start="7" type="1">
@@ -722,7 +793,7 @@ NDVI=(Band 5- Band 4)/(Band 5+ Band 4)
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/clipboard-3789126346.png" class="img-fluid figure-img" width="550"></p>
+<p><a href="images/clipboard-3789126346.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/clipboard-3789126346.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="550"></a></p>
 </figure>
 </div>
 
@@ -765,18 +836,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -808,11 +868,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -822,8 +921,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -835,7 +943,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -879,6 +1110,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -904,6 +1136,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -965,13 +1223,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ch9.html" class="pagination-link">
+      <a href="./ch9.html" class="pagination-link" aria-label="Parallel Geospatial Computing">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Parallel Geospatial Computing</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./chN.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch11.html" class="pagination-link" aria-label="Field Soil Water Balance">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Field Soil Water Balance</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -984,9 +1242,44 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a></div>
+    <div class="nav-footer-right">
+<p>Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a></p>
+</div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","loop":false,"openEffect":"zoom","descPosition":"bottom","closeEffect":"zoom"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
 
 
 
