@@ -6,18 +6,48 @@ editor:
     wrap: sentence
 ---
 
-## Field Soil Water Balance
+## Surface-Rootzone Soil Hydrologic Connectivity
 
-We will develop a 2-layer simple soil water balance modeling for simulating 1-D fluxes in the rootzone using USCRN station at Stillwater, OK, USA as an example.
-Let us extract sample data from the sample station for 2021.
+While soil moisture's centrality in precipitation partitioning into groundwater recharge and surface runoff is widely recognized, often the criticality of the surface and rootzone connectivity is overlooked.
+You might have read about incessant rainfall after a dry and hot period often generates flash floods.
+Why?
+Because the surface profile might get hydrophobic, and hence, hydrologically decoupled from the rootzone under intense heat.
+So, a larger fraction of the incoming rain contributes to overland runoff instead of infiltrating to the rootzone, and contributing to the groundwater recharge.
+So, hydrologic connectivity between surface and the rootzone profile directly affects critical ecohydrological processes such as groundwater recharge, surface runoff generation, and the overall water availability for ecosystem sustenance.
+Needless to say, knowing how moisture moves from the surface to the rootzone can improved water management to ensure sustained and adequate moisture to the crops, while preventing over-irrigation.
+Accurate data on both surface and rootzone soil moisture also helps in improving weather forecasts and seasonal-scale climate forecasts, thereby helping to predict and manage hydrologic extremes such as droughts and floods.
+
+In this chapter, we will explore the hydrologic relationship between surface and the rootzone profile, and methods to simulate these processes.
+
+### Exploratory Data Analysis for the Sample Station
+
+We will use in situ (ground) measurements from a sample station to discuss various attributes of moisture dynamics in the field and learn the relationship between moisture and thermal fluxes of surface and deeper profiles.
+For this purpose, we will use a station from U.S.
+Climate Reference Network (USCRN) at Stillwater, Oklahoma.
+USCRN is instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil moisture and temperature at 5-, 10-, 20-, 50- and 100 cm depths at sub-hourly, daily and monthly time scales.
+For our example, we will use daily dataset for 2021.
 
 ```{r 11a1, message = FALSE, warning = FALSE}
-# Yearly data from the sample station
-CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-OK_Stillwater_2_W.txt"), header=FALSE,sep="")
+# Download in situ data files for 2021 from GITHUB repositiry 
+utils::download.file("https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/CRND0103-2021-OK_Stillwater_2_W.txt?raw=true",
+                     destfile = "CRND0103-2021-OK_Stillwater_2_W.txt", 
+                     mode="wb", #wb is write binary
+                     method ='auto', 
+                     quiet=FALSE)
 
+utils::download.file("https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/HEADERS.txt?raw=true",
+                   destfile = "headers.txt", 
+                   mode="wb", #wb is write binary
+                   method ='auto', 
+                   quiet=FALSE)
+CRNdat = read.csv("CRND0103-2021-OK_Stillwater_2_W.txt", header=FALSE,sep="")
+headers = read.csv("headers.txt", header=FALSE,sep="")
+
+# OR Direct download from NCEI servers (might not work during server downtime)
+#CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-OK_Stillwater_2_W.txt"), header=FALSE,sep="")
 # Data headers
-headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")
-
+#headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")
+  
 # Column names as headers from the text file
 colnames(CRNdat)=headers[2,1:ncol(CRNdat)]
 
@@ -32,7 +62,7 @@ dataTable = kbl(head(CRNdat,6),full_width = F)
 kable_styling(dataTable,bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-### Exploratory Data Analysis for the Sample Station
+Let's plot daily average soil moisture from 5 amd and 50 cm depths, along with the corresponding daily total precipitation.
 
 ```{r 11a2, message = FALSE, warning = FALSE}
  # Create Date array for the station
@@ -102,9 +132,21 @@ p3=ggdraw(aligned_plots[[1]]) + draw_plot(aligned_plots[[2]])
 print(p3)
 ```
 
-## Low-pass Filtering of Meteorological Perturbations Through Soil Profile
+We can notice that the temporal response of surface soil moisture to a precipitation varies significantly compared to that of the deeper profile.
+Surface soil moisture reacts almost immediately to precipitation.
+This layer, typically the top few centimeters, quickly absorbs rainfall, leading to a rapid increase in moisture content.
+Similarly, the surface, having exposed to atmospheric conditions, also dries out rapidly due to evaporation and plant water uptake.
+In contrast, soil moisture from the rootzone (typically up to about 1 meter) responds more slowly to precipitation as it relies on the infiltration of water from the surface layer.
+As infiltration delays moisture transfer to the rootzone profile.
+This results in a delayed but more gradual increase in rootzone moisture content.
+Similarly, rootzone also retains water longer.
+This ensures a more consistent and reliable source of water for plant growth and ecosystem stability.
+A similar behavior can also be seen in the temperature distribution within the soil profile.
+The difference in the temporal response of rootzone moisture and thermal fluxes vis-à-vis surface profile is essentially a natural manifestation of a low pass filter, where the high-frequency variations (rapid changes) in surface soil moisture or temperature are filtered out, leaving only the low-frequency variations (slower, more sustained changes) to affect the rootzone.
 
-```{r, message = FALSE, warning = FALSE}
+![Figure 1: (Top) A schematic representation of low-pass filter effect on a time series. (Bottom) A reccursive form of low-pass filter on surface soil moisture.](images/low_pass_filter_schematic-02.png){fig-align="center" width="604"}
+
+```{r 11a3, message = FALSE, warning = FALSE}
 #| label: fig-density
 #| fig-cap: "Soil temperature and moisture response with profile depth"
 #| fig-subcap:
@@ -154,20 +196,28 @@ ggplot(df, aes(x = Date, y = Depth)) +
 
 ```
 
+::: {.callout-tip icon="TRUE"}
+## Note
+
+[A low-pass filter is a general name for the type of operations used to smooth out a time series by removing high-frequency fluctuations, leaving behind the underlying trend or low-frequency components. You may be more familiar with moving average smoothing, which calculates the average of a fixed number of consecutive data points, effectively smoothing out short-term fluctuations. Hence, moving average is also a low-pass filter.]{style="color:blue;"}
+:::
+
+## Simulating Low-pass Filtering of Meteorological Perturbations Through Soil Profile
+
 Under hydrologic equilibrium, the analytical solution of the 1-dimensional vertical water balance (differential) equation can be approximated using the relationship between the temporal changes in the rootzone soil moisture (RZSM) and the difference in SSM vis-à-vis the antecedent rootzone conditions (Wagner et al., 1999, Albergel et al., 2008, Manfreda et al., 2014).
-A simple recursive exponential LP filter to simulate the 1-dimensional first-order infinite-impulse response of RZSM to temporal variability in SSM is given as follows:
+A simple recursive exponential low-pass filter to simulate the 1-dimensional first-order infinite-impulse response of RZSM to temporal variability in SSM is given as follows:
 
-$$ SM_t^{'}= SM_{t-1}^{'}+ D_p(SSM_t-SM_{t-1}^{'}) $$ {#eq-11.1}
+$$ RZSM_t^{'}= RZSM_{t-1}^{'}+ D_p(SSM_t-RZSM_{t-1}^{'}) $$ {#eq-11.1}
 
-where, $t \ge1$; when $t=1$, $SM_{t=0}^{'}=SSM_{t=0}$.
+where, $t \ge1$; when $t=1$, $RZSM_{t=0}^{'}=SSM_{t=0}$.
 
-$SM_{t}^{'}$ is the temporally smoothed (filtered) SSM at time $t$ .
+$RZSM_{t}^{'}$ is the temporally smoothed (filtered) SSM at time $t$ .
 
 Parameter $D_p$ is the exponential filter smoothing factor of the soil profile $[-]$, also called the *pseudo-diffusivity coefficient*; $D_p$ ∈ \[0,1\].
 It represents the effective influence of various bio-geo-physical controls such as vegetation, topography, hydroclimatology and pedological characteristics (soil profile thickness, effective soil hydraulic characteristics, etc.) on vertical fluxes between the soil surface and the rootzone.
 
 Eq.
-1 provides a first-order approximation of the infinite-impulse response of RZSM to temporal variability in SSM as $SM^{'}$, and yields the exponential weighted average of the antecedent observations using weights proportional to the terms of the geometric progression: $1, (1-D_p), (1-D_p)^2, ….(1-D_p)^n$, $-$ the discrete form of an exponential function (Hunter, 1986; Perry, 2010).
+1 provides a first-order approximation of the infinite-impulse response of RZSM to temporal variability in SSM as $RZSM^{'}$, and yields the exponential weighted average of the antecedent observations using weights proportional to the terms of the geometric progression: $1, (1-D_p), (1-D_p)^2, ….(1-D_p)^n$, $-$ the discrete form of an exponential function (Hunter, 1986; Perry, 2010).
 This method makes two key assumption:
 
 1.  The lateral moisture flux to/from the rootzone is negligible, and,
@@ -203,37 +253,39 @@ $$
 $$ {#eq-11.5}
 
 As the soil reaches the second phase of drying, it enters a phase where the rate of soil drydown is slow, and the rate of loss of water from all depths can be assumed to be the same.
-Simplifying the previous equation for a simple 2-layer representaiton of soil profile, with $SSM$ and $SM$ representing the surface and rootzone soil moisture respectively, we can write Eq.
-5 as:\
-$$
-SM_t-SM_{t-1}=D(SM) \times (SSM_{t}-SM_{t-1})
-$$ {#eq-11.6}
-
-or,
-
-$$
-SM_t=SM_{t-1}+ D(SM) \times (SSM_{t}-SM_{t-1})
+Simplifying the previous equation for a simple 2-layer representation of soil profile, with $SSM$ and $RZSM$ representing the surface and rootzone soil moisture respectively, we can write Eq.
+5 as: $$
+RZSM_t-RZSM_{t-1}= D(RZSM) \times (SSM_{t}-RZSM_{t-1})
+$$ or, $$
+RZSM_t=RZSM_{t-1}+ D(RZSM) \times (SSM_{t}-RZSM_{t-1})
 $$ {#eq-11.7}
+
+However, such coarse discretization of the soil profile may not account for the different initial values of true surface and rootzone soil moisture, and may lead to a systematic bias in the estimated values of $RZSM$ using the low-pass filter approach compared to the observations.
+This equation becomes analogous to the exponential infinite impulse response low-pass filter equation provided in Eq.
+1 earlier.
+The filtered surface soil moisture i.e. $RZSM'$ can be related to the true rootzone SM through a linear transformation as: $RZSM= C \times RZSM^{'}+\epsilon$, where, $C$ is the ratio of the dynamic range of $RZSM$ and $RZSM'$ as follows: $$
+C= \frac {\max(RZSM)-min(RZSM)} {max(RZSM^{'})-min(RZSM^{'})}
+$$ {#eq-11.8} and, $$
+\epsilon=min(RZSM)-C \times min(RZSM^{'})
+$$ {#eq-11.9}
 
 ::: {.callout-tip icon="TRUE"}
 ## Note
 
-[This equation is analogous to the low-pass filter equation provided earlier. Given the true form of the relationship between the hydraulic diffusivity (or pseudo-diffusivity) with the soil moisture content is not known in the field, often times, the value of $D$ and $D_p$ is assumed to be constant for simplicity.]{style="color:blue;"}
+[Hydraulic diffusivity (or pseudo-diffusivity) is a function of the hydrologic state of the rootzone. However, since the true form of the relationship between $D-RZSM$ or $Dp-RZSM^{'}$ is not known in the field, the value of $D$ and $D_p$ is often assumed to be constant for simplicity.]{style="color:blue;"}
 :::
 
 ### Propagation of Drying Front in the Soil Profile
 
-We will demonstrate the application of low-pass filter to capture the propagation of drying front from the surface to the deeper profiles.
+We will demonstrate the application of the low-pass filter discussed above to capture the propagation of drying front from the surface to the deeper profiles at the test site.The function `lp_filt` takes the SSM as input, apply a low-pass infinite impulse response filter on the time series for the user-specified $Dp$, and returns the filtered SSM (SSMf).
+In contrast, the wetting front propagation is represented as a pulse which is passed down to the filtered soil moisture in the preceding time step.This assumption is reasonably valid at the daily time scale at which this example is applied.
 
-```{r, message = FALSE, warning = FALSE}
+```{r 11a4, message = FALSE, warning = FALSE}
 # Function for implementing LP filter on surface soil moisture
 lp_filt=function(SSM, Dp){
   # PARAMETERS---
   #   SSM= Surface soil moisture
   #   Dp= Pseudo-diffusivity coefficient
-  # RETURNS---
-  #   SSMf=filtered surface soil moisture (excluding the spinup period)
-
   SSMf=c()                           # Empty array to store filtered SSM 
   buffer=0.01*(max(SSM)-min(SSM))    # To decrease sensitivity to noise in sensor readings (1% of SSM range)
 
@@ -256,120 +308,91 @@ main="Filtered v/s observed SSM for varying Dp")
 lines(SSMf_1, col="red")
 lines(SSMf_05, col="purple")
 lines(SSMf_02, col="blue")
-
-# Normalized filtered surface soil moisture
-SSMf_1norm=(SSMf_1-min(SSMf_1))/(max(SSMf_1)-min(SSMf_1))
-SSMf_05norm=(SSMf_05-min(SSMf_05))/(max(SSMf_05)-min(SSMf_05))
-SSMf_02norm=(SSMf_02-min(SSMf_02))/(max(SSMf_02)-min(SSMf_02))
-
-# Weighted average of soil moisture at multiple depths to estimate RZSM
-RZSM=(SMpdf$SM5*(7.5-0)+    # 0- 7.5 cm depth
-SMpdf$SM10*(15-7.5)+        # 7.5-15 cm depth
-SMpdf$SM20*(35-15)+         # 15-35 cm depth
-SMpdf$SM50*(75-35)+         # 35-75 cm depth
-SMpdf$SM100*(100-75))/100   # 75-100 cm depth
-
-rzsm_norm=(RZSM-min(RZSM))/(max(RZSM)-min(RZSM))
-ssm_norm=(SSM-min(SSM))/(max(SSM)-min(SSM))
-
-plot(rzsm_norm, type="l", col="gray80", lwd=3, ylab="Value", xlab="Time", 
-main="Comparison of RZSM with SSM and filtered SSM (normalized to 0-1)")
-lines(ssm_norm, col="red")
-lines(SSMf_05norm, col="blue")
+legend(x = "bottomleft",        
+       legend = c("SSM","Dp=0.1", "Dp=0.05", "Dp=0.02"),  
+       lty = c(1,1,1,1),           
+       col = c("gray80","red","purple","blue"),           
+       lwd = 1, bty = "n")        
 ```
 
-## Priestley-Taylor Method for Estimating Potential ET (PET)
+::: {.callout-tip icon="TRUE"}
+## Note
 
-This formulation is based on physical principles and can be seen as a simplified version of the Penman-Monteith formula for calculating evapotranspiration.
-The simplification involves removing the aerodynamic terms from the Penman-Monteith equation and using a constant ($α$), which has been empirically derived and is estimated to be 1.26 for open bodies of water, but can range from \<1 (humid conditions) to almost 2 (arid conditions).
-This constant tends to be higher in arid regions or areas experiencing significant water stress.
-The Priestley-Taylor formula can be used for calculating daily evapotranspiration and can also be applied to smaller time intervals (hourly, for example) if the necessary data is available.
+[We observe that the low-pass filter is only applied during the drydown phase of the surface soil moisture moisture. As the value of $D_p$ decreases, the rate of drydown in $SM^{'}$ decreases due to the increase in the e-folding time of the exponential filter applied.]{style="color:blue;"}
+:::
 
-$$
-\text { PET }=\left(\frac{\alpha}{\lambda_v \rho_{\mathrm{w}}}\right) \times \frac{\Delta}{\Delta+\gamma} \times \text {R} 
-$$
-
-if $T_{mean}< 0^oC$
-
-$$
-\Delta=0.3405 \times \mathrm{e}^\left(0.0642 \mathrm{~T}_{\text {mean}}\right) \\
-$$
-
-if $T_{mean}> 0^oC$ $$
-\Delta=0.3221 \times \mathrm{e}^\left(0.0803 \mathrm{~T}_{\mathrm{mean}}^{0.8876}\right)
-$$
-
-where,
-
-> $PET$= Daily potential evapotranspiration ($m$)
->
-> $λv$ = Latent heat of vaporization (2260 $kJ/kg$)
->
-> $ρw$ = Density of water (1000 $kg/m^3$)
->
-> $γ$ = Psychrometric constant ( 4.95x $10^{-4}$ $kg/m^3/^oC$)
->
-> $Rad$ = Daily solar radiation incident on a horizontal earth surface ($kg/m^2$)
->
-> $Δ$ = Slope of the saturation vapor density curve from the psychrometric chart ($kg/^oC$)
->
-> $T_{mean}$ = Daily mean air temperature ($^oC$)
->
-> $\alpha$ = Priestley-Taylor correction factor
-
-```{r 11a4, message = FALSE, warning = FALSE}
-# Parameters for Priestley-Taylor formula
-lambdaV= 2260                  # Latent heat of vaporization 
-rhoW= 1000                     # Density of water 
-gamma= 4.95*1e-4               # Psychrometric constant
-alpha=1.2                      # Priestley-Taylor correction factor
-
-# PET estimation using Priestley-Taylor method 
- PT_PET=function(Tmean,Rad,alpha){
-    
-    deltaVal=rep(0, length(Tmean))  # Create empty array
-    
-    # When Tmean<0
-    deltaVal[Tmean<0]=0.3405*exp(0.0642*Tmean[Tmean<0])
-    # When Tmean>=0
-    deltaVal[Tmean>=0]=0.3221*exp(0.0803*((Tmean[Tmean>=0])^0.8876))
-    
-    # Priestley-Taylor equation 
-    PETval=(alpha/(lambdaV*rhoW))*(deltaVal/(deltaVal+gamma))*Rad
-    PETval[PETval<0]=0
-    return(PETval) #estimate in m
-  }
-```
-
-As we can see from the function above, Priestley-Taylor formula requires mean temperature and solar radiation as inputs.
-So, we will collect the meteorological dataset namely *a*) Mean daily temperature *b*) Total solar radiation from the sample station and estimate the value of total daily potential evapotranspiration (in m).
-We will also store total daily precipitation, which will be used as model forcing.
+Multi-depth soil moisture records are used to calculate the effective soil moisture for the 0-100 cm profile, which serves as the observed rootzone soil moisture for our purpose.
+We will take a weighted average of the multi-depth observations based on the profile represented by each observation depth.
+We will now use Eq 8-9 to estimate the rootzone soil moisture from surface observations.
+But first, we will select the value of $D_{p}$ which yield a filtered surface soil moisture with highest correlation with the observed rootzone soil moisture.
+Once we determine the optimum value of $D_{p}$ (either by optimization, or by trial and error), we will use it to filter SSM.
+This time series will be assumed to be representative of the temporal dynamics of the rootzone soil moisture.
 
 ```{r 11a5, message = FALSE, warning = FALSE}
- # Observed meteorological forcings 
- Rad=CRNdat$SOLARAD_DAILY*1000        # (as 1 MJ= 1000 KJ)
- Tmean=CRNdat$T_DAILY_MEAN
- PCP=CRNdat$P_DAILY_CALC/10           # convert units from mm to cm
+# Weighted average of soil moisture at multiple depths to estimate RZSM
+RZSM=(SMpdf$SM5*(7.5-0)+          # 0- 7.5 cm depth
+      SMpdf$SM10*(15-7.5)+        # 7.5-15 cm depth
+      SMpdf$SM20*(35-15)+         # 15-35 cm depth
+      SMpdf$SM50*(75-35)+         # 35-75 cm depth
+      SMpdf$SM100*(100-75))/100   # 75-100 cm depth
 
- # Linear gap-filling of missing samples and removing flagged samples
- library(zoo)
- Tmean=na.approx(Tmean,na.rm = FALSE)
- Rad=na.approx(Rad,na.rm = FALSE)
- 
- PCP[PCP<0]=0       # Negative (flagged values are replaced by 0)
- PCP[is.na(PCP)]=0  # NA values are replaced by 0)
+# Note Dp=0.1 yields maximum correlation with RZSM
+c(cor(RZSM, SSMf_02), cor(RZSM, SSMf_05),cor(RZSM, SSMf_1))
 
- # Create data frame for met forcings for the station
- datetime=as.Date(as.character(CRNdat$LST_DATE), format= "%Y%m%d")
- forcings=data.frame(Date=datetime,PCP, Rad,Tmean)
-  
- # Apply Priestley-Taylor method for PET estimation using the PT_PET function
- PET=PT_PET(Tmean,Rad,alpha)
- 
- # Plot estimated PET time series
- ggplot(data=forcings)+
-  geom_line(aes(x = datetime, y = PET), color="steelblue") + 
-  xlab("Date") +             # Add labels to the axes
-  ylab("PET [in m]")+
-  theme_bw()
+# Transform the filtered SM to RZSM using the linear transformation parameters 
+C=(max(RZSM)-min(RZSM))/(max(SSMf_1)-min(SSMf_1))
+epsilon=min(RZSM)-C*min(SSMf_1)
+RZSM_est=C*SSMf_1+epsilon
+
+# Plotting estimated versus observed RZSM
+plot(RZSM, type="l", col="gray80", lwd=3, ylab="Volumetric SM", xlab="Time", 
+main="Comparison of obs. vs est. RZSM", ylim=c(0,0.5))
+lines(SSM, col="red")
+lines(RZSM_est, col="blue")
+legend(x = "bottomleft",        
+       legend = c("RZSM", "SSM", "est. RZSM"),  
+       lty = c(1,1,1),           
+       col = c("gray80","red","blue"),           
+       lwd = 1, bty = "n")   
 ```
+
+Conversely, the low-pass filter can be inverted to estimate the surface soil moisture using the rootzone soil moisture in an iterative form.
+Use of this equation can be very helpful in a scenario where surface soil moisture observations are available (for example, from remote-sensing observations) and a simplistic representation of soil water balance for the profile can simultaneously generate equivalent surface soil moisture estimates for model training and validation.
+
+```{r 11a6, message = FALSE, warning = FALSE}
+# Inverting low pass filter for SSM estimation from filtered time series
+Dp=0.1
+buffer=0.01*(max(SSM)-min(SSM))  # To decrease sensitivity to noise in sensor readings (1% of SSM range)
+invLP_filt=function(RZSM){
+  SSMest=c()
+  SSMest[1]=RZSM[1]
+  for (t in 2:length(RZSM)){
+  SSMest[t]=ifelse(RZSM[t]>(RZSM[t-1]+buffer),
+                   min(RZSM[t],SSMf_1[t-1]),
+                   (SSMf_1[t-1]+((SSMf_1[t]-SSMf_1[t-1])/Dp)))
+  }
+return(SSMest)
+}
+
+# Apply LP filter inversion
+SSMest=invLP_filt(RZSM)
+
+# Plot observed v/s estimated Surface soil moisture
+{plot(SSM, type="l", col="gray80", lwd=3, ylab="Volumetric SM", xlab="Time", 
+main="Comparison of obs. vs est. SSM", ylim=c(0,0.55))
+lines(SSMest, col="red")
+lines(RZSM, col="blue")
+legend(x = "bottomleft",        
+       legend = c("SSM", "est. SSM", "RZSM"),  
+       lty = c(1,1,1),           
+       col = c("gray80","red","blue"),           
+       lwd = 1, bty = "n") }
+
+```
+
+Estimating rootzone soil moisture using a low-pass filter and surface soil moisture is efficient but challenging due to the lack of spatially contiguous rootzone soil moisture records for filter calibration.
+Observations of rootzone soil moisture are only available through a sparse network of observation stations.
+Some studies use land-surface model simulations for this purpose, but these can only replicate the pre-defined functional relationships in the models and are affected by significant disagreements between models due to different treatments of subgrid-scale heterogeneity in soil and vegetation properties.
+Additionally, the "active" rootzone layer, which is crucial for root-water uptake and land-atmosphere interactions, varies significantly across different regions.
+This variability is influenced by factors such as climate (temperature, radiation, and precipitation patterns), vegetation (rooting patterns and water uptake depth), and landscape characteristics (albedo and soil type).
+In contrast, most land-surface models assume a fixed rootzone depth, typically between 1 and 2 meters.

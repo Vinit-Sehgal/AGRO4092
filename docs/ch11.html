@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>11&nbsp; Field Soil Water Balance – R for Spatial Analysis &amp; Visualization</title>
+<title>10&nbsp; Surface-Rootzone Soil Hydrologic Connectivity – R for Spatial Analysis &amp; Visualization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,8 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./chN.html" rel="next">
-<link href="./ch10.html" rel="prev">
+<link href="./ch10.html" rel="next">
+<link href="./ch9.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -151,7 +151,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch11.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Field Soil Water Balance</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch11.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -164,7 +164,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Field Soil Water Balance</span></h1>
+      <h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></h1>
                       </div>
   </div>
     
@@ -251,14 +251,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
+  <a href="./ch11.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch11.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Field Soil Water Balance</span></span></a>
+  <a href="./ch10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -277,16 +277,15 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#field-soil-water-balance" id="toc-field-soil-water-balance" class="nav-link active" data-scroll-target="#field-soil-water-balance"><span class="header-section-number">11.1</span> Field Soil Water Balance</a>
+  <li><a href="#surface-rootzone-soil-hydrologic-connectivity" id="toc-surface-rootzone-soil-hydrologic-connectivity" class="nav-link active" data-scroll-target="#surface-rootzone-soil-hydrologic-connectivity"><span class="header-section-number">10.1</span> Surface-Rootzone Soil Hydrologic Connectivity</a>
   <ul class="collapse">
-  <li><a href="#exploratory-data-analysis-for-the-sample-station" id="toc-exploratory-data-analysis-for-the-sample-station" class="nav-link" data-scroll-target="#exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">11.1.1</span> Exploratory Data Analysis for the Sample Station</a></li>
+  <li><a href="#exploratory-data-analysis-for-the-sample-station" id="toc-exploratory-data-analysis-for-the-sample-station" class="nav-link" data-scroll-target="#exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">10.1.1</span> Exploratory Data Analysis for the Sample Station</a></li>
   </ul></li>
-  <li><a href="#low-pass-filtering-of-meteorological-perturbations-through-soil-profile" id="toc-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="nav-link" data-scroll-target="#low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">11.2</span> Low-pass Filtering of Meteorological Perturbations Through Soil Profile</a>
+  <li><a href="#simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" id="toc-simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="nav-link" data-scroll-target="#simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">10.2</span> Simulating Low-pass Filtering of Meteorological Perturbations Through Soil Profile</a>
   <ul class="collapse">
-  <li><a href="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" id="toc-origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="nav-link" data-scroll-target="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">11.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</a></li>
-  <li><a href="#propagation-of-drying-front-in-the-soil-profile" id="toc-propagation-of-drying-front-in-the-soil-profile" class="nav-link" data-scroll-target="#propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">11.2.2</span> Propagation of Drying Front in the Soil Profile</a></li>
+  <li><a href="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" id="toc-origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="nav-link" data-scroll-target="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">10.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</a></li>
+  <li><a href="#propagation-of-drying-front-in-the-soil-profile" id="toc-propagation-of-drying-front-in-the-soil-profile" class="nav-link" data-scroll-target="#propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">10.2.2</span> Propagation of Drying Front in the Soil Profile</a></li>
   </ul></li>
-  <li><a href="#priestley-taylor-method-for-estimating-potential-et-pet" id="toc-priestley-taylor-method-for-estimating-potential-et-pet" class="nav-link" data-scroll-target="#priestley-taylor-method-for-estimating-potential-et-pet"><span class="header-section-number">11.3</span> Priestley-Taylor Method for Estimating Potential ET (PET)</a></li>
   </ul>
 </nav>
     </div>
@@ -297,28 +296,46 @@ window.Quarto = {
 
 
 
-<section id="field-soil-water-balance" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="field-soil-water-balance"><span class="header-section-number">11.1</span> Field Soil Water Balance</h2>
-<p>We will develop a 2-layer simple soil water balance modeling for simulating 1-D fluxes in the rootzone using USCRN station at Stillwater, OK, USA as an example. Let us extract sample data from the sample station for 2021.</p>
+<section id="surface-rootzone-soil-hydrologic-connectivity" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="surface-rootzone-soil-hydrologic-connectivity"><span class="header-section-number">10.1</span> Surface-Rootzone Soil Hydrologic Connectivity</h2>
+<p>While soil moisture’s centrality in precipitation partitioning into groundwater recharge and surface runoff is widely recognized, often the criticality of the surface and rootzone connectivity is overlooked. You might have read about incessant rainfall after a dry and hot period often generates flash floods. Why? Because the surface profile might get hydrophobic, and hence, hydrologically decoupled from the rootzone under intense heat. So, a larger fraction of the incoming rain contributes to overland runoff instead of infiltrating to the rootzone, and contributing to the groundwater recharge. So, hydrologic connectivity between surface and the rootzone profile directly affects critical ecohydrological processes such as groundwater recharge, surface runoff generation, and the overall water availability for ecosystem sustenance. Needless to say, knowing how moisture moves from the surface to the rootzone can improved water management to ensure sustained and adequate moisture to the crops, while preventing over-irrigation. Accurate data on both surface and rootzone soil moisture also helps in improving weather forecasts and seasonal-scale climate forecasts, thereby helping to predict and manage hydrologic extremes such as droughts and floods.</p>
+<p>In this chapter, we will explore the hydrologic relationship between surface and the rootzone profile, and methods to simulate these processes.</p>
+<section id="exploratory-data-analysis-for-the-sample-station" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">10.1.1</span> Exploratory Data Analysis for the Sample Station</h3>
+<p>We will use in situ (ground) measurements from a sample station to discuss various attributes of moisture dynamics in the field and learn the relationship between moisture and thermal fluxes of surface and deeper profiles. For this purpose, we will use a station from U.S. Climate Reference Network (USCRN) at Stillwater, Oklahoma. USCRN is instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil moisture and temperature at 5-, 10-, 20-, 50- and 100 cm depths at sub-hourly, daily and monthly time scales. For our example, we will use daily dataset for 2021.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Yearly data from the sample station</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>CRNdat <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="fu">url</span>(<span class="st">"https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-OK_Stillwater_2_W.txt"</span>), <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data headers</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>headers<span class="ot">=</span><span class="fu">read.csv</span>(<span class="fu">url</span>(<span class="st">"https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"</span>), <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Column names as headers from the text file</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(CRNdat)<span class="ot">=</span>headers[<span class="dv">2</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(CRNdat)]</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace fill values with NA</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">99</span>]<span class="ot">=</span><span class="cn">NA</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="dv">999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># View data sample</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>dataTable <span class="ot">=</span> <span class="fu">kbl</span>(<span class="fu">head</span>(CRNdat,<span class="dv">6</span>),<span class="at">full_width =</span> F)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable_styling</span>(dataTable,<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download in situ data files for 2021 from GITHUB repositiry </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">download.file</span>(<span class="st">"https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/CRND0103-2021-OK_Stillwater_2_W.txt?raw=true"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">destfile =</span> <span class="st">"CRND0103-2021-OK_Stillwater_2_W.txt"</span>, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mode=</span><span class="st">"wb"</span>, <span class="co">#wb is write binary</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">method =</span><span class="st">'auto'</span>, </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">quiet=</span><span class="cn">FALSE</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">download.file</span>(<span class="st">"https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/HEADERS.txt?raw=true"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">destfile =</span> <span class="st">"headers.txt"</span>, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">mode=</span><span class="st">"wb"</span>, <span class="co">#wb is write binary</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">method =</span><span class="st">'auto'</span>, </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">quiet=</span><span class="cn">FALSE</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>CRNdat <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">"CRND0103-2021-OK_Stillwater_2_W.txt"</span>, <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>headers <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">"headers.txt"</span>, <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># OR Direct download from NCEI servers (might not work during server downtime)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-OK_Stillwater_2_W.txt"), header=FALSE,sep="")</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Data headers</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Column names as headers from the text file</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(CRNdat)<span class="ot">=</span>headers[<span class="dv">2</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(CRNdat)]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace fill values with NA</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">99</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="dv">999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># View data sample</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>dataTable <span class="ot">=</span> <span class="fu">kbl</span>(<span class="fu">head</span>(CRNdat,<span class="dv">6</span>),<span class="at">full_width =</span> F)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">kable_styling</span>(dataTable,<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="table-responsive">
 <table class="table table-striped table-hover table-condensed caption-top table-sm small" data-quarto-postprocess="true">
@@ -542,8 +559,7 @@ window.Quarto = {
 
 </div>
 </div>
-<section id="exploratory-data-analysis-for-the-sample-station" class="level3" data-number="11.1.1">
-<h3 data-number="11.1.1" class="anchored" data-anchor-id="exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">11.1.1</span> Exploratory Data Analysis for the Sample Station</h3>
+<p>Let’s plot daily average soil moisture from 5 amd and 50 cm depths, along with the corresponding daily total precipitation.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># Create Date array for the station</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(zoo)</span>
@@ -618,10 +634,17 @@ window.Quarto = {
 </div>
 </div>
 </div>
-</section>
-</section>
-<section id="low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">11.2</span> Low-pass Filtering of Meteorological Perturbations Through Soil Profile</h2>
+<p>We can notice that the temporal response of surface soil moisture to a precipitation varies significantly compared to that of the deeper profile. Surface soil moisture reacts almost immediately to precipitation. This layer, typically the top few centimeters, quickly absorbs rainfall, leading to a rapid increase in moisture content. Similarly, the surface, having exposed to atmospheric conditions, also dries out rapidly due to evaporation and plant water uptake. In contrast, soil moisture from the rootzone (typically up to about 1 meter) responds more slowly to precipitation as it relies on the infiltration of water from the surface layer. As infiltration delays moisture transfer to the rootzone profile. This results in a delayed but more gradual increase in rootzone moisture content. Similarly, rootzone also retains water longer. This ensures a more consistent and reliable source of water for plant growth and ecosystem stability. A similar behavior can also be seen in the temperature distribution within the soil profile. The difference in the temporal response of rootzone moisture and thermal fluxes vis-à-vis surface profile is essentially a natural manifestation of a low pass filter, where the high-frequency variations (rapid changes) in surface soil moisture or temperature are filtered out, leaving only the low-frequency variations (slower, more sustained changes) to affect the rootzone.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/low_pass_filter_schematic-02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure 1: (Top) A schematic representation of low-pass filter effect on a time series. (Bottom) A reccursive form of low-pass filter on surface soil moisture."><img src="images/low_pass_filter_schematic-02.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="604" alt="Figure 1: (Top) A schematic representation of low-pass filter effect on a time series. (Bottom) A reccursive form of low-pass filter on surface soil moisture."></a></p>
+</figure>
+</div>
+<figcaption>Figure 1: (Top) A schematic representation of low-pass filter effect on a time series. (Bottom) A reccursive form of low-pass filter on surface soil moisture.</figcaption>
+</figure>
+</div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Profile depth versus soil temperature</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Tempdf<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">T5=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOIL_TEMP_5_DAILY,<span class="at">na.rm =</span> <span class="cn">FALSE</span>), </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">T10=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOIL_TEMP_10_DAILY,<span class="at">na.rm =</span> <span class="cn">FALSE</span>), </span>
@@ -669,7 +692,7 @@ window.Quarto = {
 <div id="fig-density-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-density-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="ch11_files/figure-html/fig-density-1.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;11.1&nbsp;(a): Depth versus soil temperature"><img src="ch11_files/figure-html/fig-density-1.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
+<a href="ch11_files/figure-html/fig-density-1.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;10.1&nbsp;(a): Depth versus soil temperature"><img src="ch11_files/figure-html/fig-density-1.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-density-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (a) Depth versus soil temperature
@@ -681,7 +704,7 @@ window.Quarto = {
 <div id="fig-density-2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-density-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="ch11_files/figure-html/fig-density-2.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;11.1&nbsp;(b): Depth versus soil moisture"><img src="ch11_files/figure-html/fig-density-2.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
+<a href="ch11_files/figure-html/fig-density-2.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;10.1&nbsp;(b): Depth versus soil moisture"><img src="ch11_files/figure-html/fig-density-2.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-density-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (b) Depth versus soil moisture
@@ -692,44 +715,10 @@ window.Quarto = {
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11.1: Soil temperature and moisture response with profile depth
+Figure&nbsp;10.1: Soil temperature and moisture response with profile depth
 </figcaption>
 </figure>
 </div>
-<p>Under hydrologic equilibrium, the analytical solution of the 1-dimensional vertical water balance (differential) equation can be approximated using the relationship between the temporal changes in the rootzone soil moisture (RZSM) and the difference in SSM vis-à-vis the antecedent rootzone conditions (Wagner et al., 1999, Albergel et al., 2008, Manfreda et al., 2014). A simple recursive exponential LP filter to simulate the 1-dimensional first-order infinite-impulse response of RZSM to temporal variability in SSM is given as follows:</p>
-<p><span id="eq-11.1"><span class="math display">\[ SM_t^{'}= SM_{t-1}^{'}+ D_p(SSM_t-SM_{t-1}^{'})  \tag{11.1}\]</span></span></p>
-<p>where, <span class="math inline">\(t \ge1\)</span>; when <span class="math inline">\(t=1\)</span>, <span class="math inline">\(SM_{t=0}^{'}=SSM_{t=0}\)</span>.</p>
-<p><span class="math inline">\(SM_{t}^{'}\)</span> is the temporally smoothed (filtered) SSM at time <span class="math inline">\(t\)</span> .</p>
-<p>Parameter <span class="math inline">\(D_p\)</span> is the exponential filter smoothing factor of the soil profile <span class="math inline">\([-]\)</span>, also called the <em>pseudo-diffusivity coefficient</em>; <span class="math inline">\(D_p\)</span> ∈ [0,1]. It represents the effective influence of various bio-geo-physical controls such as vegetation, topography, hydroclimatology and pedological characteristics (soil profile thickness, effective soil hydraulic characteristics, etc.) on vertical fluxes between the soil surface and the rootzone.</p>
-<p>Eq. 1 provides a first-order approximation of the infinite-impulse response of RZSM to temporal variability in SSM as <span class="math inline">\(SM^{'}\)</span>, and yields the exponential weighted average of the antecedent observations using weights proportional to the terms of the geometric progression: <span class="math inline">\(1, (1-D_p), (1-D_p)^2, ….(1-D_p)^n\)</span>, <span class="math inline">\(-\)</span> the discrete form of an exponential function (Hunter, 1986; Perry, 2010). This method makes two key assumption:</p>
-<ol type="1">
-<li><p>The lateral moisture flux to/from the rootzone is negligible, and,</p></li>
-<li><p>The groundwater table is significantly deeper than the rootzone depth.</p></li>
-</ol>
-<section id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="level3" data-number="11.2.1">
-<h3 data-number="11.2.1" class="anchored" data-anchor-id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">11.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</h3>
-<p>The origins of the low-pass filter effect of soil profile on surface variability in soil moisture can be traced to the original equations for vertical flux of water int he unsaturated soil profile. We recall the Diffusivity version of Richard’s equation as follows:</p>
-<p><span id="eq-11.2"><span class="math display">\[
-\frac{\partial\theta} {\partial t}= \frac{\partial}{\partial z}(D(\theta)\frac{\partial\theta}{\partial z})-\frac{\partial K(\theta)}{\partial z}
-\tag{11.2}\]</span></span></p>
-<p>where, <span class="math inline">\(D\)</span> and <span class="math inline">\(K\)</span> are the hydraulic diffusivity and conductivity of the soil profile, and are a function of the water content of the soil profile, <span class="math inline">\(z\)</span> is the height above the bottom of the soil profile and <span class="math inline">\(\theta\)</span> is the soil moisture content. The right hand side of this equation contains two terms, where <span class="math inline">\(\partial/\partial z (D(\theta)\partial/\partial z)\)</span> accounts for the flux due to the suction gradient in the profile, while <span class="math inline">\(\partial K(\theta)/\partial z\)</span> pertains to the role of gravity in the vertical flow of water. Given the equivalent suction exerted by the atmosphere is several order of magnitude compare to the gravitational head gradient, we can simplify the preceeding equation as:</p>
-<p><span id="eq-11.3"><span class="math display">\[
-\frac{\partial\theta} {\partial t}= \frac{\partial}{\partial z}(D(\theta)\frac{\partial\theta}{\partial z})
-\tag{11.3}\]</span></span></p>
-<p>First integral of this equation can be written as: <span id="eq-11.4"><span class="math display">\[
-\frac{d\theta}{dt}=D(\theta)\frac{d\theta}{dz}+C
-\tag{11.4}\]</span></span> where, <span class="math inline">\(C\)</span> is the constant of integration. Since there is no flow at the bottom boundary of the soil profile, <span class="math inline">\(d\theta/dz=0\)</span> . Hence, <span class="math inline">\(C=0\)</span>. Writing the preceding equation in discrete form, we get:</p>
-<p><span id="eq-11.5"><span class="math display">\[
-\frac{\Delta\theta}{\Delta t}=D(\theta)\frac{\Delta\theta}{\Delta z}
-\tag{11.5}\]</span></span></p>
-<p>As the soil reaches the second phase of drying, it enters a phase where the rate of soil drydown is slow, and the rate of loss of water from all depths can be assumed to be the same. Simplifying the previous equation for a simple 2-layer representaiton of soil profile, with <span class="math inline">\(SSM\)</span> and <span class="math inline">\(SM\)</span> representing the surface and rootzone soil moisture respectively, we can write Eq. 5 as:<br>
-<span id="eq-11.6"><span class="math display">\[
-SM_t-SM_{t-1}=D(SM) \times (SSM_{t}-SM_{t-1})
-\tag{11.6}\]</span></span></p>
-<p>or,</p>
-<p><span id="eq-11.7"><span class="math display">\[
-SM_t=SM_{t-1}+ D(SM) \times (SSM_{t}-SM_{t-1})
-\tag{11.7}\]</span></span></p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -740,155 +729,149 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span style="color:blue;">This equation is analogous to the low-pass filter equation provided earlier. Given the true form of the relationship between the hydraulic diffusivity (or pseudo-diffusivity) with the soil moisture content is not known in the field, often times, the value of <span class="math inline">\(D\)</span> and <span class="math inline">\(D_p\)</span> is assumed to be constant for simplicity.</span></p>
+<p><span style="color:blue;">A low-pass filter is a general name for the type of operations used to smooth out a time series by removing high-frequency fluctuations, leaving behind the underlying trend or low-frequency components. You may be more familiar with moving average smoothing, which calculates the average of a fixed number of consecutive data points, effectively smoothing out short-term fluctuations. Hence, moving average is also a low-pass filter.</span></p>
 </div>
 </div>
 </section>
-<section id="propagation-of-drying-front-in-the-soil-profile" class="level3" data-number="11.2.2">
-<h3 data-number="11.2.2" class="anchored" data-anchor-id="propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">11.2.2</span> Propagation of Drying Front in the Soil Profile</h3>
-<p>We will demonstrate the application of low-pass filter to capture the propagation of drying front from the surface to the deeper profiles.</p>
+</section>
+<section id="simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">10.2</span> Simulating Low-pass Filtering of Meteorological Perturbations Through Soil Profile</h2>
+<p>Under hydrologic equilibrium, the analytical solution of the 1-dimensional vertical water balance (differential) equation can be approximated using the relationship between the temporal changes in the rootzone soil moisture (RZSM) and the difference in SSM vis-à-vis the antecedent rootzone conditions (Wagner et al., 1999, Albergel et al., 2008, Manfreda et al., 2014). A simple recursive exponential low-pass filter to simulate the 1-dimensional first-order infinite-impulse response of RZSM to temporal variability in SSM is given as follows:</p>
+<p><span id="eq-11.1"><span class="math display">\[ RZSM_t^{'}= RZSM_{t-1}^{'}+ D_p(SSM_t-RZSM_{t-1}^{'})  \tag{10.1}\]</span></span></p>
+<p>where, <span class="math inline">\(t \ge1\)</span>; when <span class="math inline">\(t=1\)</span>, <span class="math inline">\(RZSM_{t=0}^{'}=SSM_{t=0}\)</span>.</p>
+<p><span class="math inline">\(RZSM_{t}^{'}\)</span> is the temporally smoothed (filtered) SSM at time <span class="math inline">\(t\)</span> .</p>
+<p>Parameter <span class="math inline">\(D_p\)</span> is the exponential filter smoothing factor of the soil profile <span class="math inline">\([-]\)</span>, also called the <em>pseudo-diffusivity coefficient</em>; <span class="math inline">\(D_p\)</span> ∈ [0,1]. It represents the effective influence of various bio-geo-physical controls such as vegetation, topography, hydroclimatology and pedological characteristics (soil profile thickness, effective soil hydraulic characteristics, etc.) on vertical fluxes between the soil surface and the rootzone.</p>
+<p>Eq. 1 provides a first-order approximation of the infinite-impulse response of RZSM to temporal variability in SSM as <span class="math inline">\(RZSM^{'}\)</span>, and yields the exponential weighted average of the antecedent observations using weights proportional to the terms of the geometric progression: <span class="math inline">\(1, (1-D_p), (1-D_p)^2, ….(1-D_p)^n\)</span>, <span class="math inline">\(-\)</span> the discrete form of an exponential function (Hunter, 1986; Perry, 2010). This method makes two key assumption:</p>
+<ol type="1">
+<li><p>The lateral moisture flux to/from the rootzone is negligible, and,</p></li>
+<li><p>The groundwater table is significantly deeper than the rootzone depth.</p></li>
+</ol>
+<section id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">10.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</h3>
+<p>The origins of the low-pass filter effect of soil profile on surface variability in soil moisture can be traced to the original equations for vertical flux of water int he unsaturated soil profile. We recall the Diffusivity version of Richard’s equation as follows:</p>
+<p><span id="eq-11.2"><span class="math display">\[
+\frac{\partial\theta} {\partial t}= \frac{\partial}{\partial z}(D(\theta)\frac{\partial\theta}{\partial z})-\frac{\partial K(\theta)}{\partial z}
+\tag{10.2}\]</span></span></p>
+<p>where, <span class="math inline">\(D\)</span> and <span class="math inline">\(K\)</span> are the hydraulic diffusivity and conductivity of the soil profile, and are a function of the water content of the soil profile, <span class="math inline">\(z\)</span> is the height above the bottom of the soil profile and <span class="math inline">\(\theta\)</span> is the soil moisture content. The right hand side of this equation contains two terms, where <span class="math inline">\(\partial/\partial z (D(\theta)\partial/\partial z)\)</span> accounts for the flux due to the suction gradient in the profile, while <span class="math inline">\(\partial K(\theta)/\partial z\)</span> pertains to the role of gravity in the vertical flow of water. Given the equivalent suction exerted by the atmosphere is several order of magnitude compare to the gravitational head gradient, we can simplify the preceeding equation as:</p>
+<p><span id="eq-11.3"><span class="math display">\[
+\frac{\partial\theta} {\partial t}= \frac{\partial}{\partial z}(D(\theta)\frac{\partial\theta}{\partial z})
+\tag{10.3}\]</span></span></p>
+<p>First integral of this equation can be written as: <span id="eq-11.4"><span class="math display">\[
+\frac{d\theta}{dt}=D(\theta)\frac{d\theta}{dz}+C
+\tag{10.4}\]</span></span> where, <span class="math inline">\(C\)</span> is the constant of integration. Since there is no flow at the bottom boundary of the soil profile, <span class="math inline">\(d\theta/dz=0\)</span> . Hence, <span class="math inline">\(C=0\)</span>. Writing the preceding equation in discrete form, we get:</p>
+<p><span id="eq-11.5"><span class="math display">\[
+\frac{\Delta\theta}{\Delta t}=D(\theta)\frac{\Delta\theta}{\Delta z}
+\tag{10.5}\]</span></span></p>
+<p>As the soil reaches the second phase of drying, it enters a phase where the rate of soil drydown is slow, and the rate of loss of water from all depths can be assumed to be the same. Simplifying the previous equation for a simple 2-layer representation of soil profile, with <span class="math inline">\(SSM\)</span> and <span class="math inline">\(RZSM\)</span> representing the surface and rootzone soil moisture respectively, we can write Eq. 5 as: <span class="math display">\[
+RZSM_t-RZSM_{t-1}= D(RZSM) \times (SSM_{t}-RZSM_{t-1})
+\]</span> or, <span id="eq-11.7"><span class="math display">\[
+RZSM_t=RZSM_{t-1}+ D(RZSM) \times (SSM_{t}-RZSM_{t-1})
+\tag{10.6}\]</span></span></p>
+<p>However, such coarse discretization of the soil profile may not account for the different initial values of true surface and rootzone soil moisture, and may lead to a systematic bias in the estimated values of <span class="math inline">\(RZSM\)</span> using the low-pass filter approach compared to the observations. This equation becomes analogous to the exponential infinite impulse response low-pass filter equation provided in Eq. 1 earlier. The filtered surface soil moisture i.e.&nbsp;<span class="math inline">\(RZSM'\)</span> can be related to the true rootzone SM through a linear transformation as: <span class="math inline">\(RZSM= C \times RZSM^{'}+\epsilon\)</span>, where, <span class="math inline">\(C\)</span> is the ratio of the dynamic range of <span class="math inline">\(RZSM\)</span> and <span class="math inline">\(RZSM'\)</span> as follows: <span id="eq-11.8"><span class="math display">\[
+C= \frac {\max(RZSM)-min(RZSM)} {max(RZSM^{'})-min(RZSM^{'})}
+\tag{10.7}\]</span></span> and, <span id="eq-11.9"><span class="math display">\[
+\epsilon=min(RZSM)-C \times min(RZSM^{'})
+\tag{10.8}\]</span></span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span style="color:blue;">Hydraulic diffusivity (or pseudo-diffusivity) is a function of the hydrologic state of the rootzone. However, since the true form of the relationship between <span class="math inline">\(D-RZSM\)</span> or <span class="math inline">\(Dp-RZSM^{'}\)</span> is not known in the field, the value of <span class="math inline">\(D\)</span> and <span class="math inline">\(D_p\)</span> is often assumed to be constant for simplicity.</span></p>
+</div>
+</div>
+</section>
+<section id="propagation-of-drying-front-in-the-soil-profile" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">10.2.2</span> Propagation of Drying Front in the Soil Profile</h3>
+<p>We will demonstrate the application of the low-pass filter discussed above to capture the propagation of drying front from the surface to the deeper profiles at the test site.The function <code>lp_filt</code> takes the SSM as input, apply a low-pass infinite impulse response filter on the time series for the user-specified <span class="math inline">\(Dp\)</span>, and returns the filtered SSM (SSMf). In contrast, the wetting front propagation is represented as a pulse which is passed down to the filtered soil moisture in the preceding time step.This assumption is reasonably valid at the daily time scale at which this example is applied.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function for implementing LP filter on surface soil moisture</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>lp_filt<span class="ot">=</span><span class="cf">function</span>(SSM, Dp){</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># PARAMETERS---</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   SSM= Surface soil moisture</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   Dp= Pseudo-diffusivity coefficient</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># RETURNS---</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   SSMf=filtered surface soil moisture (excluding the spinup period)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  SSMf<span class="ot">=</span><span class="fu">c</span>()                           <span class="co"># Empty array to store filtered SSM </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  buffer<span class="ot">=</span><span class="fl">0.01</span><span class="sc">*</span>(<span class="fu">max</span>(SSM)<span class="sc">-</span><span class="fu">min</span>(SSM))    <span class="co"># To decrease sensitivity to noise in sensor readings (1% of SSM range)</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  SSMf<span class="ot">=</span><span class="fu">c</span>()                           <span class="co"># Empty array to store filtered SSM </span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  buffer<span class="ot">=</span><span class="fl">0.01</span><span class="sc">*</span>(<span class="fu">max</span>(SSM)<span class="sc">-</span><span class="fu">min</span>(SSM))    <span class="co"># To decrease sensitivity to noise in sensor readings (1% of SSM range)</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Apply recursive filter</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  SSMf[<span class="dv">1</span>]<span class="ot">=</span>SSM[<span class="dv">1</span>]                    <span class="co"># Initialize the series</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(SSM)) </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  SSMf[t]<span class="ot">=</span><span class="fu">ifelse</span>(SSM[t] <span class="sc">&gt;</span> (SSM[t<span class="dv">-1</span>]<span class="sc">+</span>buffer),<span class="fu">max</span>(SSM[t], SSMf[t<span class="dv">-1</span>]),SSMf[t<span class="dv">-1</span>]<span class="sc">+</span>Dp<span class="sc">*</span>(SSM[t]<span class="sc">-</span>SSMf[t<span class="dv">-1</span>]))</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(SSMf) </span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtered surface soil moisture with varying values of Dp</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>SSM<span class="ot">=</span>SMpdf<span class="sc">$</span>SM5   <span class="co"># Surface soil moisture</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>SSMf_1<span class="ot">=</span><span class="fu">lp_filt</span>(SSM, <span class="at">Dp=</span> <span class="fl">0.1</span>)</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>SSMf_05<span class="ot">=</span><span class="fu">lp_filt</span>(SSM, <span class="at">Dp=</span> <span class="fl">0.05</span>)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>SSMf_02<span class="ot">=</span><span class="fu">lp_filt</span>(SSM, <span class="at">Dp=</span> <span class="fl">0.02</span>)</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot surface soil moisture with filtered time series</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SSM, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">col=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">ylab=</span><span class="st">"Value"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, </span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">"Filtered v/s observed SSM for varying Dp"</span>)</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMf_1, <span class="at">col=</span><span class="st">"red"</span>)</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMf_05, <span class="at">col=</span><span class="st">"purple"</span>)</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMf_02, <span class="at">col=</span><span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Apply recursive filter</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  SSMf[<span class="dv">1</span>]<span class="ot">=</span>SSM[<span class="dv">1</span>]                    <span class="co"># Initialize the series</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(SSM)) </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  SSMf[t]<span class="ot">=</span><span class="fu">ifelse</span>(SSM[t] <span class="sc">&gt;</span> (SSM[t<span class="dv">-1</span>]<span class="sc">+</span>buffer),<span class="fu">max</span>(SSM[t], SSMf[t<span class="dv">-1</span>]),SSMf[t<span class="dv">-1</span>]<span class="sc">+</span>Dp<span class="sc">*</span>(SSM[t]<span class="sc">-</span>SSMf[t<span class="dv">-1</span>]))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(SSMf) </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtered surface soil moisture with varying values of Dp</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>SSM<span class="ot">=</span>SMpdf<span class="sc">$</span>SM5   <span class="co"># Surface soil moisture</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>SSMf_1<span class="ot">=</span><span class="fu">lp_filt</span>(SSM, <span class="at">Dp=</span> <span class="fl">0.1</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>SSMf_05<span class="ot">=</span><span class="fu">lp_filt</span>(SSM, <span class="at">Dp=</span> <span class="fl">0.05</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>SSMf_02<span class="ot">=</span><span class="fu">lp_filt</span>(SSM, <span class="at">Dp=</span> <span class="fl">0.02</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot surface soil moisture with filtered time series</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SSM, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">col=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">ylab=</span><span class="st">"Value"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">"Filtered v/s observed SSM for varying Dp"</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMf_1, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMf_05, <span class="at">col=</span><span class="st">"purple"</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMf_02, <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x =</span> <span class="st">"bottomleft"</span>,        </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"SSM"</span>,<span class="st">"Dp=0.1"</span>, <span class="st">"Dp=0.05"</span>, <span class="st">"Dp=0.02"</span>),  </span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),           </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray80"</span>,<span class="st">"red"</span>,<span class="st">"purple"</span>,<span class="st">"blue"</span>),           </span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>)        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="ch11_files/figure-html/unnamed-chunk-4-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="ch11_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></a></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalized filtered surface soil moisture</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>SSMf_1norm<span class="ot">=</span>(SSMf_1<span class="sc">-</span><span class="fu">min</span>(SSMf_1))<span class="sc">/</span>(<span class="fu">max</span>(SSMf_1)<span class="sc">-</span><span class="fu">min</span>(SSMf_1))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>SSMf_05norm<span class="ot">=</span>(SSMf_05<span class="sc">-</span><span class="fu">min</span>(SSMf_05))<span class="sc">/</span>(<span class="fu">max</span>(SSMf_05)<span class="sc">-</span><span class="fu">min</span>(SSMf_05))</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>SSMf_02norm<span class="ot">=</span>(SSMf_02<span class="sc">-</span><span class="fu">min</span>(SSMf_02))<span class="sc">/</span>(<span class="fu">max</span>(SSMf_02)<span class="sc">-</span><span class="fu">min</span>(SSMf_02))</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Weighted average of soil moisture at multiple depths to estimate RZSM</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>RZSM<span class="ot">=</span>(SMpdf<span class="sc">$</span>SM5<span class="sc">*</span>(<span class="fl">7.5</span><span class="dv">-0</span>)<span class="sc">+</span>    <span class="co"># 0- 7.5 cm depth</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>SMpdf<span class="sc">$</span>SM10<span class="sc">*</span>(<span class="dv">15</span><span class="fl">-7.5</span>)<span class="sc">+</span>        <span class="co"># 7.5-15 cm depth</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>SMpdf<span class="sc">$</span>SM20<span class="sc">*</span>(<span class="dv">35-15</span>)<span class="sc">+</span>         <span class="co"># 15-35 cm depth</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>SMpdf<span class="sc">$</span>SM50<span class="sc">*</span>(<span class="dv">75-35</span>)<span class="sc">+</span>         <span class="co"># 35-75 cm depth</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>SMpdf<span class="sc">$</span>SM100<span class="sc">*</span>(<span class="dv">100-75</span>))<span class="sc">/</span><span class="dv">100</span>   <span class="co"># 75-100 cm depth</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>rzsm_norm<span class="ot">=</span>(RZSM<span class="sc">-</span><span class="fu">min</span>(RZSM))<span class="sc">/</span>(<span class="fu">max</span>(RZSM)<span class="sc">-</span><span class="fu">min</span>(RZSM))</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>ssm_norm<span class="ot">=</span>(SSM<span class="sc">-</span><span class="fu">min</span>(SSM))<span class="sc">/</span>(<span class="fu">max</span>(SSM)<span class="sc">-</span><span class="fu">min</span>(SSM))</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rzsm_norm, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">col=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">ylab=</span><span class="st">"Value"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, </span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">"Comparison of RZSM with SSM and filtered SSM (normalized to 0-1)"</span>)</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(ssm_norm, <span class="at">col=</span><span class="st">"red"</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMf_05norm, <span class="at">col=</span><span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><a href="ch11_files/figure-html/unnamed-chunk-4-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="ch11_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></a></p>
+<p><a href="ch11_files/figure-html/11a4-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="ch11_files/figure-html/11a4-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
-</section>
-</section>
-<section id="priestley-taylor-method-for-estimating-potential-et-pet" class="level2" data-number="11.3">
-<h2 data-number="11.3" class="anchored" data-anchor-id="priestley-taylor-method-for-estimating-potential-et-pet"><span class="header-section-number">11.3</span> Priestley-Taylor Method for Estimating Potential ET (PET)</h2>
-<p>This formulation is based on physical principles and can be seen as a simplified version of the Penman-Monteith formula for calculating evapotranspiration. The simplification involves removing the aerodynamic terms from the Penman-Monteith equation and using a constant (<span class="math inline">\(α\)</span>), which has been empirically derived and is estimated to be 1.26 for open bodies of water, but can range from &lt;1 (humid conditions) to almost 2 (arid conditions). This constant tends to be higher in arid regions or areas experiencing significant water stress. The Priestley-Taylor formula can be used for calculating daily evapotranspiration and can also be applied to smaller time intervals (hourly, for example) if the necessary data is available.</p>
-<p><span class="math display">\[
-\text { PET }=\left(\frac{\alpha}{\lambda_v \rho_{\mathrm{w}}}\right) \times \frac{\Delta}{\Delta+\gamma} \times \text {R}
-\]</span></p>
-<p>if <span class="math inline">\(T_{mean}&lt; 0^oC\)</span></p>
-<p><span class="math display">\[
-\Delta=0.3405 \times \mathrm{e}^\left(0.0642 \mathrm{~T}_{\text {mean}}\right) \\
-\]</span></p>
-<p>if <span class="math inline">\(T_{mean}&gt; 0^oC\)</span> <span class="math display">\[
-\Delta=0.3221 \times \mathrm{e}^\left(0.0803 \mathrm{~T}_{\mathrm{mean}}^{0.8876}\right)
-\]</span></p>
-<p>where,</p>
-<blockquote class="blockquote">
-<p><span class="math inline">\(PET\)</span>= Daily potential evapotranspiration (<span class="math inline">\(m\)</span>)</p>
-<p><span class="math inline">\(λv\)</span> = Latent heat of vaporization (2260 <span class="math inline">\(kJ/kg\)</span>)</p>
-<p><span class="math inline">\(ρw\)</span> = Density of water (1000 <span class="math inline">\(kg/m^3\)</span>)</p>
-<p><span class="math inline">\(γ\)</span> = Psychrometric constant ( 4.95x <span class="math inline">\(10^{-4}\)</span> <span class="math inline">\(kg/m^3/^oC\)</span>)</p>
-<p><span class="math inline">\(Rad\)</span> = Daily solar radiation incident on a horizontal earth surface (<span class="math inline">\(kg/m^2\)</span>)</p>
-<p><span class="math inline">\(Δ\)</span> = Slope of the saturation vapor density curve from the psychrometric chart (<span class="math inline">\(kg/^oC\)</span>)</p>
-<p><span class="math inline">\(T_{mean}\)</span> = Daily mean air temperature (<span class="math inline">\(^oC\)</span>)</p>
-<p><span class="math inline">\(\alpha\)</span> = Priestley-Taylor correction factor</p>
-</blockquote>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters for Priestley-Taylor formula</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>lambdaV<span class="ot">=</span> <span class="dv">2260</span>                  <span class="co"># Latent heat of vaporization </span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>rhoW<span class="ot">=</span> <span class="dv">1000</span>                     <span class="co"># Density of water </span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>gamma<span class="ot">=</span> <span class="fl">4.95</span><span class="sc">*</span><span class="fl">1e-4</span>               <span class="co"># Psychrometric constant</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>alpha<span class="ot">=</span><span class="fl">1.2</span>                      <span class="co"># Priestley-Taylor correction factor</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># PET estimation using Priestley-Taylor method </span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a> PT_PET<span class="ot">=</span><span class="cf">function</span>(Tmean,Rad,alpha){</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    deltaVal<span class="ot">=</span><span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(Tmean))  <span class="co"># Create empty array</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When Tmean&lt;0</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    deltaVal[Tmean<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="fl">0.3405</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fl">0.0642</span><span class="sc">*</span>Tmean[Tmean<span class="sc">&lt;</span><span class="dv">0</span>])</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When Tmean&gt;=0</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    deltaVal[Tmean<span class="sc">&gt;=</span><span class="dv">0</span>]<span class="ot">=</span><span class="fl">0.3221</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fl">0.0803</span><span class="sc">*</span>((Tmean[Tmean<span class="sc">&gt;=</span><span class="dv">0</span>])<span class="sc">^</span><span class="fl">0.8876</span>))</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priestley-Taylor equation </span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    PETval<span class="ot">=</span>(alpha<span class="sc">/</span>(lambdaV<span class="sc">*</span>rhoW))<span class="sc">*</span>(deltaVal<span class="sc">/</span>(deltaVal<span class="sc">+</span>gamma))<span class="sc">*</span>Rad</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    PETval[PETval<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="dv">0</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(PETval) <span class="co">#estimate in m</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<p>As we can see from the function above, Priestley-Taylor formula requires mean temperature and solar radiation as inputs. So, we will collect the meteorological dataset namely <em>a</em>) Mean daily temperature <em>b</em>) Total solar radiation from the sample station and estimate the value of total daily potential evapotranspiration (in m). We will also store total daily precipitation, which will be used as model forcing.</p>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span style="color:blue;">We observe that the low-pass filter is only applied during the drydown phase of the surface soil moisture moisture. As the value of <span class="math inline">\(D_p\)</span> decreases, the rate of drydown in <span class="math inline">\(SM^{'}\)</span> decreases due to the increase in the e-folding time of the exponential filter applied.</span></p>
+</div>
+</div>
+<p>Multi-depth soil moisture records are used to calculate the effective soil moisture for the 0-100 cm profile, which serves as the observed rootzone soil moisture for our purpose. We will take a weighted average of the multi-depth observations based on the profile represented by each observation depth. We will now use Eq 8-9 to estimate the rootzone soil moisture from surface observations. But first, we will select the value of <span class="math inline">\(D_{p}\)</span> which yield a filtered surface soil moisture with highest correlation with the observed rootzone soil moisture. Once we determine the optimum value of <span class="math inline">\(D_{p}\)</span> (either by optimization, or by trial and error), we will use it to filter SSM. This time series will be assumed to be representative of the temporal dynamics of the rootzone soil moisture.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># Observed meteorological forcings </span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> Rad<span class="ot">=</span>CRNdat<span class="sc">$</span>SOLARAD_DAILY<span class="sc">*</span><span class="dv">1000</span>        <span class="co"># (as 1 MJ= 1000 KJ)</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a> Tmean<span class="ot">=</span>CRNdat<span class="sc">$</span>T_DAILY_MEAN</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a> PCP<span class="ot">=</span>CRNdat<span class="sc">$</span>P_DAILY_CALC<span class="sc">/</span><span class="dv">10</span>           <span class="co"># convert units from mm to cm</span></span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Weighted average of soil moisture at multiple depths to estimate RZSM</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>RZSM<span class="ot">=</span>(SMpdf<span class="sc">$</span>SM5<span class="sc">*</span>(<span class="fl">7.5</span><span class="dv">-0</span>)<span class="sc">+</span>          <span class="co"># 0- 7.5 cm depth</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>      SMpdf<span class="sc">$</span>SM10<span class="sc">*</span>(<span class="dv">15</span><span class="fl">-7.5</span>)<span class="sc">+</span>        <span class="co"># 7.5-15 cm depth</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      SMpdf<span class="sc">$</span>SM20<span class="sc">*</span>(<span class="dv">35-15</span>)<span class="sc">+</span>         <span class="co"># 15-35 cm depth</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      SMpdf<span class="sc">$</span>SM50<span class="sc">*</span>(<span class="dv">75-35</span>)<span class="sc">+</span>         <span class="co"># 35-75 cm depth</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      SMpdf<span class="sc">$</span>SM100<span class="sc">*</span>(<span class="dv">100-75</span>))<span class="sc">/</span><span class="dv">100</span>   <span class="co"># 75-100 cm depth</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Note Dp=0.1 yields maximum correlation with RZSM</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">cor</span>(RZSM, SSMf_02), <span class="fu">cor</span>(RZSM, SSMf_05),<span class="fu">cor</span>(RZSM, SSMf_1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8317762 0.9283331 0.9322160</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform the filtered SM to RZSM using the linear transformation parameters </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>C<span class="ot">=</span>(<span class="fu">max</span>(RZSM)<span class="sc">-</span><span class="fu">min</span>(RZSM))<span class="sc">/</span>(<span class="fu">max</span>(SSMf_1)<span class="sc">-</span><span class="fu">min</span>(SSMf_1))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>epsilon<span class="ot">=</span><span class="fu">min</span>(RZSM)<span class="sc">-</span>C<span class="sc">*</span><span class="fu">min</span>(SSMf_1)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>RZSM_est<span class="ot">=</span>C<span class="sc">*</span>SSMf_1<span class="sc">+</span>epsilon</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a> <span class="co"># Linear gap-filling of missing samples and removing flagged samples</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(zoo)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a> Tmean<span class="ot">=</span><span class="fu">na.approx</span>(Tmean,<span class="at">na.rm =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a> Rad<span class="ot">=</span><span class="fu">na.approx</span>(Rad,<span class="at">na.rm =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a> PCP[PCP<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="dv">0</span>       <span class="co"># Negative (flagged values are replaced by 0)</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a> PCP[<span class="fu">is.na</span>(PCP)]<span class="ot">=</span><span class="dv">0</span>  <span class="co"># NA values are replaced by 0)</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a> <span class="co"># Create data frame for met forcings for the station</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a> datetime<span class="ot">=</span><span class="fu">as.Date</span>(<span class="fu">as.character</span>(CRNdat<span class="sc">$</span>LST_DATE), <span class="at">format=</span> <span class="st">"%Y%m%d"</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a> forcings<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">Date=</span>datetime,PCP, Rad,Tmean)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a> <span class="co"># Apply Priestley-Taylor method for PET estimation using the PT_PET function</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a> PET<span class="ot">=</span><span class="fu">PT_PET</span>(Tmean,Rad,alpha)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a> <span class="co"># Plot estimated PET time series</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a> <span class="fu">ggplot</span>(<span class="at">data=</span>forcings)<span class="sc">+</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> datetime, <span class="at">y =</span> PET), <span class="at">color=</span><span class="st">"steelblue"</span>) <span class="sc">+</span> </span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Date"</span>) <span class="sc">+</span>             <span class="co"># Add labels to the axes</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PET [in m]"</span>)<span class="sc">+</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting estimated versus observed RZSM</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(RZSM, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">col=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">ylab=</span><span class="st">"Volumetric SM"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">"Comparison of obs. vs est. RZSM"</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.5</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSM, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(RZSM_est, <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x =</span> <span class="st">"bottomleft"</span>,        </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"RZSM"</span>, <span class="st">"SSM"</span>, <span class="st">"est. RZSM"</span>),  </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),           </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray80"</span>,<span class="st">"red"</span>,<span class="st">"blue"</span>),           </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -897,8 +880,47 @@ Note
 </div>
 </div>
 </div>
+<p>Conversely, the low-pass filter can be inverted to estimate the surface soil moisture using the rootzone soil moisture in an iterative form. Use of this equation can be very helpful in a scenario where surface soil moisture observations are available (for example, from remote-sensing observations) and a simplistic representation of soil water balance for the profile can simultaneously generate equivalent surface soil moisture estimates for model training and validation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inverting low pass filter for SSM estimation from filtered time series</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Dp<span class="ot">=</span><span class="fl">0.1</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>buffer<span class="ot">=</span><span class="fl">0.01</span><span class="sc">*</span>(<span class="fu">max</span>(SSM)<span class="sc">-</span><span class="fu">min</span>(SSM))  <span class="co"># To decrease sensitivity to noise in sensor readings (1% of SSM range)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>invLP_filt<span class="ot">=</span><span class="cf">function</span>(RZSM){</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  SSMest<span class="ot">=</span><span class="fu">c</span>()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  SSMest[<span class="dv">1</span>]<span class="ot">=</span>RZSM[<span class="dv">1</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(RZSM)){</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  SSMest[t]<span class="ot">=</span><span class="fu">ifelse</span>(RZSM[t]<span class="sc">&gt;</span>(RZSM[t<span class="dv">-1</span>]<span class="sc">+</span>buffer),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">min</span>(RZSM[t],SSMf_1[t<span class="dv">-1</span>]),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                   (SSMf_1[t<span class="dv">-1</span>]<span class="sc">+</span>((SSMf_1[t]<span class="sc">-</span>SSMf_1[t<span class="dv">-1</span>])<span class="sc">/</span>Dp)))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(SSMest)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply LP filter inversion</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>SSMest<span class="ot">=</span><span class="fu">invLP_filt</span>(RZSM)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot observed v/s estimated Surface soil moisture</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>{<span class="fu">plot</span>(SSM, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">col=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">ylab=</span><span class="st">"Volumetric SM"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="at">main=</span><span class="st">"Comparison of obs. vs est. SSM"</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.55</span>))</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSMest, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(RZSM, <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x =</span> <span class="st">"bottomleft"</span>,        </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"SSM"</span>, <span class="st">"est. SSM"</span>, <span class="st">"RZSM"</span>),  </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),           </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray80"</span>,<span class="st">"red"</span>,<span class="st">"blue"</span>),           </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>) }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="ch11_files/figure-html/11a6-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="ch11_files/figure-html/11a6-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Estimating rootzone soil moisture using a low-pass filter and surface soil moisture is efficient but challenging due to the lack of spatially contiguous rootzone soil moisture records for filter calibration. Observations of rootzone soil moisture are only available through a sparse network of observation stations. Some studies use land-surface model simulations for this purpose, but these can only replicate the pre-defined functional relationships in the models and are affected by significant disagreements between models due to different treatments of subgrid-scale heterogeneity in soil and vegetation properties. Additionally, the “active” rootzone layer, which is crucial for root-water uptake and land-atmosphere interactions, varies significantly across different regions. This variability is influenced by factors such as climate (temperature, radiation, and precipitation patterns), vegetation (rooting patterns and water uptake depth), and landscape characteristics (albedo and soil type). In contrast, most land-surface models assume a fixed rootzone depth, typically between 1 and 2 meters.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -1324,13 +1346,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ch10.html" class="pagination-link" aria-label="Practice Exercises">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span>
+      <a href="./ch9.html" class="pagination-link" aria-label="Parallel Geospatial Computing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Parallel Geospatial Computing</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./chN.html" class="pagination-link" aria-label="Acknowledgement and References">
-        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch10.html" class="pagination-link" aria-label="Practice Exercises">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1348,7 +1370,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","loop":false,"selector":".lightbox","descPosition":"bottom"});
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

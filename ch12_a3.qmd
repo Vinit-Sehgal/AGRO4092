@@ -1,0 +1,375 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Sample Meteorological Dataset from a USCRN Site
+
+We will develop a 2-layer simple soil water balance modeling for simulating 1-D fluxes in the rootzone using USCRN station at Stillwater, OK, USA as an example.
+Let us extract sample data from the sample station for 2021.
+
+```{r 12a1, message = FALSE, warning = FALSE}
+library(zoo)
+
+# Yearly data from the sample station
+# CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2020/CRND0103-2020-OK_Stillwater_2_W.txt"), header=FALSE,sep="")
+
+CRNdat = read.csv("C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/research_tamu/general_data_access/USCRN_insitu_data/daily_data_Jan23/2020/CRND0103-2020-OK_Stillwater_2_W.txt", header=FALSE,sep="")
+
+# Data headers
+# headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")
+
+headers=read.csv("C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/research_tamu/general_data_access/USCRN_insitu_data/daily_data_Jan23/headers.txt", header=FALSE,sep="")
+
+# Column names as headers from the text file
+colnames(CRNdat)=headers[2,1:ncol(CRNdat)]
+
+# Replace fill values with NA
+CRNdat[CRNdat == -9999]=NA
+CRNdat[CRNdat == -99]=NA
+CRNdat[CRNdat == 999]=NA
+
+# Replace NA precipitation values with 0
+CRNdat$P_DAILY_CALC[is.na(CRNdat$P_DAILY_CALC)]=0
+
+
+# PET estimation using Priestley-Taylor method 
+ PT_PET=function(Tmean,Rad,alpha){
+    lambdaV= 2260                  # Latent heat of vaporization 
+    rhoW= 1000                     # Density of water 
+    gamma= 4.95*1e-4               # Psychrometric constant
+
+    deltaVal=rep(0, length(Tmean))  # Create empty array
+    
+    # When Tmean<0
+    deltaVal[Tmean<0]=0.3405*exp(0.0642*Tmean[Tmean<0])
+    # When Tmean>=0
+    deltaVal[Tmean>=0]=0.3221*exp(0.0803*((Tmean[Tmean>=0])^0.8876))
+    
+    # Priestley-Taylor equation 
+    PETval=(alpha/(lambdaV*rhoW))*(deltaVal/(deltaVal+gamma))*Rad
+    PETval[PETval<0]=0
+    return(PETval) #estimate in m
+ }
+
+```
+
+## Simple Soil Water Balance Model
+
+There are three important processes which are modeled: 
+1) Water energy coupling in the form of SM-EF curve. EF is given as ET/PET. PET is calculated by Priestley-Taylor method.
+2) Runoff 
+3) SSM and RZSM relationship
+
+```{r 12a2, message = FALSE, warning = FALSE}
+ # Observed meteorological forcings 
+ Rad=CRNdat$SOLARAD_DAILY*1000        # (as 1 MJ= 1000 KJ)
+ Tmean=CRNdat$T_DAILY_MEAN
+ PCP=CRNdat$P_DAILY_CALC/10           # convert units from mm to cm
+
+ # Model parameters
+ alpha=0.5                # Priestley-Taylor correction factor
+ EFmx=0.750               # Max Evaporative fraction 
+
+ por_s=0.5                # Surface field capacity
+ wp_s=0.10                # Surface wilting point
+ b_s=5                    # Power coefficient of surface drainage curve  
+ Ks_s=80                  # Saturated hydraulic conductivity of surface 
+ 
+ por_r=0.5                # RZ field capacity
+ wp_r=0.30                # RZ wilting point
+ b_r=1.5                  # Power coefficient of rootzone drainage curve  
+ Ks_r=100                 # Saturated hydraulic conductivity of rootzone 
+ 
+ #~~~ Two-layer Soil Water Balance Model 
+ # Empty arrays to store data
+ RZSM= SSM= drainage= ET= PET= runoff= infilt =c()
+ # Initial soil moisture state for model initiation
+ SSM[1]=RZSM[1]=0.45                          
+ 
+ for (t in 2:length(PCP)){
+   zs=5                     # Surface layer depth (cm)
+   cp_s=(por_s+wp_s)/2      # Surface critical soil moisture
+   zr=100                   # Rootzone profile depth (cm)
+   cp_r=(por_r+wp_r)/2      # Rootzone critical soil moisture
+
+   # Infiltration based on the SSM state
+   infilt[t]=pmin(Ks_r*(pmax(0,por_s-wp_s))^b_s, 
+                  Ks_r*(pmax(0,SSM[t-1]-wp_s))^b_s)
+   
+   # Update SSM based on infilt over the past day and current PCP
+   SSM[t]=pmax(wp_s,(zs*SSM[t-1]-infilt[t]+PCP[t])/zs)
+
+   # Runoff: only if SSM > por. Update SSM to por after runoff
+   runoff[t]=ifelse(PCP[t]>0, 
+              ifelse(SSM[t]>cp_s,
+                  pmax(0,(PCP[t]-infilt[t]-(SSM[t]-cp_s)*zs)),
+                  0),0)
+   
+   SSM[t]=ifelse(SSM[t]>por_s, por_s,SSM[t])
+   
+   # SSM[t]=ifelse(runoff[t]>0, cp_s, SSM[t])
+   #SSM[t]=ifelse(runoff[t]>0, (zs*SSM[t]-runoff[t])/zs, SSM[t])
+   
+   # Update RZSM based on drainage from the surface layer
+   RZSM[t]=(RZSM[t-1]*zr+infilt[t])/zr
+   
+   # Estimate ET based on PET and RZSM state
+   PET[t]=100*PT_PET(Tmean[t],Rad[t],alpha)  #PET in cm
+   ET[t]=max(0,ifelse(RZSM[t]>cp_r,
+                PET[t]*(EFmx/(cp_r-wp_r))*(cp_r-wp_r),
+                PET[t]*(EFmx/(cp_r-wp_r))*(RZSM[t]-wp_r)))
+   
+   # Deep drainage based on RZSM state. Continues till CP
+   drainage[t]=Ks_r*(pmax(0,RZSM[t]-cp_r))^b_r
+   
+   # Update RZSM after drainage and ET
+   RZSM[t]=(zr*RZSM[t]-drainage[t]-ET[t])/zr  
+
+}
+ 
+  # Weighted average of soil moisture at multiple depths to estimate RZSM
+  SMpdf=data.frame(
+    SM5=na.approx(CRNdat$SOIL_MOISTURE_5_DAILY,na.rm = FALSE), 
+    SM10=na.approx(CRNdat$SOIL_MOISTURE_10_DAILY,na.rm = FALSE), 
+    SM20=na.approx(CRNdat$SOIL_MOISTURE_20_DAILY,na.rm = FALSE), 
+    SM50=na.approx(CRNdat$SOIL_MOISTURE_50_DAILY,na.rm = FALSE),
+    SM100=na.approx(CRNdat$SOIL_MOISTURE_100_DAILY,na.rm = FALSE))
+
+  RZSM_obs=(SMpdf$SM5*(7.5-0)+      # 0- 7.5 cm depth
+        SMpdf$SM10*(15-7.5)+        # 7.5-15 cm depth
+        SMpdf$SM20*(35-15)+         # 15-35 cm depth
+        SMpdf$SM50*(75-35)+         # 35-75 cm depth
+        SMpdf$SM100*(100-75))/100   # 75-100 cm depth
+
+# Plotting estimated versus observed RZSM
+{plot(RZSM_obs, type="l", col="gray80", lwd=3, 
+      ylab="Volumetric SM", xlab="Time", 
+      main="Comparison of observed vs modeled RZSM", ylim=c(0,0.5))
+lines(RZSM, col="blue")
+legend(x = "bottomleft",
+       legend = c("Obs RZSM", "Modeled RZSM"),
+       col = c("gray80","blue"),
+       lwd = c(2,1), bty = "n")
+}
+  
+{plot(SMpdf$SM5, type="l", col="gray80", lwd=3, 
+      ylab="Volumetric SM", xlab="Time", 
+      main="Comparison of observed vs modeled SSM", ylim=c(0,0.5))
+lines(SSM, col="blue")
+legend(x = "bottomleft",
+       legend = c("Obs SSM", "Modeled SSM"),
+       col = c("gray80","blue"),
+       lwd = c(2,1), bty = "n")
+}
+  
+```
+
+## Optimizing Soil Water Balance Model Parameters
+
+```{r 12a3, message = FALSE, warning = FALSE}
+# Set condition for model initiation
+ini_condition=RZSM_obs[1]  
+
+# Data frame with Met forcings
+forcing=data.frame(Rad=CRNdat$SOLARAD_DAILY*1000,   # in KJ
+                  Tmean=CRNdat$T_DAILY_MEAN,        # in deg C  
+                  PCP=CRNdat$P_DAILY_CALC/10)       # in cm
+
+# Split 75% of data for model training 
+forcing_trn=forcing[1:round(nrow(forcing)*.75),]
+forcing_tst=forcing[round(nrow(forcing)*.75):nrow(forcing),]
+
+# Soil Water balance model in the form of a function
+SWB_model=function(ParIn,ini_condition,forcing){
+  
+  # Input parameters  
+   alpha=ParIn[1]        # Priestley-Taylor correction factor
+   EFmx=ParIn[2]         # Max Evaporative fraction 
+   por_s=ParIn[3]         # Surface field capacity
+   wp_s=ParIn[4]         # Surface wilting point
+   b_s=ParIn[5]          # Power coefficient of surface drainage curve  
+   Ks_s=ParIn[6]         # Saturated hydraulic conductivity of surface 
+   por_r=ParIn[7]         # RZ field capacity
+   wp_r=ParIn[8]         # RZ wilting point
+   b_r=ParIn[9]          # Power coefficient of rootzone drainage curve  
+   Ks_r=ParIn[10]        # Saturated hydraulic conductivity of rootzone 
+ 
+  # Forcings
+  PCP=forcing$PCP
+  Tmean=forcing$Tmean
+  Rad=forcing$Rad
+
+ #~~~ Simple Soil Water Balance Model 
+ RZSM= SSM= drainage= ET= PET= runoff=c()  # Empty arrays to store data
+ SSM[1]= RZSM[1]= ini_condition            # Initial soil moisture state
+ for (t in 2:nrow(forcing)){
+   zs=5                    # Surface layer depth (cm)
+   cp_s=(por_s+wp_s)/2      # Surface critical soil moisture
+   zr=100                  # Rootzone profile depth (cm)
+   cp_r=(por_r+wp_r)/2      # Rootzone critical soil moisture
+
+   # Infiltration based on the SSM state
+   infilt[t]=Ks_r*(pmax(0,SSM[t-1]-cp_s))^b_s
+   
+   # Update SSM based on infilt over the past day and current PCP
+   SSM[t]=pmax(wp_s,(zs*SSM[t-1]-infilt[t]+PCP[t])/zs)
+
+   # Runoff: only if SSM > por. Update SSM to por after runoff
+   runoff[t]=ifelse(SSM[t]>por_s,
+                  pmax(0,(PCP[t]-infilt[t]-(SSM[t]-por_s)*zs)),
+                  0)
+   
+   SSM[t]=ifelse(runoff[t]>0, por_s, SSM[t])
+   
+   # Update RZSM based on drainage from the surface layer
+   RZSM[t]=(RZSM[t-1]*zr+infilt[t])/zr
+   
+   # Estimate ET based on PET and RZSM state
+   PET[t]=100*PT_PET(Tmean[t],Rad[t],alpha)  #PET in cm
+   ET[t]=max(0,ifelse(RZSM[t]>cp_r,
+                PET[t]*(EFmx/(cp_r-wp_r))*(cp_r-wp_r),
+                PET[t]*(EFmx/(cp_r-wp_r))*(RZSM[t]-wp_r)))
+   
+   # Deep drainage based on RZSM state. Continues till CP
+   drainage[t]=Ks_r*(pmax(0,RZSM[t]-cp_r))^b_r
+   
+   # Update RZSM after drainage and ET
+   RZSM[t]=(zr*RZSM[t]-drainage[t]-ET[t])/zr  
+ }
+   return(cbind(SSM,RZSM,drainage,ET,runoff,PET))
+}
+
+# Function to calculate error in the simulated RZSM vis-a-vis obs RZSM
+error_fun=function(par){
+  #~~~~~~~~~ MODEL VARIABLES HERE ~~~~~~~~~
+  SSM_obs=SMpdf$SM5
+  RZSM_obs=RZSM_obs
+  spinup=30           # Excluded from the model evaluation
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+ # We use estimated parameters for this iteration in the SWB model
+ sim_out=SWB_model(par,ini_condition,forcing=forcing)
+ 
+ err=hydroGOF::mae(SSM_obs[-c(1:spinup)],
+                    sim_out[-c(1:spinup),1])+   # SSM simulation RMSE
+     hydroGOF::mae(RZSM_obs[-c(1:spinup)],
+                     sim_out[-c(1:spinup),2])   # RZSM simulation RMSE
+
+ names(par)= c("alpha","EFmx","por_s","wp_s","b_s",
+               "Ks_s","por_r","wp_r","b_r","Ks_r")
+
+ por_s=par[3]
+ wp_s=par[4]
+ por_r=par[7]
+ wp_r=par[8]
+ 
+ # Penalized constraint violation 
+ if(!(por_s>wp_s) | !(por_r>wp_r)){ 
+ # If WP>PC>Porosity is not true, the function returns high errors
+ err=10e3  
+ }
+ return(err)
+}
+
+# Use SCE Optim to optimize the SWB model parameters
+library(hydromad)
+set.seed(100);ParOut=hydromad::SCEoptim(error_fun,                 
+       c(0.7,0.5,
+         0.4,0.2,0.1,100,
+         0.4,0.2,0.1,100),            # Initial values of params
+       lower = c(0.5,0.4,
+                 0.25,0.1,1.1,20,
+                 0.25,0.1,1.1,20),     # Lower values of params
+       upper = c(2,0.95,
+                 0.6,0.4,5,500,
+                 0.6,0.4,5,500),      # Upper values of params
+       control = list(reltol = 1e-3,tolsteps=7))
+
+names(ParOut$par)=c("alpha","EFmx",
+                    "por_s","wp_s","b_s","Ks_s",
+                    "por_r","wp_r","b_r","Ks_r");ParOut$par
+
+```
+
+## Evaluating model output 
+
+```{r 12a4, message = FALSE, warning = FALSE}
+
+{ # Apply the SWB model on test dataset
+  optimOut=SWB_model(ParIn=ParOut$par,                                              ini_condition=RZSM_obs[1],
+                  forcing=forcing)
+
+  # Convert the output array to a data frame for easy plotting
+  optimOut=data.frame(optimOut) 
+  
+  # Add time and precipitation to the output df so it can be plotted 
+  optimOut$PCP=forcing$PCP
+  optimOut$time=as.Date(as.character(CRNdat$LST_DATE),format="%Y%m%d")
+  optimOut$RZSM_obs=RZSM_obs
+  optimOut$SSM_obs=SMpdf$SM5
+}
+
+{ library(ggplot2)
+  library(patchwork)
+
+  # Plot for observed and modeled RZSM
+  p_SSM=ggplot(optimOut) +
+  geom_line(aes(x = time, y = SSM, color = "SSM"),linetype=2)+
+  geom_line(aes(x = time, y = SSM_obs, color = "SSM_obs"),linetype=1)+
+  scale_y_continuous( name = "SSM")+
+  labs(x = "Time") +
+  theme_minimal() +
+  scale_color_manual(values = c("blue","black"))+
+  theme(legend.title = element_blank())
+
+  p_RZSM=ggplot(optimOut) +
+  geom_line(aes(x = time, y = RZSM, color = "RZSM"),linetype=2)+
+  geom_line(aes(x = time, y = RZSM_obs, color = "RZSM_obs"),linetype=1)+
+  scale_y_continuous( name = "RZSM")+
+  labs(x = "Time") +
+  theme_minimal() +
+  scale_color_manual(values = c("blue","black"))+
+  theme(legend.title = element_blank())
+
+# Plot for modeled ET
+p_ET=ggplot(optimOut) +
+  geom_line(aes(x = time, y = ET, color = "ET"))+
+  scale_y_continuous( name = "ET")+
+  labs(x = "Time") +
+  theme_minimal() +
+  scale_color_manual(values = c("ET" = "blue"))+
+  theme(legend.title = element_blank())
+
+# Plot for modeled drainage
+p_drain=ggplot(optimOut) +
+  geom_line(aes(x = time, y = drainage, color = "drainage"))+
+  scale_y_continuous( name = "Drainage")+
+  labs(x = "Time") +
+  theme_minimal() +
+  scale_color_manual(values = c("drainage" = "blue"))+
+  theme(legend.title = element_blank())
+
+# Plot for observed precipitation
+p_PCP=ggplot(optimOut) +
+  geom_bar(aes(x = time, y = PCP, fill = "PCP"),  
+           stat = "identity")+
+  scale_y_continuous( name = "PCP",limits = c(0,6))+
+  labs(x = "Time") +
+  theme_minimal() +
+  scale_fill_manual(values = c("PCP" = "black"))+
+  theme(legend.title = element_blank())
+}
+
+# Combine all plots into a single window
+library(patchwork)
+p_SSM/p_RZSM/p_PCP/p_ET/p_drain+                # Plots one under the other
+  plot_layout(guides = "collect",       # Collect common legends
+            axis_titles = "collect",    # Collect common axis titles
+            axes="collect") &           # Collect common axis labels
+            theme(legend.position='bottom')           
+
+```

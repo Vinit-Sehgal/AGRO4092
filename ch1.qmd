@@ -19,8 +19,3 @@ bibliography: references.bib
 
 
 ```
-
-```{r child="ch1_d.qmd", message = FALSE, warning = FALSE}
-
-
-```

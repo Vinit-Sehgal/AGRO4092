@@ -218,14 +218,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
+  <a href="./ch11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch11.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Field Soil Water Balance</span></span></a>
+  <a href="./ch10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -294,7 +294,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 dimensions  : 2000, 7200, 365  (nrow, ncol, nlyr)
 resolution  : 0.05, 0.05  (x, y)
 extent      : -180, 180, -50, 50  (xmin, xmax, ymin, ymax)
-coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84) 
+coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
 source      : daily_pcp_2023.nc 
 varname     : precip (Climate Hazards group InfraRed Precipitation with Stations) 
 names       : precip_1, precip_2, precip_3, precip_4, precip_5, precip_6, ... 
@@ -972,7 +972,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","openEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom"});
+<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox","loop":false,"openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

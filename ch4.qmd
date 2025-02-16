@@ -14,10 +14,25 @@ Let us extract sample data from a USCRN site in Lafayette, LA, USA for 2021.
 #| warning: false
 
 # Yearly data from the sample station
-CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-LA_Lafayette_13_SE.txt"), header=FALSE,sep="")
+utils::download.file("https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/CRND0103-2021-OK_Stillwater_2_W.txt?raw=true",
+                     destfile = "CRND0103-2021-OK_Stillwater_2_W.txt", 
+                     mode="wb", #wb is write binary
+                     method ='auto', 
+                     quiet=FALSE)
 
+utils::download.file("https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/HEADERS.txt?raw=true",
+                   destfile = "headers.txt", 
+                   mode="wb", #wb is write binary
+                   method ='auto', 
+                   quiet=FALSE)
+CRNdat = read.csv("CRND0103-2021-OK_Stillwater_2_W.txt", header=FALSE,sep="")
+headers = read.csv("headers.txt", header=FALSE,sep="")
+
+# OR Direct download from NCEI servers (might not work during server downtime)
+#CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-OK_Stillwater_2_W.txt"), header=FALSE,sep="")
 # Data headers
-headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")
+#headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")
+
 
 # Column names as headers from the text file
 colnames(CRNdat)=headers[2,1:ncol(CRNdat)]

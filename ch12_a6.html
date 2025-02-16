@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>ch12_a6</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ch12_a6_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ch12_a6_files/libs/quarto-html/quarto.js"></script>
+<script src="ch12_a6_files/libs/quarto-html/popper.min.js"></script>
+<script src="ch12_a6_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ch12_a6_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ch12_a6_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ch12_a6_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ch12_a6_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ch12_a6_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ch12_a6_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="work-in-progress" class="level1">
+<h1>WORK IN PROGRESS</h1>
+<p>We will develop a 2-layer simple soil water balance modeling for simulating 1-D fluxes in the rootzone using USCRN station at Stillwater, OK, USA as an example. Let us extract sample data from the sample station for 2021.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Yearly data from the sample station</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># CRNdat = read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/2021/CRND0103-2021-OK_Stillwater_2_W.txt"), header=FALSE,sep="")</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>CRNdat <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">"C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/research_tamu/general_data_access/USCRN_insitu_data/daily_data_Jan23/2021/CRND0103-2021-OK_Stillwater_2_W.txt"</span>, <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Data headers</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># headers=read.csv(url("https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/headers.txt"), header=FALSE,sep="")</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>headers<span class="ot">=</span><span class="fu">read.csv</span>(<span class="st">"C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/research_tamu/general_data_access/USCRN_insitu_data/daily_data_Jan23/headers.txt"</span>, <span class="at">header=</span><span class="cn">FALSE</span>,<span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Column names as headers from the text file</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(CRNdat)<span class="ot">=</span>headers[<span class="dv">2</span>,<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(CRNdat)]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace fill values with NA</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">9999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="sc">-</span><span class="dv">99</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>CRNdat[CRNdat <span class="sc">==</span> <span class="dv">999</span>]<span class="ot">=</span><span class="cn">NA</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace NA precipitation values with 0</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>CRNdat<span class="sc">$</span>P_DAILY_CALC[<span class="fu">is.na</span>(CRNdat<span class="sc">$</span>P_DAILY_CALC)]<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># PET estimation using Priestley-Taylor method </span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a> PT_PET<span class="ot">=</span><span class="cf">function</span>(Tmean,Rad,alpha){</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    lambdaV<span class="ot">=</span> <span class="dv">2260</span>                  <span class="co"># Latent heat of vaporization </span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    rhoW<span class="ot">=</span> <span class="dv">1000</span>                     <span class="co"># Density of water </span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    gamma<span class="ot">=</span> <span class="fl">4.95</span><span class="sc">*</span><span class="fl">1e-4</span>               <span class="co"># Psychrometric constant</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    deltaVal<span class="ot">=</span><span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(Tmean))  <span class="co"># Create empty array</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When Tmean&lt;0</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    deltaVal[Tmean<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="fl">0.3405</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fl">0.0642</span><span class="sc">*</span>Tmean[Tmean<span class="sc">&lt;</span><span class="dv">0</span>])</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When Tmean&gt;=0</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    deltaVal[Tmean<span class="sc">&gt;=</span><span class="dv">0</span>]<span class="ot">=</span><span class="fl">0.3221</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fl">0.0803</span><span class="sc">*</span>((Tmean[Tmean<span class="sc">&gt;=</span><span class="dv">0</span>])<span class="sc">^</span><span class="fl">0.8876</span>))</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priestley-Taylor equation </span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    PETval<span class="ot">=</span>(alpha<span class="sc">/</span>(lambdaV<span class="sc">*</span>rhoW))<span class="sc">*</span>(deltaVal<span class="sc">/</span>(deltaVal<span class="sc">+</span>gamma))<span class="sc">*</span>Rad</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    PETval[PETval<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(PETval) <span class="co">#estimate in m</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Weighted average of soil moisture at multiple depths to estimate RZSM</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(zoo)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  SMpdf<span class="ot">=</span><span class="fu">data.frame</span>(</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">SM5=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOIL_MOISTURE_5_DAILY,<span class="at">na.rm =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">SM10=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOIL_MOISTURE_10_DAILY,<span class="at">na.rm =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">SM20=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOIL_MOISTURE_20_DAILY,<span class="at">na.rm =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">SM50=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOIL_MOISTURE_50_DAILY,<span class="at">na.rm =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">SM100=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOIL_MOISTURE_100_DAILY,<span class="at">na.rm =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  RZSM_obs<span class="ot">=</span>(SMpdf<span class="sc">$</span>SM5<span class="sc">*</span>(<span class="fl">7.5</span><span class="dv">-0</span>)<span class="sc">+</span>      <span class="co"># 0- 7.5 cm depth</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        SMpdf<span class="sc">$</span>SM10<span class="sc">*</span>(<span class="dv">15</span><span class="fl">-7.5</span>)<span class="sc">+</span>        <span class="co"># 7.5-15 cm depth</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        SMpdf<span class="sc">$</span>SM20<span class="sc">*</span>(<span class="dv">35-15</span>)<span class="sc">+</span>         <span class="co"># 15-35 cm depth</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>        SMpdf<span class="sc">$</span>SM50<span class="sc">*</span>(<span class="dv">75-35</span>)<span class="sc">+</span>         <span class="co"># 35-75 cm depth</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        SMpdf<span class="sc">$</span>SM100<span class="sc">*</span>(<span class="dv">100-75</span>))<span class="sc">/</span><span class="dv">100</span>   <span class="co"># 75-100 cm depth</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Characteristic curves</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  Ks_s<span class="ot">=</span><span class="fl">0.7</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  b_s<span class="ot">=</span><span class="dv">3</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  cp_s<span class="ot">=</span><span class="fl">0.3</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  por_s<span class="ot">=</span><span class="fl">0.5</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  SSM<span class="ot">=</span><span class="fu">seq</span>(<span class="dv">0</span>,por_s,<span class="at">length.out=</span><span class="dv">100</span>)</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>  infilt<span class="ot">=</span>Ks_s<span class="sc">*</span>(<span class="fu">pmax</span>(<span class="dv">0</span>,(<span class="fu">exp</span>(b_s<span class="sc">*</span>(SSM<span class="sc">-</span>cp_s))<span class="sc">-</span><span class="dv">1</span>)<span class="sc">/</span>(<span class="fu">exp</span>(b_s<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>cp_s))<span class="sc">-</span><span class="dv">1</span>)))</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(SSM, infilt,<span class="at">type=</span><span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ch12_a6_files/figure-html/12a1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  infilt<span class="ot">=</span>Ks_s<span class="sc">*</span>(<span class="fu">pmax</span>(<span class="dv">0</span>,SSM<span class="sc">-</span>cp_s)<span class="sc">/</span>(por_s<span class="sc">-</span>cp_s))<span class="sc">^</span><span class="fl">1.8</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(SSM, infilt,<span class="at">type=</span><span class="st">"l"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ch12_a6_files/figure-html/12a1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="priestley-taylor-method-for-estimating-potential-et-pet" class="level2">
+<h2 class="anchored" data-anchor-id="priestley-taylor-method-for-estimating-potential-et-pet">Priestley-Taylor Method for Estimating Potential ET (PET)</h2>
+<p>This formulation is based on physical principles and can be seen as a simplified version of the Penman-Monteith formula for calculating evapotranspiration. The simplification involves removing the aerodynamic terms from the Penman-Monteith equation and using a constant (<span class="math inline">\(α\)</span>), which has been empirically derived and is estimated to be 1.26 for open bodies of water, but can range from &lt;1 (humid conditions) to almost 2 (arid conditions). This constant tends to be higher in arid regions or areas experiencing significant water stress. The Priestley-Taylor formula can be used for calculating daily evapotranspiration and can also be applied to smaller time intervals (hourly, for example) if the necessary data is available.</p>
+<p><span class="math display">\[ \text { PET }=\left(\frac{\alpha}{\lambda_v \rho_{\mathrm{w}}}\right) \times \frac{\Delta}{\Delta+\gamma} \times \text {R}  \]</span></p>
+<p>if <span class="math inline">\(T_{mean}&lt; 0^oC\)</span></p>
+<p><span class="math display">\[ \Delta=0.3405 \times \mathrm{e}^\left(0.0642 \mathrm{~T}_{\text {mean}}\right) \\ \]</span></p>
+<p>if <span class="math inline">\(T_{mean}&gt; 0^oC\)</span> <span class="math display">\[ \Delta=0.3221 \times \mathrm{e}^\left(0.0803 \mathrm{~T}_{\mathrm{mean}}^{0.8876}\right) \]</span></p>
+<p>where,</p>
+<blockquote class="blockquote">
+<p><span class="math inline">\(PET\)</span>= Daily potential evapotranspiration (<span class="math inline">\(m\)</span>)</p>
+<p><span class="math inline">\(λv\)</span> = Latent heat of vaporization (2260 <span class="math inline">\(kJ/kg\)</span>)</p>
+<p><span class="math inline">\(ρw\)</span> = Density of water (1000 <span class="math inline">\(kg/m^3\)</span>)</p>
+<p><span class="math inline">\(γ\)</span> = Psychrometric constant ( 4.95x <span class="math inline">\(10^{-4}\)</span> <span class="math inline">\(kg/m^3/^oC\)</span>)</p>
+<p><span class="math inline">\(Rad\)</span> = Daily solar radiation incident on a horizontal earth surface (<span class="math inline">\(kg/m^2\)</span>)</p>
+<p><span class="math inline">\(Δ\)</span> = Slope of the saturation vapor density curve from the psychrometric chart (<span class="math inline">\(kg/^oC\)</span>)</p>
+<p><span class="math inline">\(T_{mean}\)</span> = Daily mean air temperature (<span class="math inline">\(^oC\)</span>)</p>
+<p><span class="math inline">\(\alpha\)</span> = Priestley-Taylor correction factor</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters for Priestley-Taylor formula</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>lambdaV<span class="ot">=</span> <span class="dv">2260</span>                  <span class="co"># Latent heat of vaporization </span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>rhoW<span class="ot">=</span> <span class="dv">1000</span>                     <span class="co"># Density of water </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>gamma<span class="ot">=</span> <span class="fl">4.95</span><span class="sc">*</span><span class="fl">1e-4</span>               <span class="co"># Psychrometric constant</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>alpha<span class="ot">=</span><span class="fl">1.2</span>                      <span class="co"># Priestley-Taylor correction factor</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># PET estimation using Priestley-Taylor method </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a> PT_PET<span class="ot">=</span><span class="cf">function</span>(Tmean,Rad,alpha){</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    deltaVal<span class="ot">=</span><span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(Tmean))  <span class="co"># Create empty array</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When Tmean&lt;0</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    deltaVal[Tmean<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="fl">0.3405</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fl">0.0642</span><span class="sc">*</span>Tmean[Tmean<span class="sc">&lt;</span><span class="dv">0</span>])</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># When Tmean&gt;=0</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    deltaVal[Tmean<span class="sc">&gt;=</span><span class="dv">0</span>]<span class="ot">=</span><span class="fl">0.3221</span><span class="sc">*</span><span class="fu">exp</span>(<span class="fl">0.0803</span><span class="sc">*</span>((Tmean[Tmean<span class="sc">&gt;=</span><span class="dv">0</span>])<span class="sc">^</span><span class="fl">0.8876</span>))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priestley-Taylor equation </span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    PETval<span class="ot">=</span>(alpha<span class="sc">/</span>(lambdaV<span class="sc">*</span>rhoW))<span class="sc">*</span>(deltaVal<span class="sc">/</span>(deltaVal<span class="sc">+</span>gamma))<span class="sc">*</span>Rad</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    PETval[PETval<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(PETval) <span class="co">#estimate in m</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As we can see from the function above, Priestley-Taylor formula requires mean temperature and solar radiation as inputs. So, we will collect the meteorological dataset namely <em>a</em>) Mean daily temperature <em>b</em>) Total solar radiation from the sample station and estimate the value of total daily potential evapotranspiration (in m). We will also store total daily precipitation, which will be used as model forcing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># Observed meteorological forcings </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> Rad<span class="ot">=</span>CRNdat<span class="sc">$</span>SOLARAD_DAILY<span class="sc">*</span><span class="dv">1000</span>        <span class="co"># (as 1 MJ= 1000 KJ)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a> Tmean<span class="ot">=</span>CRNdat<span class="sc">$</span>T_DAILY_MEAN</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a> PCP<span class="ot">=</span>CRNdat<span class="sc">$</span>P_DAILY_CALC<span class="sc">/</span><span class="dv">10</span>           <span class="co"># convert units from mm to cm</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a> <span class="co"># Linear gap-filling of missing samples and removing flagged samples</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(zoo)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a> Tmean<span class="ot">=</span><span class="fu">na.approx</span>(Tmean,<span class="at">na.rm =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a> Rad<span class="ot">=</span><span class="fu">na.approx</span>(Rad,<span class="at">na.rm =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a> PCP[PCP<span class="sc">&lt;</span><span class="dv">0</span>]<span class="ot">=</span><span class="dv">0</span>       <span class="co"># Negative (flagged values are replaced by 0)</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a> PCP[<span class="fu">is.na</span>(PCP)]<span class="ot">=</span><span class="dv">0</span>  <span class="co"># NA values are replaced by 0)</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a> <span class="co"># Create data frame for met forcings for the station</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a> datetime<span class="ot">=</span><span class="fu">as.Date</span>(<span class="fu">as.character</span>(CRNdat<span class="sc">$</span>LST_DATE), <span class="at">format=</span> <span class="st">"%Y%m%d"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a> forcings<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">Date=</span>datetime,PCP, Rad,Tmean)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a> <span class="co"># Apply Priestley-Taylor method for PET estimation using the PT_PET function</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a> PET<span class="ot">=</span><span class="fu">PT_PET</span>(Tmean,Rad,alpha)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a> <span class="co"># Plot estimated PET time series</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a> <span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a> <span class="fu">ggplot</span>(<span class="at">data=</span>forcings)<span class="sc">+</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> datetime, <span class="at">y =</span> PET), <span class="at">color=</span><span class="st">"steelblue"</span>) <span class="sc">+</span> </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Date"</span>) <span class="sc">+</span>             <span class="co"># Add labels to the axes</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PET [in m]"</span>)<span class="sc">+</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ch12_a6_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="simple-soil-water-balance-model" class="level2">
+<h2 class="anchored" data-anchor-id="simple-soil-water-balance-model">Simple Soil Water Balance Model</h2>
+<p>There are three important processes which are modeled: 1) Water energy coupling in the form of SM-EF curve. EF is given as ET/PET. PET is calculated by Priestley-Taylor method. 2) Runoff 3) SSM and RZSM relationship</p>
+<p>$ =P-ET-R-D$</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># Observed meteorological forcings </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># Convert Rad to KJ (as 1 MJ= 1000 KJ)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a> Rad<span class="ot">=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>SOLARAD_DAILY<span class="sc">*</span><span class="dv">1000</span>, <span class="at">na.rm=</span><span class="cn">FALSE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a> Tmean<span class="ot">=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>T_DAILY_MEAN,<span class="at">na.rm=</span><span class="cn">FALSE</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a> <span class="co"># convert units from mm to cm</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a> PCP<span class="ot">=</span><span class="fu">na.approx</span>(CRNdat<span class="sc">$</span>P_DAILY_CALC<span class="sc">/</span><span class="dv">10</span> ,<span class="at">na.rm=</span><span class="cn">FALSE</span>) </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a> {<span class="co"># Model parameters</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a> <span class="co"># alpha=0.5                # Priestley-Taylor correction factor</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a> <span class="co"># EFmx=0.950               # Max Evaporative fraction </span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a> <span class="co"># </span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a> <span class="co"># por_s=0.5                # Surface field capacity</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a> <span class="co"># wp_s=0.12                # Surface wilting point</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a> <span class="co"># b_s=3                    # Power coefficient of surface drainage curve  </span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a> <span class="co"># Ks_s=250                  # Saturated hydraulic conductivity of surface </span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a> <span class="co"># </span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a> <span class="co"># por_r=0.5                # RZ field capacity</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a> <span class="co"># wp_r=0.30                # RZ wilting point</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a> <span class="co"># b_r=1.1                    # Power coefficient of rootzone drainage curve  </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a> <span class="co"># Ks_r=100                 # Saturated hydraulic conductivity of rootzone </span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  alpha<span class="ot">=</span><span class="fl">1.58</span>; EFmx<span class="ot">=</span><span class="fl">0.9</span>; por_s<span class="ot">=</span><span class="fl">0.39</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  wp_s<span class="ot">=</span><span class="fl">0.08</span>; b_s<span class="ot">=</span> <span class="fl">2.4</span>; Ks_s<span class="ot">=</span><span class="fl">0.7</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  por_r<span class="ot">=</span> <span class="fl">0.53</span>; wp_r<span class="ot">=</span><span class="fl">0.4</span>; b_r<span class="ot">=</span><span class="fl">3.5</span>; Ks_r<span class="ot">=</span> <span class="dv">10</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a> <span class="co">#~~~ Two-layer Soil Water Balance Model </span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a> <span class="co"># Empty arrays to store data</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a> RZSM<span class="ot">=</span> SSM<span class="ot">=</span> drainage<span class="ot">=</span> ET<span class="ot">=</span> PET<span class="ot">=</span> runoff<span class="ot">=</span> infilt <span class="ot">=</span>Es<span class="ot">=</span><span class="fu">c</span>()</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a> <span class="co"># Initial soil moisture state for model initiation</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a> SSM[<span class="dv">1</span>]<span class="ot">=</span>RZSM[<span class="dv">1</span>]<span class="ot">=</span><span class="fl">0.45</span>                          </span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(PCP)){</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>   zs<span class="ot">=</span><span class="dv">5</span>                     <span class="co"># Surface layer depth (cm)</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>   cp_s<span class="ot">=</span>(por_s<span class="sc">+</span>wp_s)<span class="sc">/</span><span class="dv">2</span>      <span class="co"># Surface critical soil moisture</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>   zr<span class="ot">=</span><span class="dv">100</span>                   <span class="co"># Rootzone profile depth (cm)</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>   cp_r<span class="ot">=</span>(por_r<span class="sc">+</span>wp_r)<span class="sc">/</span><span class="dv">2</span>      <span class="co"># Rootzone critical soil moisture</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>   hp_s<span class="ot">=</span><span class="fl">0.0</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>   EFmx_s<span class="ot">=</span><span class="fl">0.1</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>   intercept_thresh<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>   infilCap<span class="ot">=</span><span class="fu">pmax</span>(<span class="dv">0</span>,(por_s<span class="sc">-</span>SSM[t<span class="dv">-1</span>])<span class="sc">*</span>zs)</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>   runoff[t]<span class="ot">=</span><span class="fu">pmax</span>(<span class="dv">0</span>,(PCP[t]<span class="sc">-</span>infilCap))</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>   infilt[t]<span class="ot">=</span> Ks_s<span class="sc">*</span>(<span class="fu">pmax</span>(<span class="dv">0</span>,SSM[t<span class="dv">-1</span>]<span class="sc">-</span>cp_s)<span class="sc">/</span>(por_s<span class="sc">-</span>cp_s))<span class="sc">^</span>b_s</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>   SSM[t]<span class="ot">=</span><span class="fu">pmax</span>(wp_s,</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>               (zs<span class="sc">*</span>SSM[t<span class="dv">-1</span>]<span class="sc">+</span><span class="fu">pmin</span>(PCP[t],infilCap)<span class="sc">-</span>infilt[t])<span class="sc">/</span>zs)</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>   <span class="co"># 4. Calculate surface evaporation for days with no PCP </span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>   PET[t]<span class="ot">=</span><span class="dv">100</span><span class="sc">*</span><span class="fu">PT_PET</span>(Tmean[t],Rad[t],alpha)  <span class="co">#PET in cm</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>   Es[t]<span class="ot">=</span><span class="fu">max</span>(<span class="dv">0</span>,<span class="fu">ifelse</span>(SSM[t]<span class="sc">&gt;</span>wp_s,</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>                PET[t]<span class="sc">*</span>(EFmx_s<span class="sc">/</span>(wp_s<span class="sc">-</span>hp_s))<span class="sc">*</span>(wp_s<span class="sc">-</span>hp_s),</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>                PET[t]<span class="sc">*</span>(EFmx_s<span class="sc">/</span>(wp_s<span class="sc">-</span>hp_s))<span class="sc">*</span>(SSM[t]<span class="sc">-</span>hp_s)))</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>   <span class="co"># 5. Exclude evaporative losses from SSM</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>   SSM[t]<span class="ot">=</span><span class="fu">ifelse</span>(PCP[t]<span class="sc">&gt;=</span>intercept_thresh,</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>         <span class="fu">pmax</span>(wp_s,(zs<span class="sc">*</span>SSM[t]<span class="sc">-</span>Es[t])<span class="sc">/</span>zs),SSM[t])</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Estimate ET based on PET and RZSM state</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>   ET[t]<span class="ot">=</span><span class="fu">max</span>(<span class="dv">0</span>,<span class="fu">ifelse</span>(RZSM[t<span class="dv">-1</span>]<span class="sc">&gt;</span>cp_r,</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>                PET[t]<span class="sc">*</span>(EFmx<span class="sc">/</span>(cp_r<span class="sc">-</span>wp_r))<span class="sc">*</span>(cp_r<span class="sc">-</span>wp_r),</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>                PET[t]<span class="sc">*</span>(EFmx<span class="sc">/</span>(cp_r<span class="sc">-</span>wp_r))<span class="sc">*</span>(RZSM[t<span class="dv">-1</span>]<span class="sc">-</span>wp_r)))</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Deep drainage based on RZSM state. Continues till CP</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>   <span class="co">#drainage[t]=Ks_r*(pmax(0,RZSM[t-1]-cp_r))^b_r</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>   <span class="co"># drainage[t]= max(0,Ks_r*((exp(b_r*(RZSM[t-1]-cp_r))-1)/(exp(b_r*(1-cp_r))-1)))</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>   drainage[t]<span class="ot">=</span> Ks_r<span class="sc">*</span>(<span class="fu">pmax</span>(<span class="dv">0</span>,RZSM[t<span class="dv">-1</span>]<span class="sc">-</span>cp_r)<span class="sc">/</span>(por_r<span class="sc">-</span>cp_r))<span class="sc">^</span>b_r</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Update RZSM after drainage and ET</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>   RZSM[t]<span class="ot">=</span><span class="fu">pmax</span>(wp_r,</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>                (zr<span class="sc">*</span>RZSM[t<span class="dv">-1</span>]<span class="sc">-</span>drainage[t]<span class="sc">-</span>ET[t]<span class="sc">+</span>infilt[t])<span class="sc">/</span>zr) </span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a> <span class="co"># Plotting estimated versus observed RZSM</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>{<span class="fu">plot</span>(RZSM_obs, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">col=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="dv">3</span>, </span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>      <span class="at">ylab=</span><span class="st">"Volumetric SM"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, </span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">"Comparison of observed vs modeled RZSM"</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.5</span>))</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(RZSM, <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x =</span> <span class="st">"bottomleft"</span>,</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Obs RZSM"</span>, <span class="st">"Modeled RZSM"</span>),</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray80"</span>,<span class="st">"blue"</span>),</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ch12_a6_files/figure-html/12a2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>{<span class="fu">plot</span>(SMpdf<span class="sc">$</span>SM5, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">col=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="dv">3</span>, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">ylab=</span><span class="st">"Volumetric SM"</span>, <span class="at">xlab=</span><span class="st">"Time"</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">main=</span><span class="st">"Comparison of observed vs modeled SSM"</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.5</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(SSM, <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x =</span> <span class="st">"bottomleft"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Obs SSM"</span>, <span class="st">"Modeled SSM"</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray80"</span>,<span class="st">"blue"</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ch12_a6_files/figure-html/12a2-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="optimizing-soil-water-balance-model-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="optimizing-soil-water-balance-model-parameters">Optimizing Soil Water Balance Model Parameters</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set condition for model initiation</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ini_condition<span class="ot">=</span>RZSM_obs[<span class="dv">1</span>]  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame with Met forcings</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>forcing<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">Rad=</span>CRNdat<span class="sc">$</span>SOLARAD_DAILY<span class="sc">*</span><span class="dv">1000</span>,   <span class="co"># in KJ</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Tmean=</span>CRNdat<span class="sc">$</span>T_DAILY_MEAN,        <span class="co"># in deg C  </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">PCP=</span>CRNdat<span class="sc">$</span>P_DAILY_CALC<span class="sc">/</span><span class="dv">10</span>)       <span class="co"># in cm</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Split 75% of data for model training </span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>forcing_trn<span class="ot">=</span>forcing[<span class="dv">1</span><span class="sc">:</span><span class="fu">round</span>(<span class="fu">nrow</span>(forcing)<span class="sc">*</span>.<span class="dv">75</span>),]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>forcing_tst<span class="ot">=</span>forcing[<span class="fu">round</span>(<span class="fu">nrow</span>(forcing)<span class="sc">*</span>.<span class="dv">75</span>)<span class="sc">:</span><span class="fu">nrow</span>(forcing),]</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Soil Water balance model in the form of a function</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>SWB_model<span class="ot">=</span><span class="cf">function</span>(ParIn,ini_condition,forcing){</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Input parameters  </span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>   alpha<span class="ot">=</span>ParIn[<span class="dv">1</span>]        <span class="co"># Priestley-Taylor correction factor</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>   EFmx<span class="ot">=</span>ParIn[<span class="dv">2</span>]         <span class="co"># Max Evaporative fraction </span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>   por_s<span class="ot">=</span>ParIn[<span class="dv">3</span>]         <span class="co"># Surface field capacity</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>   wp_s<span class="ot">=</span>ParIn[<span class="dv">4</span>]         <span class="co"># Surface wilting point</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>   b_s<span class="ot">=</span>ParIn[<span class="dv">5</span>]          <span class="co"># Power coefficient of surface drainage curve  </span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>   Ks_s<span class="ot">=</span>ParIn[<span class="dv">6</span>]         <span class="co"># Saturated hydraulic conductivity of surface </span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>   por_r<span class="ot">=</span>ParIn[<span class="dv">7</span>]        <span class="co"># RZ field capacity</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>   wp_r<span class="ot">=</span>ParIn[<span class="dv">8</span>]         <span class="co"># RZ wilting point</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>   b_r<span class="ot">=</span>ParIn[<span class="dv">9</span>]          <span class="co"># Power coefficient of rootzone drainage curve  </span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>   Ks_r<span class="ot">=</span>ParIn[<span class="dv">10</span>]        <span class="co"># Saturated hydraulic conductivity of rootzone </span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Forcings</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  PCP<span class="ot">=</span><span class="fu">na.approx</span>(forcing<span class="sc">$</span>PCP, <span class="at">na.rm=</span>F)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  Tmean<span class="ot">=</span><span class="fu">na.approx</span>(forcing<span class="sc">$</span>Tmean, <span class="at">na.rm=</span>F)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  Rad<span class="ot">=</span><span class="fu">na.approx</span>(forcing<span class="sc">$</span>Rad, <span class="at">na.rm=</span>F)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a> <span class="co">#~~~ Simple Soil Water Balance Model </span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a> <span class="co"># Empty arrays to store data</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a> RZSM<span class="ot">=</span> SSM<span class="ot">=</span> drainage<span class="ot">=</span> ET<span class="ot">=</span> PET<span class="ot">=</span> runoff<span class="ot">=</span> infilt <span class="ot">=</span>Es<span class="ot">=</span>infilCap<span class="ot">=</span><span class="fu">c</span>()  </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a> SSM[<span class="dv">1</span>]<span class="ot">=</span> RZSM[<span class="dv">1</span>]<span class="ot">=</span> ini_condition            <span class="co"># Initial soil moisture state</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">nrow</span>(forcing)){</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>   zs<span class="ot">=</span><span class="dv">10</span>                     <span class="co"># Surface layer depth (cm)</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>   cp_s<span class="ot">=</span>(por_s<span class="sc">+</span>wp_s)<span class="sc">/</span><span class="dv">2</span>      <span class="co"># Surface critical soil moisture</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>   zr<span class="ot">=</span><span class="dv">100</span>                   <span class="co"># Rootzone profile depth (cm)</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>   cp_r<span class="ot">=</span>(por_r<span class="sc">+</span>wp_r)<span class="sc">/</span><span class="dv">2</span>      <span class="co"># Rootzone critical soil moisture</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>   hp_s<span class="ot">=</span><span class="fl">0.00</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>   EFmx_s<span class="ot">=</span><span class="fl">0.15</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Infiltration based on the SSM state after PCP</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    infilCap[t]<span class="ot">=</span><span class="fu">pmax</span>(<span class="dv">0</span>,(por_s<span class="sc">-</span>SSM[t<span class="dv">-1</span>])<span class="sc">*</span>zs)</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2 Runoff: if SSM &gt; por. Update SSM to por after runoff</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    runoff[t]<span class="ot">=</span><span class="fu">pmax</span>(<span class="dv">0</span>,(PCP[t]<span class="sc">-</span>infilCap[t]))</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. Infiltration</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    infilt[t]<span class="ot">=</span> Ks_s<span class="sc">*</span>(<span class="fu">pmax</span>(<span class="dv">0</span>,SSM[t<span class="dv">-1</span>]<span class="sc">-</span>cp_s)<span class="sc">/</span>(por_s<span class="sc">-</span>cp_s))<span class="sc">^</span>b_s</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4. Update SSM based on infilt and PCP</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    SSM[t]<span class="ot">=</span><span class="fu">pmax</span>(wp_s,</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>                (zs<span class="sc">*</span>SSM[t<span class="dv">-1</span>]<span class="sc">+</span><span class="fu">pmin</span>(PCP[t],infilCap[t])<span class="sc">-</span>infilt[t])<span class="sc">/</span>zs)</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 5. Calculate surface evaporation for days with no PCP </span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    PET[t]<span class="ot">=</span><span class="dv">100</span><span class="sc">*</span><span class="fu">PT_PET</span>(Tmean[t],Rad[t],alpha)  <span class="co">#PET in cm</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    Es[t]<span class="ot">=</span><span class="fu">max</span>(<span class="dv">0</span>,<span class="fu">ifelse</span>(SSM[t]<span class="sc">&gt;</span>wp_s,</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>                       PET[t]<span class="sc">*</span>(EFmx_s<span class="sc">/</span>(wp_s<span class="sc">-</span>hp_s))<span class="sc">*</span>(wp_s<span class="sc">-</span>hp_s),</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>                       PET[t]<span class="sc">*</span>(EFmx_s<span class="sc">/</span>(wp_s<span class="sc">-</span>hp_s))<span class="sc">*</span>(SSM[t]<span class="sc">-</span>hp_s)))</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 6. Exclude evaporative losses from SSM</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    SSM[t]<span class="ot">=</span><span class="fu">ifelse</span>(PCP[t]<span class="sc">==</span><span class="dv">0</span>,</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">pmax</span>(wp_s,(zs<span class="sc">*</span>SSM[t]<span class="sc">-</span>Es[t])<span class="sc">/</span>zs),SSM[t])</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 7. Estimate ET based on PET and RZSM state</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    ET[t]<span class="ot">=</span><span class="fu">max</span>(<span class="dv">0</span>,<span class="fu">ifelse</span>(RZSM[t<span class="dv">-1</span>]<span class="sc">&gt;</span>cp_r,</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>                       PET[t]<span class="sc">*</span>(EFmx<span class="sc">/</span>(cp_r<span class="sc">-</span>wp_r))<span class="sc">*</span>(cp_r<span class="sc">-</span>wp_r),</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>                       PET[t]<span class="sc">*</span>(EFmx<span class="sc">/</span>(cp_r<span class="sc">-</span>wp_r))<span class="sc">*</span>(RZSM[t<span class="dv">-1</span>]<span class="sc">-</span>wp_r)))</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 8. Deep drainage based on RZSM state. Continues till CP</span></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>    drainage[t]<span class="ot">=</span> Ks_r<span class="sc">*</span>(<span class="fu">pmax</span>(<span class="dv">0</span>,RZSM[t<span class="dv">-1</span>]<span class="sc">-</span>cp_r)<span class="sc">/</span>(por_r<span class="sc">-</span>cp_r))<span class="sc">^</span>b_r</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 9. Update RZSM after drainage and ET</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>    RZSM[t]<span class="ot">=</span><span class="fu">pmax</span>(wp_r,</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>                 (zr<span class="sc">*</span>RZSM[t<span class="dv">-1</span>]<span class="sc">-</span>drainage[t]<span class="sc">-</span>ET[t]<span class="sc">+</span>infilt[t])<span class="sc">/</span>zr) </span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>   <span class="fu">return</span>(<span class="fu">cbind</span>(SSM,RZSM,drainage,ET,runoff,PET))</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate error in the simulated RZSM vis-a-vis obs RZSM</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>error_fun<span class="ot">=</span><span class="cf">function</span>(parVal){</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>  <span class="co">#~~~~~~~~~ MODEL VARIABLES HERE ~~~~~~~~~</span></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>  SSM_obs<span class="ot">=</span>SMpdf<span class="sc">$</span>SM5</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>  RZSM_obs<span class="ot">=</span>RZSM_obs</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>  spinup<span class="ot">=</span><span class="dv">30</span>           <span class="co"># Excluded from the model evaluation</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>  <span class="co">#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a> <span class="co"># We use estimated parameters for this iteration in the SWB model</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a> sim_out<span class="ot">=</span><span class="fu">SWB_model</span>(parVal,ini_condition,<span class="at">forcing=</span>forcing)</span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a> err<span class="ot">=</span>hydroGOF<span class="sc">::</span><span class="fu">mae</span>(SSM_obs[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>spinup)],</span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>                    sim_out[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>spinup),<span class="dv">1</span>])<span class="sc">+</span>   <span class="co"># SSM simulation RMSE</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>     hydroGOF<span class="sc">::</span><span class="fu">mae</span>(RZSM_obs[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>spinup)],</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>                     sim_out[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>spinup),<span class="dv">2</span>])   <span class="co"># RZSM simulation RMSE</span></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a> <span class="fu">names</span>(par)<span class="ot">=</span> <span class="fu">c</span>(<span class="st">"alpha"</span>,<span class="st">"EFmx"</span>,<span class="st">"por_s"</span>,<span class="st">"wp_s"</span>,<span class="st">"b_s"</span>,</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Ks_s"</span>,<span class="st">"por_r"</span>,<span class="st">"wp_r"</span>,<span class="st">"b_r"</span>,<span class="st">"Ks_r"</span>)</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a> por_s<span class="ot">=</span>par[<span class="dv">3</span>]</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a> wp_s<span class="ot">=</span>par[<span class="dv">4</span>]</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a> por_r<span class="ot">=</span>par[<span class="dv">7</span>]</span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a> wp_r<span class="ot">=</span>par[<span class="dv">8</span>]</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a> <span class="co"># Penalized constraint violation </span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span>(<span class="sc">!</span>(por_s<span class="sc">&gt;</span>wp_s) <span class="sc">|</span> <span class="sc">!</span>(por_r<span class="sc">&gt;</span>wp_r)){ </span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a> <span class="co"># If WP&gt;PC&gt;Porosity is not true, the function returns high errors</span></span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a> err<span class="ot">=</span><span class="fl">10e3</span>  </span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a> <span class="fu">return</span>(err)</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a><span class="co"># Use SCE Optim to optimize the SWB model parameters</span></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hydromad)</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9</span>);ParOut<span class="ot">=</span>hydromad<span class="sc">::</span><span class="fu">SCEoptim</span>(error_fun,</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Initial values of params</span></span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>       <span class="fu">c</span>(<span class="fl">0.7</span>,<span class="fl">0.5</span>,                     <span class="co"># "alpha","EFmx"</span></span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="fl">1.1</span>,<span class="dv">4</span>,             <span class="co"># "por_s","wp_s","b_s","Ks_s"</span></span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>         <span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="fl">1.1</span>,<span class="dv">4</span>),            <span class="co"># "por_r","wp_r","b_r","Ks_r"  </span></span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Lower values of params</span></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>       <span class="at">lower =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.2</span>,             <span class="co"># "alpha","EFmx"</span></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.25</span>,<span class="fl">0.08</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>,   <span class="co"># "por_s","wp_s","b_s","Ks_s"</span></span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.25</span>,<span class="fl">0.8</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>),   <span class="co"># "por_r","wp_r","b_r","Ks_r"  </span></span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Upper values of params</span></span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>       <span class="at">upper =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="fl">0.98</span>,              <span class="co"># "alpha","EFmx"</span></span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.6</span>,<span class="fl">0.4</span>,<span class="dv">5</span>,<span class="dv">10</span>,       <span class="co"># "por_s","wp_s","b_s","Ks_s"</span></span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.6</span>,<span class="fl">0.4</span>,<span class="dv">5</span>,<span class="dv">10</span>),      <span class="co"># "por_r","wp_r","b_r","Ks_r"  </span></span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>       <span class="at">control =</span> <span class="fu">list</span>(<span class="at">reltol =</span> <span class="fl">1e-3</span>,<span class="at">tolsteps=</span><span class="dv">7</span>,<span class="at">trace=</span>F))</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ParOut<span class="sc">$</span>par)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"alpha"</span>,<span class="st">"EFmx"</span>,</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"por_s"</span>,<span class="st">"wp_s"</span>,<span class="st">"b_s"</span>,<span class="st">"Ks_s"</span>,</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"por_r"</span>,<span class="st">"wp_r"</span>,<span class="st">"b_r"</span>,<span class="st">"Ks_r"</span>);ParOut<span class="sc">$</span>par</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    alpha      EFmx     por_s      wp_s       b_s      Ks_s     por_r      wp_r 
+1.4673006 0.8875335 0.3914829 0.2591621 4.7322125 6.2081672 0.4587781 0.8000000 
+      b_r      Ks_r 
+1.7243408 2.0689389 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># alpha=1.58; EFmx=0.3; por_s=0.39</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># wp_s=0.08; b_s= 2.4; Ks_s=0.7</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># por_r= 0.53; wp_r=0.4; b_r=3.5; Ks_r= 6.7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="evaluating-model-output" class="level2">
+<h2 class="anchored" data-anchor-id="evaluating-model-output">Evaluating model output</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>{ <span class="co"># Apply the SWB model on test dataset</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  optimOut<span class="ot">=</span><span class="fu">SWB_model</span>(<span class="at">ParIn=</span>ParOut<span class="sc">$</span>par,                                              <span class="at">ini_condition=</span>RZSM_obs[<span class="dv">1</span>],</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">forcing=</span>forcing)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert the output array to a data frame for easy plotting</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  optimOut<span class="ot">=</span><span class="fu">data.frame</span>(optimOut) </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add time and precipitation to the output df so it can be plotted </span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  optimOut<span class="sc">$</span>PCP<span class="ot">=</span>forcing<span class="sc">$</span>PCP</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  optimOut<span class="sc">$</span>time<span class="ot">=</span><span class="fu">as.Date</span>(<span class="fu">as.character</span>(CRNdat<span class="sc">$</span>LST_DATE),<span class="at">format=</span><span class="st">"%Y%m%d"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  optimOut<span class="sc">$</span>RZSM_obs<span class="ot">=</span>RZSM_obs</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  optimOut<span class="sc">$</span>SSM_obs<span class="ot">=</span>SMpdf<span class="sc">$</span>SM5</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>{ </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(ggplot2)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(patchwork)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot for observed and modeled RZSM</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  p_SSM<span class="ot">=</span><span class="fu">ggplot</span>(optimOut) <span class="sc">+</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> SSM, <span class="at">color =</span> <span class="st">"SSM"</span>),<span class="at">linetype=</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> SSM_obs, <span class="at">color =</span> <span class="st">"SSM_obs"</span>),<span class="at">linetype=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"SSM"</span>)<span class="sc">+</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>) <span class="sc">+</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"blue"</span>,<span class="st">"black"</span>))<span class="sc">+</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  p_RZSM<span class="ot">=</span><span class="fu">ggplot</span>(optimOut) <span class="sc">+</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> RZSM, <span class="at">color =</span> <span class="st">"RZSM"</span>),<span class="at">linetype=</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> RZSM_obs, <span class="at">color =</span> <span class="st">"RZSM_obs"</span>),<span class="at">linetype=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"RZSM"</span>)<span class="sc">+</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>) <span class="sc">+</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"blue"</span>,<span class="st">"black"</span>))<span class="sc">+</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot for modeled ET</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>p_ET<span class="ot">=</span><span class="fu">ggplot</span>(optimOut) <span class="sc">+</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> ET, <span class="at">color =</span> <span class="st">"ET"</span>))<span class="sc">+</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"ET"</span>)<span class="sc">+</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>) <span class="sc">+</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"ET"</span> <span class="ot">=</span> <span class="st">"blue"</span>))<span class="sc">+</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot for modeled drainage</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>p_drain<span class="ot">=</span><span class="fu">ggplot</span>(optimOut) <span class="sc">+</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> drainage, <span class="at">color =</span> <span class="st">"drainage"</span>))<span class="sc">+</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"Drainage"</span>)<span class="sc">+</span></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>) <span class="sc">+</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"drainage"</span> <span class="ot">=</span> <span class="st">"blue"</span>))<span class="sc">+</span></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot for observed precipitation</span></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>p_PCP<span class="ot">=</span><span class="fu">ggplot</span>(optimOut) <span class="sc">+</span></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> PCP, <span class="at">fill =</span> <span class="st">"PCP"</span>),  </span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>           <span class="at">stat =</span> <span class="st">"identity"</span>)<span class="sc">+</span></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>( <span class="at">name =</span> <span class="st">"PCP"</span>,<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">6</span>))<span class="sc">+</span></span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time"</span>) <span class="sc">+</span></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"PCP"</span> <span class="ot">=</span> <span class="st">"black"</span>))<span class="sc">+</span></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine all plots into a single window</span></span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>p_SSM<span class="sc">/</span>p_RZSM<span class="sc">/</span>p_PCP<span class="sc">/</span>p_ET<span class="sc">/</span>p_drain<span class="sc">+</span>                <span class="co"># Plots one under the other</span></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">"collect"</span>,       <span class="co"># Collect common legends</span></span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>            <span class="at">axis_titles =</span> <span class="st">"collect"</span>,    <span class="co"># Collect common axis titles</span></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>            <span class="at">axes=</span><span class="st">"collect"</span>) <span class="sc">&amp;</span>           <span class="co"># Collect common axis labels</span></span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>            <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">'bottom'</span>)           </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ch12_a6_files/figure-html/12a4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(optimOut<span class="sc">$</span>RZSM,optimOut<span class="sc">$</span>ET)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ch12_a6_files/figure-html/12a4-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
