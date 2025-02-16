@@ -230,8 +230,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./ch12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Modeling Field Soil Water Balance</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
   </div>
 </li>
     </ul>
@@ -540,13 +546,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">2</span>]] <span class="ot">=</span> data2</span>
 <span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a>out[[<span class="dv">1</span>]]          <span class="co"># Contains data1 at this location</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 23.37942 22.45872 22.16273 25.20562 28.57200 24.98929 25.06057 24.51844
- [9] 21.60843 20.18016 26.24442 21.88610 21.74348 26.82165 23.90272 21.90610
-[17] 29.65709 27.82109 21.76006 26.69227 22.25969 25.53530 21.02821 20.68609
-[25] 25.88259 26.03527 23.23063 27.74360 24.41544 24.93585 21.04806 26.84137
-[33] 29.89322 21.68510 20.55723 24.71014 22.99953 20.63198 24.33490 27.62807
-[41] 24.92916 29.56528 21.03162 22.71321 23.72977 23.53730 20.19817 20.56595
-[49] 21.64033 26.60291</code></pre>
+<pre><code> [1] 27.90755 21.54491 27.14830 28.95415 26.87814 27.20162 24.58002 29.23537
+ [9] 23.50161 26.17044 22.03400 24.11849 22.16038 26.72510 21.05802 20.55996
+[17] 22.07802 21.48522 24.90543 24.10379 26.63294 22.35540 24.93446 23.53812
+[25] 29.84921 29.40850 21.36123 21.23293 24.81339 24.36070 21.96585 21.10036
+[33] 26.09149 24.34997 24.34922 29.61488 22.65894 24.70010 20.61949 29.80737
+[41] 24.16209 25.78879 25.65871 29.89169 27.95555 28.87231 21.76569 20.84275
+[49] 22.85248 29.99750</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame</span></span>
 <span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">=</span><span class="fu">data.frame</span>(<span class="at">x=</span>data1, <span class="at">y=</span>data2)</span>
@@ -975,12 +981,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 6 × 4
    Year January Month  Value
   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-1  1913    48.3 Jan   -15.7 
-2  1913    48.3 Feb    -8.92
-3  1913    48.3 Mar    -2.93
-4  1914    30.1 Jan   -17.5 
-5  1914    30.1 Feb   -17.3 
-6  1914    30.1 Mar    -3.07</code></pre>
+1  1913    30.9 Jan   -12.4 
+2  1913    30.9 Feb   -10.2 
+3  1913    30.9 Mar    -5.67
+4  1914    73.8 Jan    -8.38
+5  1914    73.8 Feb   -11.7 
+6  1914    73.8 Mar   -10.4 </code></pre>
 </div>
 </div>
 <p><strong>Line plot</strong></p>
@@ -1562,7 +1568,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","selector":".lightbox"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","openEffect":"zoom","descPosition":"bottom","loop":false});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

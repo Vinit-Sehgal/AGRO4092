@@ -9,4 +9,6 @@ editor:
 # Modeling Field Soil Water Balance
 
 ```{r child="ch12_a6.qmd", message = FALSE, warning = FALSE}
+
+
 ```
