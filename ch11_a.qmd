@@ -29,13 +29,14 @@ For our example, we will use daily dataset for 2021.
 
 ```{r 11a1, message = FALSE, warning = FALSE}
 # Download in situ data files for 2021 from GITHUB repositiry 
-utils::download.file("https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/CRND0103-2021-OK_Stillwater_2_W.txt?raw=true",
+utils::download.file("https://github.com/Vinit-Sehgal/SampleData/blob/master/CRN_data/CRND0103-2021-OK_Stillwater_2_W.txt?raw=true",
                      destfile = "CRND0103-2021-OK_Stillwater_2_W.txt", 
                      mode="wb", #wb is write binary
                      method ='auto', 
                      quiet=FALSE)
 
-utils::download.file("https://github.com/Vinit-Sehgal/AGRO4092/blob/main/SampleData-master/CRN_data/HEADERS.txt?raw=true",
+
+utils::download.file("https://github.com/Vinit-Sehgal/SampleData/blob/master/CRN_data/HEADERS.txt?raw=true",
                    destfile = "headers.txt", 
                    mode="wb", #wb is write binary
                    method ='auto', 
@@ -62,7 +63,7 @@ dataTable = kbl(head(CRNdat,6),full_width = F)
 kable_styling(dataTable,bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-Let's plot daily average soil moisture from 5 amd and 50 cm depths, along with the corresponding daily total precipitation.
+Let's plot daily average soil moisture from 5 and and 50 cm depths, along with the corresponding daily total precipitation.
 
 ```{r 11a2, message = FALSE, warning = FALSE}
  # Create Date array for the station

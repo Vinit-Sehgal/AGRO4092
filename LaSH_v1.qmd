@@ -8,7 +8,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Landscape-scale Soil Hydrology Model
+# Landscape Soil Hydrology Model
 
 ## Model Description
 
@@ -65,7 +65,7 @@ We will use one of the MOPEX watersheds in Louisiana for the demonstration of th
 library(terra)   # for spatial data manipulation
 library(mapview) # for spatial data visualization
 
-MOPEX=vect("C:/Users/VSehgal/OneDrive - LSU AgCenter/TAMU/research_tamu/general_data_access/MOPEX Catchments/MOPEX_catchments_431.shp")
+MOPEX=vect("./SampleData-master/MOPEX/MOPEX_catchments_431.shp")
 
 # Display the MOPEX catchments
 mapview(MOPEX, col.regions="blue", lwd=2, legend=TRUE, layer.name="MOPEX Catchments")  
@@ -129,40 +129,46 @@ As an example, we will use daily gridded dataset for the year 2018 for precipita
 # Meteorological dataset
 ############################################################################################
 # Download 1-km meteorological data for the selected watershed 
-library("daymetr") #VARIABLES of INTEREST:  prcp (mm), srad (W m-2),	tmax and tmin (degrees c)
+library("daymetr") 
 
+# prcp (mm)
 download_daymet_ncss(location = c(mopex_ext[4],mopex_ext[1],mopex_ext[3],mopex_ext[2]),
+                     # location = bounding box extent defined as top left / bottom right pair c(lat,lon,lat,lon)
                      start = 2018,
                      end = 2018,
-                     path = "C:/Users/VSehgal/Documents/",
+                     path = tempdir(),  # Save file in the temp directory
                      param = "prcp", 
                      silent = TRUE)
-
+# srad (W m-2)
 download_daymet_ncss(location = c(mopex_ext[4],mopex_ext[1],mopex_ext[3],mopex_ext[2]),
+                     # location = bounding box extent defined as top left / bottom right pair c(lat,lon,lat,lon)
                      start = 2018,
                      end = 2018,
-                     path = "C:/Users/VSehgal/Documents/",
+                     path = tempdir(),  # Save file in the temp directory
                      param = "tmax", 
                      silent = TRUE)
-
+# tmin (degree C)
 download_daymet_ncss(location = c(mopex_ext[4],mopex_ext[1],mopex_ext[3],mopex_ext[2]),
+                     # location = bounding box extent defined as top left / bottom right pair c(lat,lon,lat,lon)
                      start = 2018,
                      end = 2018,
-                     path = "C:/Users/VSehgal/Documents/",
+                     path = tempdir(),  # Save file in the temp directory
                      param = "tmin", 
                      silent = TRUE)
-
+# tmax (degrees c)
 download_daymet_ncss(location = c(mopex_ext[4],mopex_ext[1],mopex_ext[3],mopex_ext[2]),
+                     # location = bounding box extent defined as top left / bottom right pair c(lat,lon,lat,lon)
                      start = 2018,
                      end = 2018,
-                     path = "C:/Users/VSehgal/Documents/",
+                     path = tempdir(), # Save file in the temp directory
                      param = "srad", 
                      silent = TRUE)
 
-prcpYr=0.1*rast("C:/Users/VSehgal/Documents/prcp_daily_2018_ncss.nc")    # in cm/day
-tmaxYr=rast("C:/Users/VSehgal/Documents/tmax_daily_2018_ncss.nc")        # in deg C
-tminYr=rast("C:/Users/VSehgal/Documents/tmin_daily_2018_ncss.nc")        # in deg C
-sradYr=86.400*rast("C:/Users/VSehgal/Documents/srad_daily_2018_ncss.nc") # in KJ/m2/day
+
+prcpYr=0.1*rast(file.path(tempdir(),"prcp_daily_2018_ncss.nc"))     # in cm/day
+tmaxYr=rast(file.path(tempdir(),"tmax_daily_2018_ncss.nc"))         # in deg C
+tminYr=rast(file.path(tempdir(),"tmin_daily_2018_ncss.nc"))         # in deg C
+sradYr=86.400*rast(file.path(tempdir(),"srad_daily_2018_ncss.nc"))  # in KJ/m2/day
 
 ############################################################################################
 # Reproject to the projection of the watershed
@@ -265,7 +271,6 @@ plot(parDist, fun=function(){plot(mymopex, add=T)})
 Using the dataset and model parameters, we will apply the LaSH model to each grid to generate spatially distributed outputs of hydrological variables.
 
 ```{r, message = FALSE, warning = FALSE}
-
 ############################################################################################
 # Soil Water Balance Model
 ############################################################################################
