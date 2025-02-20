@@ -16,7 +16,7 @@ Landscape-scale Soil Hydrology Model is a 2-layer soil water balance model which
 As general schematic of the model with key model variables is given below:
 
 ![](images/clipboard-1325851612.png){fig-align="center" width="467"}
-
+### Background
 The nature of the soil-vegetation-atmosphere (SVA) interactions evolve with changes in the rootzone soil moisture.
 This transition of soil hydrologic state from energy-limited to water-limited regimes is represented as a sigmoid curve, with three distinct phases.
 Abundance of soil moisture in the SVA system can be characterized as wet decoupled, characterized by weakened linkages between water–carbon–energy cycles due to limiting net radiation and atmospheric resistance, with ET losses close to (or at) the potential rate.
@@ -51,36 +51,9 @@ Surface runoff is estimated as the saturation excess component of the precipitat
 Surface evaporation is considered as a fraction $Es_{frac}$ of the net evapotranspiration.
 The depth of the surface and the rootzone profile are fixed and are assumed to be 0-5 and 0-100 cm respectively.
 
-## Key Datasets for Model Development
-
-### MOPEX Catchments
-
-MOPEX (Model Parameter Estimation Experiment, [@schaake2006us]) catchments are a collection of hydrological catchments across the continental United States used for studying and modeling various aspects of hydrology.
-These catchments are part of a large dataset that includes daily measurements of evaporation, precipitation, streamflow, and temperature, along with other properties such as drainage area, elevation, and slope.
-The primary goal of the MOPEX initiative is to improve the understanding and prediction of hydrological processes by providing a comprehensive dataset for model calibration and validation.
-We will use one of the MOPEX watersheds in Louisiana for the demonstration of the soil water balance model [@duan2006model].
-
-```{r, message = FALSE, warning = FALSE}
-
-library(terra)   # for spatial data manipulation
-library(mapview) # for spatial data visualization
-
-MOPEX=vect("./SampleData-master/MOPEX/MOPEX_catchments_431.shp")
-
-# Display the MOPEX catchments
-mapview(MOPEX, col.regions="blue", lwd=2, legend=TRUE, layer.name="MOPEX Catchments")  
-
-# List of LA watersheds: 107, 427, 141, 406, 185
-mymopex=MOPEX[427,1]
-plot(mymopex, col="gray88", lwd=2, main="Selected watershed in Louisiana")
-
-# Extract the extent of the watershed. We will download Met data matching this extent
-mopex_ext=ext(mymopex) 
-```
-
 ### Priestley-Taylor Method for Potential ET (PET)
 
-For our purpose, we will use Priestley-Taylor formulation of Potential ET. This formulation is based on physical principles and can be seen as a simplified version of the Penman-Monteith formula for calculating evapotranspiration.
+The model uses Priestley-Taylor equation for potential ET estimation. This formulation is based on physical principles and can be seen as a simplified version of the Penman-Monteith formula for calculating evapotranspiration.
 The simplification involves removing the aerodynamic terms from the Penman-Monteith equation and using a constant ($α$), which has been empirically derived and is estimated to be 1.26 for open bodies of water, but can range from \<1 (humid conditions) to almost 2 (arid conditions).
 This constant tends to be higher in arid regions or areas experiencing significant water stress.
 The Priestley-Taylor formula can be used for calculating daily evapotranspiration and can also be applied to smaller time intervals (hourly, for example) if the necessary data is available.
@@ -111,13 +84,50 @@ where,
 >
 > $\alpha$ = Priestley-Taylor correction factor
 
-We will use high resolution (30arc-sec) estimates of PT correction factor from [@aschonitis2017high].
-The dataset is available at a global extent, which is masked to the extent of the selected watershed.
+For use with this model, we will use global, high resolution (30arc-sec) estimates of PT correction factor from [@aschonitis2017high].
+The dataset will be masked to the extent of the region-of-interest at the time of model implementation. Let's view the values of Priestley-Taylor correction factor for Contiguous US.
+
+```{r, message = FALSE, warning = FALSE}
+library(terra)
+utils::download.file("https://github.com/Vinit-Sehgal/SampleData/blob/master/raster_files/priestley_taylor_coefficient/cropPTalpha.tif?raw=true",
+                     destfile = "cropPTalpha.tif", 
+                     mode="wb", #wb is write binary
+                     method ='auto', 
+                     quiet=FALSE)
+PTalpha=rast("cropPTalpha.tif")
+plot(PTalpha, main="Priestley-Taylor coefficient for CONUS")
+```
+
+## Catchment Hydrology with LaSH model
+
+### MOPEX Catchments
+MOPEX (Model Parameter Estimation Experiment, [@schaake2006us]) catchments are a collection of hydrological catchments across the continental United States used for studying and modeling various aspects of hydrology.
+These catchments are part of a large dataset that includes daily measurements of evaporation, precipitation, streamflow, and temperature, along with other properties such as drainage area, elevation, and slope.
+The primary goal of the MOPEX initiative is to improve the understanding and prediction of hydrological processes by providing a comprehensive dataset for model calibration and validation.
+We will use one of the MOPEX catchments in Louisiana for the demonstration of LaSH model at catchment scale [@duan2006model].
+
+```{r, message = FALSE, warning = FALSE}
+
+library(terra)   # for spatial data manipulation
+library(mapview) # for spatial data visualization
+
+MOPEX=vect("./SampleData-master/MOPEX/MOPEX_catchments_431.shp")
+
+# Display the MOPEX catchments
+mapview(MOPEX, col.regions="blue", lwd=2, legend=TRUE, layer.name="MOPEX Catchments")  
+
+# List of LA catchments: 107, 427, 141, 406, 185
+mymopex=MOPEX[427,1]
+plot(mymopex, col="gray88", lwd=2, main="Selected catchment in Louisiana")
+
+# Extract the extent of the catchment. We will download Met data matching this extent
+mopex_ext=ext(mymopex) 
+```
 
 ### Meteorological Variables
 
 One might recollect Daymet dataset from Chapter 6.
-We will use Daymet dataset, version 4 [@thornton1850daymet] as a source of high-resolution, daily surface weather data for the sample watershed.
+We will use Daymet dataset, version 4 [@thornton1850daymet] as a source of high-resolution, daily surface weather data for the sample catchment.
 This dataset offers gridded estimates of various weather parameters such as: Minimum and maximum temperature, Precipitation, Shortwave radiation, Vapor pressure, Snow water equivalent and Day length.
 Appropriate transformation is applied to the dataset to transform the variables to the necessary units.
 
@@ -128,7 +138,7 @@ As an example, we will use daily gridded dataset for the year 2018 for precipita
 ############################################################################################
 # Meteorological dataset
 ############################################################################################
-# Download 1-km meteorological data for the selected watershed 
+# Download 1-km meteorological data for the selected catchment 
 library("daymetr") 
 
 # prcp (mm)
@@ -171,14 +181,14 @@ tminYr=rast(file.path(tempdir(),"tmin_daily_2018_ncss.nc"))         # in deg C
 sradYr=86.400*rast(file.path(tempdir(),"srad_daily_2018_ncss.nc"))  # in KJ/m2/day
 
 ############################################################################################
-# Reproject to the projection of the watershed
+# Reproject to the projection of the catchment
 pcpProj=terra::project(prcpYr, crs(mymopex))
 tmaxProj=terra::project(tmaxYr, crs(mymopex))
 tminProj=terra::project(tminYr, crs(mymopex))
 sradProj=terra::project(sradYr, crs(mymopex))
 
 ############################################################################################
-# Crop to the watershed extent
+# Crop to the catchment extent
 ############################################################################################
 pcpcrp=crop(pcpProj,mymopex, mask=T)
 tmaxcrp=crop(tmaxProj,mymopex, mask=T)
@@ -194,14 +204,14 @@ ptalphacrp=crop(PTalphaProj,mymopex, mask=T)
 alpha=resample(ptalphacrp,pcpcrp)
 names(alpha)="PTcoefficient"
 
-plot(alpha, main="PT correction factor for the watershed")
+plot(alpha, main="PT correction factor for the catchment")
 plot(mymopex, add=T)
 ```
 
 ## Random Fields of Soil and Land-Atmosphere Coupling Parameters
 
-We will use random values of input model variables for the implementation of the model for the watershed.
-We will add a synthetic diagonal gradient in the model parameters to represent spatial heterogeneity in the model parameters within the watershed.
+We will use random values of input model variables for the implementation of the model for the catchment.
+We will add a synthetic diagonal gradient in the model parameters to represent spatial heterogeneity in the model parameters within the catchment.
 The list of model parameters and their description is given in the table below.
 
 |                  |                                              |
@@ -233,14 +243,14 @@ randmRast = rast(outer(x,y,function(x,y){(0.1*(x)+0.1*(y))}))
 randmano=(randmRast-as.numeric(global(randmRast, mean, na.rm = T)))
 plot(randmano)  
 
-# Mask and re-project the synthetic raster to the watershed
+# Mask and re-project the synthetic raster to the catchment
 ext(randmano)=ext(mymopex)
 crs(randmano)=crs(mymopex)
 # Resample the synthetic raster to the resolution of the meteorological data
 anomaly_resamp=resample(randmano,pcpcrp)
 anomaly_crp=crop(anomaly_resamp, mymopex, mask=T)
 
-# Mean value of model parameters for the watershed
+# Mean value of model parameters for the catchment
 SMrx=0.30      # Rootzone crossing point 
 mr=2.5         # LA coupling strength    
 EFrmx=0.8      # Max rootzone Evaporative fraction 
@@ -266,7 +276,7 @@ parDist=parRas*par_mean+par_mean
 plot(parDist, fun=function(){plot(mymopex, add=T)})
 ```
 
-## Model Application for the Watershed
+## Model Application for the catchment
 
 Using the dataset and model parameters, we will apply the LaSH model to each grid to generate spatially distributed outputs of hydrological variables.
 
@@ -399,9 +409,9 @@ legend(x = "topleft", legend=c("SSM", "RZSM"),
       fill = c("black","red")) 
 
 ############################################################################################
-# Model implementation for the watershed
+# Model implementation for the catchment
 ############################################################################################
-modelOut = terra::xapp(ParInRas, forcingRas, fun= SWB_model)     # Model output for the watershed
+modelOut = terra::xapp(ParInRas, forcingRas, fun= SWB_model)     # Model output for the catchment
 
 # Gather simulated variables
 {i=0; SSM=modelOut[[(365*i+1):(365*(i+1))]]; names(SSM)=paste("day",seq(1:365))
@@ -441,5 +451,262 @@ plot(RZSM[[1:10]], range=c(0.25,0.40), fun=function(){plot(mymopex, add=T)})
 
 plot(ETrts, type="l", main="Simulated ET for the location",
      xlab="Time (days)", ylab="ET (cm/day)")
+
+```
+
+
+## Field Application of LaSH Model
+We will use sample dataset from a CRN site to demonstrate the application of LaSH model for field-scale applications. 
+
+```{r, message = FALSE, warning = FALSE}
+############################################################################################
+# Data Access for Sample Location
+############################################################################################
+library(zoo)
+utils::download.file("https://github.com/Vinit-Sehgal/SampleData/blob/master/CRN_data/CRND0103-2021-OK_Stillwater_2_W.txt?raw=true",
+                     destfile = "CRND0103-2021-OK_Stillwater_2_W.txt", 
+                     mode="wb", #wb is write binary
+                     method ='auto', 
+                     quiet=FALSE) #
+
+
+utils::download.file("https://github.com/Vinit-Sehgal/SampleData/blob/master/CRN_data/HEADERS.txt?raw=true",
+                     destfile = "headers.txt", 
+                     mode="wb", #wb is write binary
+                     method ='auto', 
+                     quiet=FALSE)
+CRNdat = read.csv("CRND0103-2021-OK_Stillwater_2_W.txt", header=FALSE,sep="")
+headers = read.csv("headers.txt", header=FALSE,sep="")
+
+# Column names as headers from the text file
+colnames(CRNdat)=headers[2,1:ncol(CRNdat)]
+
+# Replace fill values with NA
+CRNdat[CRNdat == -9999]=NA
+CRNdat[CRNdat == -99]=NA
+CRNdat[CRNdat == 999]=NA
+
+# Weighted average of soil moisture at multiple depths to estimate RZSM
+SMpdf=data.frame(
+  SM5=na.approx(CRNdat$SOIL_MOISTURE_5_DAILY,na.rm = FALSE), 
+  SM10=na.approx(CRNdat$SOIL_MOISTURE_10_DAILY,na.rm = FALSE), 
+  SM20=na.approx(CRNdat$SOIL_MOISTURE_20_DAILY,na.rm = FALSE), 
+  SM50=na.approx(CRNdat$SOIL_MOISTURE_50_DAILY,na.rm = FALSE),
+  SM100=na.approx(CRNdat$SOIL_MOISTURE_100_DAILY,na.rm = FALSE))
+
+SSM_obs=SMpdf$SM5; 
+RZSM_obs=(SMpdf$SM5*(7.5-0)+            # 0- 7.5 cm depth
+            SMpdf$SM10*(15-7.5)+        # 7.5-15 cm depth
+            SMpdf$SM20*(35-15)+         # 15-35 cm depth
+            SMpdf$SM50*(75-35)+         # 35-75 cm depth
+            SMpdf$SM100*(100-75))/100   # 75-100 cm depth
+
+# Target location
+coord=cbind(CRNdat$LONGITUDE[1], CRNdat$LATITUDE[1]) 
+
+############################################################################################
+# Setting Model Parameters and Forcing Data
+############################################################################################
+# Set condition for model initiation
+ini_condition=RZSM_obs[which(!is.na(RZSM_obs))[1]]
+spinup=10            # Excluded from the model evaluation
+zs=5                 # Surface layer depth (cm)
+zr=95                # Rootzone profile depth (cm)
+
+# Trial parameters for model run
+SMrx=0.127        # Rootzone crossing point 
+mr=10             # LA coupling strength 
+EFrmx=0.59        # Max rootzone Evaporative fraction 
+Es_frac=0.108     # Surface evaporation fraction: E/Total ET
+por_s=0.429       # Surface porosity
+por_r=0.458       # Rootzone porosity
+b_s=7.768         # Power coefficient of surface drainage curve
+b_r=6.040         # Power coefficient of rootzone drainage curve
+Ks_s=0.280        # Surface Saturated hydraulic conductivity 
+Ks_r=2.601        # Rootzone Saturated hydraulic conductivity 
+fc_s=0.405        # Surface field capacity
+
+parIn=c(SMrx,mr,EFrmx,Es_frac,por_s,por_r,b_s,b_r,Ks_s,Ks_r,fc_s)
+
+# Priestley-Taylor correction factor for the location
+alphaVal=as.numeric(terra::extract(PTalpha,coord),method='bilinear'); alphaVal
+
+# Data frame with Met forcings
+forcing=data.frame(Rad=CRNdat$SOLARAD_DAILY*1000,    # in KJ
+                   Tmean=CRNdat$T_DAILY_MEAN,        # in deg C  
+                   PCP=CRNdat$P_DAILY_CALC/10)       # in cm
+head(forcing)
+```
+
+We will modify the SWB model function shown earlier for application to single station application. Instead of stacking all output variables, this form collate the columns and give a 2-D matrix of the simulated variables, with each column representing one variable. 
+
+```{r, message = FALSE, warning = FALSE}
+############################################################################################
+# Soil Water Balance Model Function
+############################################################################################
+SWB_model=function(ParIn,ini_condition,forcing){
+  
+  # Input parameters  
+  SMrx=ParIn[1]         # Rootzone crossing point 
+  mr=ParIn[2]           # LA coupling strength  
+  EFrmx=ParIn[3]        # Max rootzone Evaporative fraction 
+  Es_frac=ParIn[4]      # Surface evaporation fraction: E/Total ET
+  
+  por_s=ParIn[5]        # Surface porosity
+  por_r=ParIn[6]        # Rootzone porosity
+  b_s=ParIn[7]          # Power coefficient of surface drainage curve
+  b_r=ParIn[8]          # Power coefficient of rootzone drainage curve
+  Ks_s=ParIn[9]         # Surface Saturated hydraulic conductivity 
+  Ks_r=ParIn[10]        # Rootzone Saturated hydraulic conductivity 
+  fc_s=ParIn[11]        # Surface field capacity
+  
+  # Rootzone SWRP
+  fc_r=SMrx+EFrmx/(2*mr)
+  wp_r=pmax(0.02,(SMrx-EFrmx/(2*mr)))
+  
+  # Forcings
+  PCP=na.approx(forcing$PCP, na.rm=F)
+  Tmean=na.approx(forcing$Tmean, na.rm=F)
+  Rad=na.approx(forcing$Rad, na.rm=F)
+  
+  # PET estimation using Priestley-Taylor method 
+    PT_PET=function(Tmean,Rad,alpha){
+      lambdaV= 2260                  # Latent heat of vaporization 
+      rhoW= 1000                     # Density of water 
+      gamma= 4.95*1e-4               # Psychrometric constant
+      
+      deltaVal=rep(0, length(Tmean))  # Create empty array
+      
+      # When Tmean<0
+      deltaVal[Tmean<0]=0.3405*exp(0.0642*Tmean[Tmean<0])
+      # When Tmean>=0
+      deltaVal[Tmean>=0]=0.3221*exp(0.0803*((Tmean[Tmean>=0])^0.8876))
+      
+      # Priestley-Taylor equation 
+      PETval=(alpha/(lambdaV*rhoW))*(deltaVal/(deltaVal+gamma))*Rad
+      PETval[PETval<0]=0
+      return(PETval) #estimate in m
+    }
+
+  #~~~ Simple Soil Water Balance Model 
+  # Empty arrays to store data
+  RZSM= SSM= drainage= ETr= ETs=PET= runoff= infilt =infilCap=c()  
+  SSM[1]= RZSM[1]= ini_condition            # Initial soil moisture state
+  for (t in 2:length(PCP)){
+    
+    infilCap[t]= pmax(0,(por_s-SSM[t-1])*zs)
+    runoff[t]=pmax(0,(PCP[t]-infilCap[t]))
+    
+    infilt[t]= Ks_s*(pmax(0,SSM[t-1]-fc_r)/(por_s-fc_r))^b_s
+    SSM[t]=pmin(por_s,(pmax(0.02,
+                            (zs*SSM[t-1]+pmin(PCP[t],infilCap[t])-infilt[t])/zs)))
+    
+    # 4. Calculate surface evaporation for days with no PCP 
+    PET[t]=100*PT_PET(Tmean[t],Rad[t],alpha=alphaVal)  #PET in cm
+    
+    # Estimate ET based on PET and RZSM state
+    ETr[t]=PET[t]*EFrmx/(1+(abs((SMrx*(RZSM[t-1]-1))/(RZSM[t-1]*(1-SMrx))))^mr)
+    ETs[t]=Es_frac*ETr[t]
+    
+    # 5. Exclude evaporative losses from SSM
+    SSM[t]=ifelse(PCP[t]==0,
+                  pmin(por_s,pmax(0.02,(zs*SSM[t]-ETs[t])/zs)),SSM[t])
+    
+    # Deep drainage based on RZSM state. Continues till CP
+    drainage[t]= Ks_r*(pmax(0,RZSM[t-1]-fc_r)/(por_r-fc_r))^b_r
+    
+    # Update RZSM after drainage and ET
+    RZSM[t]=pmin(por_r,pmax(wp_r,
+                            ((zr+zs)*RZSM[t-1]+zs*SSM[t]-drainage[t]-ETr[t]+infilt[t])/(zr+zs))) 
+  }
+  return(cbind(SSM,RZSM,infilt, drainage,ETr,ETs, runoff,PET))
+}
+
+# Apply the SWB model on test dataset
+  optimOut=SWB_model(ParIn=parIn, 
+                     ini_condition=RZSM_obs[which(!is.na(RZSM_obs))[1]],
+                     forcing=forcing)
+  
+  # Convert the output array to a data frame for easy plotting
+  optimOut=data.frame(optimOut) 
+  
+  # Add time and precipitation to the output df so it can be plotted 
+  optimOut$PCP=forcing$PCP
+  optimOut$time=as.Date(as.character(CRNdat$LST_DATE),format="%Y%m%d")
+  optimOut$RZSM_obs=RZSM_obs
+  optimOut$SSM_obs=SMpdf$SM5
+```
+
+Now that we have executed the model for the sample dataset, we will plot the simulated variables. We will also overlay the observed surface and rootzone soil moisture to compare the ability of the model in simulaing temporal dynamics of the observed variables. 
+```{r, message = FALSE, warning = FALSE}
+############################################################################################
+# Plot Simulated Variables
+############################################################################################
+  library(ggplot2)
+  library(patchwork)
+  
+  # Plot for observed and modeled RZSM
+  p_SSM=ggplot(optimOut) +
+    geom_line(aes(x = time, y = SSM, color = "SSM"),linetype=2)+
+    geom_line(aes(x = time, y = SSM_obs, color = "SSM_obs"),linetype=1)+
+    scale_y_continuous( name = "SSM")+
+    labs(x = "Time") +
+    theme_minimal() +
+    scale_color_manual(values = c("blue","black"))+
+    theme(legend.title = element_blank())
+  
+  p_RZSM=ggplot(optimOut) +
+    geom_line(aes(x = time, y = RZSM, color = "RZSM"),linetype=2)+
+    geom_line(aes(x = time, y = RZSM_obs, color = "RZSM_obs"),linetype=1)+
+    scale_y_continuous( name = "RZSM")+
+    labs(x = "Time") +
+    theme_minimal() +
+    scale_color_manual(values = c("blue","black"))+
+    theme(legend.title = element_blank())
+  
+  # Plot for modeled ET
+  p_ET=ggplot(optimOut) +
+    geom_line(aes(x = time, y = ETr, color = "ET"))+
+    scale_y_continuous( name = "ET")+
+    labs(x = "Time") +
+    theme_minimal() +
+    scale_color_manual(values = c("ET" = "blue"))+
+    theme(legend.title = element_blank())
+  
+  # Plot for modeled drainage
+  p_drain=ggplot(optimOut) +
+    geom_line(aes(x = time, y = drainage, color = "drainage"))+
+    scale_y_continuous( name = "GW recharge")+
+    labs(x = "Time") +
+    theme_minimal() +
+    scale_color_manual(values = c("drainage" = "blue"))+
+    theme(legend.title = element_blank())
+  
+  # Plot for observed precipitation
+  p_PCP=ggplot(optimOut) +
+    geom_bar(aes(x = time, y = PCP, fill = "PCP"),  
+             stat = "identity")+
+    scale_y_continuous( name = "PCP")+
+    labs(x = "Time") +
+    theme_minimal() +
+    scale_fill_manual(values = c("PCP" = "black"))+
+    theme(legend.title = element_blank())
+  
+  # Plot for modeled drainage
+  p_runoff=ggplot(optimOut) +
+    geom_bar(aes(x = time, y = runoff, fill = "runoff"),stat = "identity")+
+    scale_y_continuous( name = "Runoff")+
+    labs(x = "Time") +
+    theme_minimal() +
+    scale_fill_manual(values = c("runoff" = "black"))+
+    theme(legend.title = element_blank())
+
+# Combine all plots into a single window
+library(patchwork)
+p_SSM/p_RZSM/p_PCP/p_runoff/p_ET/p_drain+                # Plots one under the other
+  plot_layout(guides = "collect",       # Collect common legends
+              axis_titles = "collect",    # Collect common axis titles
+              axes="collect") &           # Collect common axis labels
+  theme(legend.position='bottom')
 
 ```
