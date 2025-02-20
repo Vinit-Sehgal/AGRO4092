@@ -16,6 +16,7 @@ Landscape-scale Soil Hydrology Model is a 2-layer soil water balance model which
 As general schematic of the model with key model variables is given below:
 
 ![](images/clipboard-1325851612.png){fig-align="center" width="467"}
+
 ### Background
 The nature of the soil-vegetation-atmosphere (SVA) interactions evolve with changes in the rootzone soil moisture.
 This transition of soil hydrologic state from energy-limited to water-limited regimes is represented as a sigmoid curve, with three distinct phases.

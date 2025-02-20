@@ -31,6 +31,9 @@ We will first start with a refresher of basic `R` programming in Chapter 1. In C
 
 This resource will serve as a dynamic class note, where students can access detailed concepts, codes and exercises related to this class. Notes will be updated regularly as the class progresses with up-to-date material and upcoming assignments.
 
+**Funding support:**
+This project is supported by funding from LSU Libraries Open Educational Resource Advancement Fellowship
+
 <br>
 
 <center>![](./images/LSUlogo.jpg){width="20%"}</center>

@@ -6,7 +6,7 @@ editor:
     wrap: sentence
 ---
 
-# Landscape-scale Soil Hydrology Model
+# Landscape Soil Hydrology Model
 
 ```{r child="LaSH_v1.qmd", message = FALSE, warning = FALSE}
 
