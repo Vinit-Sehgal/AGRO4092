@@ -13,8 +13,6 @@ editor:
 
 ```
 
-# Cellwise Linear Regression
-
 ```{r child="ch8_b.qmd", message = FALSE, warning = FALSE}
 
 

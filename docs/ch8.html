@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; Multilayer Rasters: Cell–wise Operations – R for Spatial Analysis &amp; Visualization</title>
+<title>8&nbsp; Multilayer Rasters: Cell–wise Operations – R Tools for Mesoscale Soil Hydrology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -71,10 +71,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-d5d78c9e45e9a5253a6059031ce5ea1b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -106,6 +106,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -149,7 +178,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">R for Spatial Analysis &amp; Visualization</a> 
+      <a href="./">R Tools for Mesoscale Soil Hydrology</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/vinit-sehgal/AGRO4092" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -225,7 +254,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch12.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Landscape-scale Soil Hydrology Model</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Landscape Soil Hydrology Model</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -255,6 +284,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#cellwise-operation-on-all-layers" id="toc-cellwise-operation-on-all-layers" class="nav-link" data-scroll-target="#cellwise-operation-on-all-layers"><span class="header-section-number">8.3</span> Cell–wise Operation on All Layers</a></li>
   <li><a href="#cellwise-operation-on-layer-groups" id="toc-cellwise-operation-on-layer-groups" class="nav-link" data-scroll-target="#cellwise-operation-on-layer-groups"><span class="header-section-number">8.4</span> Cell–wise Operation on Layer Groups</a></li>
   <li><a href="#layers-as-function-arguments" id="toc-layers-as-function-arguments" class="nav-link" data-scroll-target="#layers-as-function-arguments"><span class="header-section-number">8.5</span> Layers as Function Arguments</a></li>
+  <li><a href="#cell-wise-regression-and-prediction" id="toc-cell-wise-regression-and-prediction" class="nav-link" data-scroll-target="#cell-wise-regression-and-prediction"><span class="header-section-number">8.6</span> Cell-wise regression and prediction</a>
+  <ul class="collapse">
+  <li><a href="#prepare-the-multilayer-ndvi-raster" id="toc-prepare-the-multilayer-ndvi-raster" class="nav-link" data-scroll-target="#prepare-the-multilayer-ndvi-raster"><span class="header-section-number">8.6.1</span> Prepare the multilayer NDVI raster</a></li>
+  <li><a href="#construct-the-lagged-regression-model" id="toc-construct-the-lagged-regression-model" class="nav-link" data-scroll-target="#construct-the-lagged-regression-model"><span class="header-section-number">8.6.2</span> Construct the lagged regression model</a></li>
+  <li><a href="#apply-and-interpret-the-cellwise-model" id="toc-apply-and-interpret-the-cellwise-model" class="nav-link" data-scroll-target="#apply-and-interpret-the-cellwise-model"><span class="header-section-number">8.6.3</span> Apply and interpret the cellwise model</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding"><span class="header-section-number">8.6.4</span> Check your understanding</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -527,8 +563,352 @@ unit        :    [-],    [-],    [-],    [-],    [-],    [-], ... </code></pre>
 </div>
 </div>
 </div>
+<p>We will use a time series of global gridded NDVI rasters to fit a separate linear regression model at every land pixel. By the end of this lesson, you should be able to:</p>
+<ol type="1">
+<li>Read multiple raster files as a time-ordered <code>SpatRaster</code> using the <strong>terra</strong> package.</li>
+<li>Understand how a raster stack represents a time series at each grid cell.</li>
+<li>Create lagged NDVI predictors.</li>
+<li>Fit a multiple linear regression model for one pixel.</li>
+<li>Apply the model independently to every raster cell with <code>terra::app()</code>.</li>
+<li>Handle non-land pixels and model failures using <code>NA</code> values and <code>tryCatch()</code>.</li>
+<li>Interpret and map the resulting regression coefficients.</li>
+</ol>
+</section>
+<section id="cell-wise-regression-and-prediction" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="cell-wise-regression-and-prediction"><span class="header-section-number">8.6</span> Cell-wise regression and prediction</h2>
+<p>Let us consider a grid cell with NDVI observations through time:</p>
+<p><span class="math display">\[
+NDVI_1, NDVI_2, NDVI_3, \ldots, NDVI_T.
+\]</span></p>
+<p>We model current NDVI as a function of its previous three layers:</p>
+<p><span class="math display">\[
+NDVI_t = \beta_0 + \beta_1 NDVI_{t-1} + \beta_2 NDVI_{t-2}
++ \beta_3 NDVI_{t-3} + \epsilon_t.
+\]</span></p>
+<p>Here, <span class="math inline">\(\beta_0\)</span> is the intercept; <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>, and <span class="math inline">\(\beta_3\)</span> describe the relationships with NDVI one, two, and three layers earlier; and <span class="math inline">\(\epsilon_t\)</span> represents unexplained variation. This is an autoregressive-style regression because NDVI values from previous layers are used to explain current NDVI. The model is implemented separately for every grid cell.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A lag of one means one raster layer, not necessarily one day or one month. Its physical meaning depends on the temporal spacing of the input files.</p>
+</div>
+</div>
+<section id="prepare-the-multilayer-ndvi-raster" class="level3" data-number="8.6.1">
+<h3 data-number="8.6.1" class="anchored" data-anchor-id="prepare-the-multilayer-ndvi-raster"><span class="header-section-number">8.6.1</span> Prepare the multilayer NDVI raster</h3>
+<p>We will use the <strong>terra</strong> package to import the raster layers, inspect the resulting <code>SpatRaster</code>, and apply a function across the time series of each grid cell.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First, locate the NDVI files and combine them into a multilayer raster.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ndvi_directory <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"./SampleData-master/raster_files/NDVI"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>rasNames <span class="ot">&lt;-</span> <span class="fu">list.files</span>(</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">path =</span> ndvi_directory,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">.tif$"</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">full.names =</span> T</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The regression requires the rasters to be in chronological order.</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>rasNames <span class="ot">&lt;-</span> <span class="fu">sort</span>(rasNames)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>ndviStack <span class="ot">&lt;-</span> <span class="fu">rast</span>(rasNames)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>ndviStack</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 456, 964, 23  (nrow, ncol, nlyr)
+resolution  : 0.373444, 0.373444  (x, y)
+extent      : -180, 180, -85.24595, 85.0445  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+sources     : NDVI_resamp_2016-01-01.tif  
+              NDVI_resamp_2016-01-17.tif  
+              NDVI_resamp_2016-02-02.tif  
+              ... and 20 more sources
+names       : NDVI_~01-01, NDVI_~01-17, NDVI_~02-02, NDVI_~02-18, NDVI_~03-05, NDVI_~03-21, ... 
+min values  :  -0.1760762,  -0.2000000,  -0.1939000,  -0.1828998,  -0.2000000,   -0.175517, ... 
+max values  :   0.9506500,   0.9190628,   0.9371761,   0.9294667,   0.9168695,    0.909500, ... </code></pre>
+</div>
+</div>
+<p><code>list.files()</code> searches the directory for files ending in <code>.tif</code>. Setting <code>full.names = T</code> returns the complete file paths required by <code>rast()</code>. The <code>sort()</code> function places filenames in alphanumeric order. This produces chronological order only when dates in the filenames use a sortable format, such as <code>NDVI_2020_01.tif</code> and <code>NDVI_2020_02.tif</code>. Inspect the filenames before fitting the model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rasNames)              <span class="co"># Number of time steps</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 23</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">basename</span>(rasNames))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "NDVI_resamp_2016-01-01.tif" "NDVI_resamp_2016-01-17.tif"
+[3] "NDVI_resamp_2016-02-02.tif" "NDVI_resamp_2016-02-18.tif"
+[5] "NDVI_resamp_2016-03-05.tif" "NDVI_resamp_2016-03-21.tif"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(<span class="fu">basename</span>(rasNames))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "NDVI_resamp_2016-09-29.tif" "NDVI_resamp_2016-10-15.tif"
+[3] "NDVI_resamp_2016-10-31.tif" "NDVI_resamp_2016-11-16.tif"
+[5] "NDVI_resamp_2016-12-02.tif" "NDVI_resamp_2016-12-18.tif"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nlyr</span>(ndviStack)               <span class="co"># Number of raster layers</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 23</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ndviStack[[<span class="dv">1</span>]], <span class="at">main =</span> <span class="st">"NDVI at the first time step"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="ch8_files/figure-html/inspect-inputs-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="ch8_files/figure-html/inspect-inputs-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For any grid cell, its values across all layers form an NDVI time series. Let us extract one example cell to see the type of data passed to the cellwise function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose a cell number known to be on land for the sample data.</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>example_cell <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>x_example <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(ndviStack[example_cell])</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>x_example</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]       NA -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38
+ [9] -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38
+[17] -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38 -3.4e+38</code></pre>
+</div>
+</div>
+<p>When <code>app()</code> evaluates a cell, it passes a vector like <code>x_example</code> to the function. Non-land cells contain only <code>NA</code> values. Land cells may also contain occasional <code>NA</code> values because of clouds, missing observations, or quality screening.</p>
+</section>
+<section id="construct-the-lagged-regression-model" class="level3" data-number="8.6.2">
+<h3 data-number="8.6.2" class="anchored" data-anchor-id="construct-the-lagged-regression-model"><span class="header-section-number">8.6.2</span> Construct the lagged regression model</h3>
+<p>Let us first construct lagged predictors for a short example time series.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.20</span>, <span class="fl">0.25</span>, <span class="fl">0.31</span>, <span class="fl">0.29</span>, <span class="fl">0.35</span>, <span class="fl">0.39</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA</span>, x[<span class="sc">-</span><span class="fu">length</span>(x)])</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA</span>, x1[<span class="sc">-</span><span class="fu">length</span>(x1)])</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>x3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA</span>, x2[<span class="sc">-</span><span class="fu">length</span>(x2)])</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>lagInput <span class="ot">&lt;-</span> <span class="fu">cbind</span>(</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">current_NDVI =</span> x,</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">lag_1 =</span> x1,</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">lag_2 =</span> x2,</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">lag_3 =</span> x3</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>lagInput</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     current_NDVI lag_1 lag_2 lag_3
+[1,]         0.20    NA    NA    NA
+[2,]         0.25  0.20    NA    NA
+[3,]         0.31  0.25  0.20    NA
+[4,]         0.29  0.31  0.25  0.20
+[5,]         0.35  0.29  0.31  0.25
+[6,]         0.39  0.35  0.29  0.31</code></pre>
+</div>
+</div>
+<p>The first row cannot have a one-layer lag, so <code>lag_1</code> begins with <code>NA</code>. Similarly, <code>lag_2</code> begins with two missing values and <code>lag_3</code> begins with three. Therefore, the first three rows cannot be used to fit the regression.</p>
+<p>We can now place these steps inside a function that receives the NDVI time series for one cell and returns the four model coefficients.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>NDVI_pred_mod <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert the cell values to a numeric vector.</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(x)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>({</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Skip cells with no NDVI observations, such as non-land pixels.</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all</span>(<span class="fu">is.na</span>(x))) {</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Construct one-, two-, and three-layer lagged predictors.</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>      x1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA</span>, x[<span class="sc">-</span><span class="fu">length</span>(x)])</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>      x2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA</span>, x1[<span class="sc">-</span><span class="fu">length</span>(x1)])</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>      x3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA</span>, x2[<span class="sc">-</span><span class="fu">length</span>(x2)])</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Column 1 is current NDVI; columns 2-4 are lagged NDVI.</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>      lagInput <span class="ot">&lt;-</span> <span class="fu">cbind</span>(x, x1, x2, x3)</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Fit current NDVI using the previous three layers.</span></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>      regCoeff <span class="ot">&lt;-</span> <span class="fu">lm</span>(lagInput[, <span class="dv">1</span>] <span class="sc">~</span> lagInput[, <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>])</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Extract the intercept and slope coefficients.</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>      interc <span class="ot">&lt;-</span> regCoeff<span class="sc">$</span>coefficients[<span class="dv">1</span>]</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>      a1 <span class="ot">&lt;-</span> regCoeff<span class="sc">$</span>coefficients[<span class="dv">2</span>]</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>      a2 <span class="ot">&lt;-</span> regCoeff<span class="sc">$</span>coefficients[<span class="dv">3</span>]</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>      a3 <span class="ot">&lt;-</span> regCoeff<span class="sc">$</span>coefficients[<span class="dv">4</span>]</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">c</span>(interc, a1, a2, a3))</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">4</span>))</span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>  }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">4</span>))</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The function must always return four values: the intercept and three lag coefficients. Non-land cells and failed models also return four values, but each value is <code>NA</code>. This keeps the output structure consistent across the raster.</p>
+<p><code>tryCatch()</code> prevents one problematic cell from stopping the entire operation. A model may fail because it has too few complete observations, no variation in valid NDVI values, or strong dependence among the lagged predictors.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>tryCatch()</code> handles errors, but it can also hide their causes. While developing the function, test it on selected cells without <code>tryCatch()</code> so that you can examine any model errors.</p>
+</div>
+</div>
+<p>Before applying the function globally, test it on a valid example and an all-<code>NA</code> cell.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>test_series <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">0.2</span> <span class="sc">*</span> <span class="fu">sin</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">4</span> <span class="sc">*</span> pi, <span class="at">length.out =</span> <span class="dv">30</span>)) <span class="sc">+</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.02</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(test_series, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">main=</span><span class="st">"sample auto-correlated time series"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="ch8_files/figure-html/test-function-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="ch8_files/figure-html/test-function-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">NDVI_pred_mod</span>(test_series)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      (Intercept) lagInput[, 2:4]x1 lagInput[, 2:4]x2 lagInput[, 2:4]x3 
+       0.14780681        1.14293026        0.05334672       -0.49302383 </code></pre>
+</div>
+</div>
+<p>The first call should return four coefficients. The second should return four <code>NA</code> values.</p>
+</section>
+<section id="apply-and-interpret-the-cellwise-model" class="level3" data-number="8.6.3">
+<h3 data-number="8.6.3" class="anchored" data-anchor-id="apply-and-interpret-the-cellwise-model"><span class="header-section-number">8.6.3</span> Apply and interpret the cellwise model</h3>
+<p>We will now run the function over the complete global raster. During rendering, <code>app()</code> passes the NDVI time series of every grid cell to <code>NDVI_pred_mod()</code> and creates four global coefficient layers.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>coeffVal <span class="ot">&lt;-</span> <span class="fu">app</span>(ndviStack, NDVI_pred_mod)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(coeffVal) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"intercept"</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"lag_1_coefficient"</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"lag_2_coefficient"</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"lag_3_coefficient"</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>coeffVal</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 456, 964, 4  (nrow, ncol, nlyr)
+resolution  : 0.373444, 0.373444  (x, y)
+extent      : -180, 180, -85.24595, 85.0445  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source(s)   : memory
+names       : intercept, lag_1_coefficient, lag_2_coefficient, lag_3_coefficient 
+min values  : -5.353866,         -86.06724,         -40.68961,         -34.68671 
+max values  : 41.088533,          35.72367,          62.46070,          24.03736 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm the four global coefficient layers.</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(coeffVal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 456, 964, 4  (nrow, ncol, nlyr)
+resolution  : 0.373444, 0.373444  (x, y)
+extent      : -180, 180, -85.24595, 85.0445  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source(s)   : memory
+names       : intercept, lag_1_coefficient, lag_2_coefficient, lag_3_coefficient 
+min values  : -5.353866,         -86.06724,         -40.68961,         -34.68671 
+max values  : 41.088533,          35.72367,          62.46070,          24.03736 </code></pre>
+</div>
+</div>
+<p><code>terra::app()</code> gathers the values across all layers at one grid cell, supplies that vector to the function, and writes the four returned coefficients to four output raster layers. Because this code chunk is evaluated, the global coefficient rasters are created before the plotting chunk runs. The output retains the geometry of the input raster.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot all four coefficient layers in the rendered output.</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>plot_colors <span class="ot">=</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"saddlebrown"</span>, <span class="st">"gold"</span>, <span class="st">"lightyellow"</span>, <span class="st">"lightblue"</span>, <span class="st">"darkblue"</span>))(<span class="dv">100</span>)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrange the four coefficient maps in a 2 x 2 layout</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coeffVal[[<span class="st">"intercept"</span>]],</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Intercept"</span>,</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> plot_colors)</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coeffVal[[<span class="st">"lag_1_coefficient"</span>]],</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Lag-1 coefficient"</span>,</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">3</span>),</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> plot_colors)</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coeffVal[[<span class="st">"lag_2_coefficient"</span>]],</span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Lag-2 coefficient"</span>,</span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">range =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> plot_colors)</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coeffVal[[<span class="st">"lag_3_coefficient"</span>]],</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Lag-3 coefficient"</span>,</span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">range =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> plot_colors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="ch8_files/figure-html/plot-coefficients-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="ch8_files/figure-html/plot-coefficients-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore the default graphics layout</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A positive lag coefficient indicates that, after accounting for the other lags, higher NDVI in an earlier layer is associated with higher current NDVI. A negative coefficient indicates an inverse partial relationship. Larger absolute coefficients represent stronger fitted relationships on the scale of the model. The intercept is the predicted NDVI when all three lagged NDVI values equal zero, although that condition may not be ecologically meaningful everywhere.</p>
+<p>A coefficient map is not a prediction map. It shows how fitted model parameters vary spatially. For one time series, the next NDVI value can be estimated from the three most recent observations:</p>
+<p><span class="math display">\[
+\widehat{NDVI}_{T+1} = b_0 + b_1 NDVI_T + b_2 NDVI_{T-1} + b_3 NDVI_{T-2}.
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> <span class="fu">NDVI_pred_mod</span>(test_series)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>next_ndvi <span class="ot">&lt;-</span> coefs[<span class="dv">1</span>] <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  coefs[<span class="dv">2</span>] <span class="sc">*</span> test_series[<span class="fu">length</span>(test_series)] <span class="sc">+</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  coefs[<span class="dv">3</span>] <span class="sc">*</span> test_series[<span class="fu">length</span>(test_series) <span class="sc">-</span> <span class="dv">1</span>] <span class="sc">+</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  coefs[<span class="dv">4</span>] <span class="sc">*</span> test_series[<span class="fu">length</span>(test_series) <span class="sc">-</span> <span class="dv">2</span>]</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>next_ndvi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept) 
+  0.5733534 </code></pre>
+</div>
+</div>
+<p>To create a full prediction raster, the same calculation would be applied cellwise using the coefficient rasters and the final three NDVI layers.</p>
+<p>If needed, save the coefficient layers as a multilayer GeoTIFF.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">writeRaster</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  coeffVal,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"NDVI_regression_coefficients.tif"</span>,</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="check-your-understanding" class="level3" data-number="8.6.4">
+<h3 data-number="8.6.4" class="anchored" data-anchor-id="check-your-understanding"><span class="header-section-number">8.6.4</span> Check your understanding</h3>
+<ol type="1">
+<li>Why do the first three rows of <code>lagInput</code> contain missing values?</li>
+<li>What does a lag of one represent for this NDVI dataset?</li>
+<li>Why must the raster files be arranged chronologically?</li>
+<li>Why does the function return four values for a non-land pixel?</li>
+<li>What happens if a land pixel has too few complete lagged observations?</li>
+<li>Does a positive lag-1 coefficient prove that earlier NDVI causes current NDVI? Why or why not?</li>
+<li>How would you modify the model to use only two lags?</li>
+<li>How would you produce a raster of predicted NDVI for the next time step?</li>
+<li>Why might neighboring pixels have different coefficients?</li>
+<li>What diagnostics would you inspect before using the model for forecasting?</li>
+</ol>
+<p>The key elements of this workflow are the temporal ordering of the raster layers, the construction of lagged predictors, consistent handling of missing values, and the use of <code>terra::app()</code> to repeat the same analysis independently at every grid cell.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -614,8 +994,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -726,7 +1104,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -978,7 +1355,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
