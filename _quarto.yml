@@ -6,11 +6,11 @@ execute:
   echo: true
 
 book:
-  title: "R for Spatial Analysis & Visualization"
+  title: "R Tools for Mesoscale Soil Hydrology"
   author:
     - Vinit Sehgal, Ph.D.
   repo-url: https://github.com/vinit-sehgal/AGRO4092
-  date: "Jan-16-2024"
+  date: "Oct-20-2026"
   page-footer:
     right: |
       Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a>

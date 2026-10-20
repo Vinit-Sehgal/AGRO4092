@@ -1,0 +1,324 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Learning objectives
+
+In this lesson, we will use a time series of global gridded NDVI rasters to fit a separate linear regression model at every land pixel. By the end of this lesson, you should be able to:
+
+1.  Read multiple raster files as a time-ordered `SpatRaster` using the **terra** package.
+2.  Understand how a raster stack represents a time series at each grid cell.
+3.  Create lagged NDVI predictors.
+4.  Fit a multiple linear regression model for one pixel.
+5.  Apply the same model independently to every raster cell with `terra::app()`.
+6.  Handle non-land pixels and other model failures using `NA` values and `tryCatch()`.
+7.  Interpret and map the resulting regression coefficients.
+
+# Conceptual model
+
+Let us consider a grid cell with NDVI observations through time:
+
+$$
+NDVI_1, NDVI_2, NDVI_3, \ldots, NDVI_T.
+$$
+
+We model current NDVI as a function of its previous three layers:
+
+$$
+NDVI_t = \beta_0 + \beta_1 NDVI_{t-1} + \beta_2 NDVI_{t-2}
++ \beta_3 NDVI_{t-3} + \epsilon_t.
+$$
+
+Here:
+
+-   $\beta_0$ is the intercept.
+-   $\beta_1$ measures the relationship with NDVI one layer earlier.
+-   $\beta_2$ measures the relationship with NDVI two time steps earlier.
+-   $\beta_3$ measures the relationship with NDVI three time steps earlier.
+-   $\epsilon_t$ represents unexplained variation.
+
+This is an autoregressive-style regression because previous NDVI values are used to explain current NDVI. It is implemented separately for every grid cell.
+
+::: {.callout-important}
+A lag of one means one raster layer, not necessarily one day or one month. Its physical meaning depends on the temporal spacing of the input files.
+:::
+
+# Load the required package
+
+```{r setup, message=FALSE, warning=FALSE}
+library(terra)
+```
+
+The **terra** package is designed for spatial raster and vector data. In this exercise, we use:
+
+-   `rast()` to create a multilayer raster object.
+-   `app()` to apply a function to the time series at every cell.
+-   `plot()` to display the resulting coefficient maps.
+
+# Locate and read the NDVI layers
+
+```{r read-ndvi, eval=FALSE}
+ndvi_directory <- paste0(
+  "C:/Users/VSehgal/OneDrive - LSU AgCenter/LSU/02_Teaching/",
+  "LGAR_workshop/lgar/SampleData-master/raster_files/NDVI"
+)
+
+rasNames <- list.files(
+  path = ndvi_directory,
+  pattern = "\\.tif$",
+  full.names = T
+)
+
+# The regression requires the rasters to be in chronological order.
+rasNames <- sort(rasNames)
+
+ndviStack <- rast(rasNames)
+ndviStack
+```
+
+## What this code does
+
+`list.files()` searches the NDVI directory for files ending in `.tif`. Setting `full.names = T` returns complete paths, allowing `rast()` to locate each file.
+
+`sort()` places filenames in alphanumeric order. This produces chronological order only if the filenames contain dates in a sortable format, such as `NDVI_2020_01.tif`, `NDVI_2020_02.tif`, and so on. Before fitting the model, inspect the filenames and confirm that they are arranged chronologically.
+
+`rast(rasNames)` creates a `SpatRaster` with one layer per date. For any cell, values across the layers form that cell's NDVI time series.
+
+```{r inspect-inputs, eval=FALSE}
+length(rasNames)       # Number of time steps
+head(basename(rasNames))
+tail(basename(rasNames))
+nlyr(ndviStack)       # Number of raster layers
+plot(ndviStack[[1]], main = "NDVI at the first time step")
+```
+
+# Understand the data passed to the cellwise function
+
+Let us begin by selecting one land cell and extracting its time series.
+
+```{r inspect-cell, eval=FALSE}
+# Choose a cell number known to be on land for the sample data.
+example_cell <- 1000
+x_example <- as.numeric(values(ndviStack)[example_cell, ])
+x_example
+```
+
+When `app()` evaluates a cell, it passes a vector like `x_example` to the function. The vector contains that cell's values in raster-layer order.
+
+Non-land cells contain only `NA` values. Some land cells may also contain occasional `NA` values because of clouds, missing observations, or quality screening.
+
+# Build lagged predictors for one time series
+
+Let us first construct the lagged vectors for a short example time series.
+
+```{r demonstrate-lags}
+x <- c(0.20, 0.25, 0.31, 0.29, 0.35, 0.39)
+
+x1 <- c(NA, x[-length(x)])
+x2 <- c(NA, x1[-length(x1)])
+x3 <- c(NA, x2[-length(x2)])
+
+lagInput <- cbind(
+  current_NDVI = x,
+  lag_1 = x1,
+  lag_2 = x2,
+  lag_3 = x3
+)
+
+lagInput
+```
+
+The first row cannot have a one-step lag, so `lag_1` begins with `NA`. Similarly, `lag_2` begins with two missing values and `lag_3` begins with three. Consequently, the first three rows cannot be used to fit the regression.
+
+# Define the cellwise regression function
+
+```{r regression-function}
+NDVI_pred_mod <- function(x) {
+  # app() may provide values in a matrix-like form; convert to a vector.
+  x <- as.numeric(x)
+
+  tryCatch({
+    # Skip cells that contain no NDVI observations, such as non-land pixels.
+    if (!all(is.na(x))) {
+
+      # Construct one-, two-, and three-step lagged NDVI predictors.
+      x1 <- c(NA, x[-length(x)])
+      x2 <- c(NA, x1[-length(x1)])
+      x3 <- c(NA, x2[-length(x2)])
+
+      # Column 1 is current NDVI; columns 2-4 are lagged NDVI.
+      lagInput <- cbind(x, x1, x2, x3)
+
+      # Fit current NDVI as a function of the previous three layers.
+      # lm() excludes rows containing NA values.
+      regCoeff <- lm(lagInput[, 1] ~ lagInput[, 2:4])
+
+      # Extract the intercept and three slope coefficients.
+      interc <- regCoeff$coefficients[1]
+      a1 <- regCoeff$coefficients[2]
+      a2 <- regCoeff$coefficients[3]
+      a3 <- regCoeff$coefficients[4]
+
+      return(c(interc, a1, a2, a3))
+
+    } else {
+      # Return four missing coefficients for a non-land cell.
+      return(rep(NA, 4))
+    }
+  }, error = function(e) {
+    # If the model cannot be fitted, preserve the output structure.
+    return(rep(NA, 4))
+  })
+}
+```
+
+## Why return exactly four values?
+
+The function returns one value for each model coefficient:
+
+1.  Intercept, $\beta_0$
+2.  Lag-1 coefficient, $\beta_1$
+3.  Lag-2 coefficient, $\beta_2$
+4.  Lag-3 coefficient, $\beta_3$
+
+Because every cell must return the same number of values, failed models and non-land cells also return a four-element vector, but all four elements are `NA`.
+
+## Why use `tryCatch()`?
+
+A cellwise model can fail for reasons such as:
+
+-   too few complete observations;
+-   all valid NDVI values being identical;
+-   perfect collinearity among lagged predictors;
+-   singular or otherwise unusable model fits.
+
+`tryCatch()` prevents one problematic cell from stopping the global raster operation. It converts a model error into four `NA` coefficients.
+
+::: {.callout-important}
+`tryCatch()` handles errors, but it can also hide their causes. While developing the function, test it on selected cells without `tryCatch()` so that you can see and interpret any model errors.
+:::
+
+# Test the function before running it globally
+
+Before passing a cellwise function to `app()`, test it on a few example vectors.
+
+```{r test-function}
+# A valid synthetic NDVI time series
+set.seed(42)
+test_series <- 0.5 + 0.2 * sin(seq(0, 4 * pi, length.out = 30)) +
+  rnorm(30, mean = 0, sd = 0.02)
+
+NDVI_pred_mod(test_series)
+
+# A non-land pixel
+NDVI_pred_mod(rep(NA, 30))
+```
+
+The first call should return four coefficients. The second should return four `NA` values.
+
+# Apply the regression to every raster cell
+
+```{r apply-model, eval=FALSE}
+coeffVal <- app(ndviStack, NDVI_pred_mod)
+
+names(coeffVal) <- c(
+  "intercept",
+  "lag_1_coefficient",
+  "lag_2_coefficient",
+  "lag_3_coefficient"
+)
+
+coeffVal
+```
+
+`terra::app()` visits each grid cell, gathers its values across all layers, supplies that vector to `NDVI_pred_mod()`, and writes the four returned coefficients to four output raster layers.
+
+The spatial geometry of the input is retained. Therefore, every cell in the output corresponds to the same location as the input NDVI rasters.
+
+# Map and interpret model coefficients
+
+```{r plot-coefficients, eval=FALSE}
+plot(
+  coeffVal[["intercept"]],
+  main = "Regression intercept",
+  range = c(0, 1)
+)
+
+plot(
+  coeffVal[["lag_1_coefficient"]],
+  main = "Lag-1 NDVI coefficient"
+)
+
+plot(coeffVal, main = names(coeffVal))
+```
+
+Interpret the coefficient maps carefully:
+
+-   A positive lag coefficient indicates that, after accounting for the other lags, higher NDVI in earlier layers is associated with higher current NDVI.
+-   A negative lag coefficient indicates an inverse partial relationship after accounting for the other lags.
+-   Larger absolute values indicate a stronger fitted relationship on the scale of the model.
+-   The intercept is the predicted current NDVI when all three lagged NDVI values equal zero. That condition may not be ecologically meaningful for every location.
+
+A coefficient map is not a prediction map. It shows how fitted model parameters vary spatially.
+
+# Generate next-time-step predictions for a single cell
+
+The fitted equation can be used to predict the next NDVI value from the three most recent observations. If the model returns coefficients `(b0, b1, b2, b3)`, then:
+
+$$
+\widehat{NDVI}_{T+1} = b_0 + b_1 NDVI_T + b_2 NDVI_{T-1} + b_3 NDVI_{T-2}.
+$$
+
+```{r one-cell-prediction}
+coefs <- NDVI_pred_mod(test_series)
+
+next_ndvi <- coefs[1] +
+  coefs[2] * test_series[length(test_series)] +
+  coefs[3] * test_series[length(test_series) - 1] +
+  coefs[4] * test_series[length(test_series) - 2]
+
+next_ndvi
+```
+
+This example is for one time series. To create a full prediction raster, we would apply the same calculation cellwise using the coefficient rasters and the final three NDVI layers.
+
+# Check your understanding
+
+Use the following questions to check your understanding of the workflow.
+
+1.  Why do the first three rows of `lagInput` contain missing values?
+2.  What does a lag of one represent for this particular NDVI dataset?
+3.  Why must the raster files be arranged chronologically?
+4.  Why does the function return four values for a non-land pixel?
+5.  What happens if a land pixel has only four complete lagged observations?
+6.  Does a positive lag-1 coefficient prove that NDVI in earlier layers causes current NDVI? Why or why not?
+7.  How would you modify the model to use only two lags?
+8.  How would you produce a raster of predicted NDVI for the next time step?
+9.  Why might neighboring pixels have very different coefficients?
+10. What diagnostics would you inspect before treating this as a reliable forecasting model?
+
+# Optional extension: save the coefficient rasters
+
+```{r save-output, eval=FALSE}
+writeRaster(
+  coeffVal,
+  filename = "NDVI_regression_coefficients.tif",
+  overwrite = TRUE
+)
+```
+
+A multilayer GeoTIFF is written with one layer for each coefficient. The output should be checked after writing to confirm its layer names, coordinate reference system, spatial extent, and missing-value pattern.
+
+# Key takeaways
+
+-   A multilayer raster can represent time through its layer dimension.
+-   `terra::app()` allows the same function to be run independently for each grid cell.
+-   Lagged variables align earlier observations with current NDVI.
+-   Non-land pixels require explicit missing-value handling.
+-   `tryCatch()` makes large cellwise computations resilient, but errors should still be investigated during development.
+-   Raster-layer order determines the time order, so file sorting and date verification are essential.
+-   Regression coefficients describe fitted relationships; additional validation is required before using the model for forecasting.
