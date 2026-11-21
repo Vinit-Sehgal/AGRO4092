@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12&nbsp; Curve Fitting, Optimization, and Machine Learning – R Tools for Mesoscale Soil Hydrology</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ch14.html" rel="next">
+<link href="./ch12.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d5d78c9e45e9a5253a6059031ce5ea1b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch13.html">Curve Fitting, Optimization, and Machine Learning</a></li><li class="breadcrumb-item"><a href="./ch13.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch13.html">Curve Fitting, Optimization, and Machine Learning</a></li><li class="breadcrumb-item"><a href="./ch13.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></a></li></ol></nav>
+      <h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Tools for Mesoscale Soil Hydrology</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/vinit-sehgal/AGRO4092" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">R Fundamentals</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basics of R</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Mapping in R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Spatial Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmetic and Statistics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Spatial Operations on Rasters and Vectors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Land and Climate Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Layer–wise Operations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Cell–wise Operations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Parallel Geospatial Computing</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Hydrologic Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Landscape Soil Hydrology Model</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Curve Fitting, Optimization, and Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch13.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch14.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Practice and Resources</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chN.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-we-will-explore" id="toc-what-we-will-explore" class="nav-link active" data-scroll-target="#what-we-will-explore"><span class="header-section-number">12.1</span> What we will explore</a></li>
+  <li><a href="#the-physical-question" id="toc-the-physical-question" class="nav-link" data-scroll-target="#the-physical-question"><span class="header-section-number">12.2</span> The physical question</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">12.3</span> Setup</a></li>
+  <li><a href="#download-and-read-the-simplified-data" id="toc-download-and-read-the-simplified-data" class="nav-link" data-scroll-target="#download-and-read-the-simplified-data"><span class="header-section-number">12.4</span> Download and read the simplified data</a></li>
+  <li><a href="#identify-simple-drydown-periods" id="toc-identify-simple-drydown-periods" class="nav-link" data-scroll-target="#identify-simple-drydown-periods"><span class="header-section-number">12.5</span> Identify simple drydown periods</a></li>
+  <li><a href="#define-the-physics-based-response-curve" id="toc-define-the-physics-based-response-curve" class="nav-link" data-scroll-target="#define-the-physics-based-response-curve"><span class="header-section-number">12.6</span> Define the physics-based response curve</a></li>
+  <li><a href="#set-the-optimization-bounds" id="toc-set-the-optimization-bounds" class="nav-link" data-scroll-target="#set-the-optimization-bounds"><span class="header-section-number">12.7</span> Set the optimization bounds</a></li>
+  <li><a href="#fit-the-model-with-nls2-and-nls" id="toc-fit-the-model-with-nls2-and-nls" class="nav-link" data-scroll-target="#fit-the-model-with-nls2-and-nls"><span class="header-section-number">12.8</span> Fit the model with NLS2 and NLS</a>
+  <ul class="collapse">
+  <li><a href="#build-a-starting-value-grid" id="toc-build-a-starting-value-grid" class="nav-link" data-scroll-target="#build-a-starting-value-grid"><span class="header-section-number">12.8.1</span> Build a starting-value grid</a></li>
+  <li><a href="#search-the-grid-with-nls2" id="toc-search-the-grid-with-nls2" class="nav-link" data-scroll-target="#search-the-grid-with-nls2"><span class="header-section-number">12.8.2</span> Search the grid with NLS2</a></li>
+  <li><a href="#refine-the-solution-with-bounded-nls" id="toc-refine-the-solution-with-bounded-nls" class="nav-link" data-scroll-target="#refine-the-solution-with-bounded-nls"><span class="header-section-number">12.8.3</span> Refine the solution with bounded NLS</a></li>
+  </ul></li>
+  <li><a href="#fit-the-same-model-with-pso" id="toc-fit-the-same-model-with-pso" class="nav-link" data-scroll-target="#fit-the-same-model-with-pso"><span class="header-section-number">12.9</span> Fit the same model with PSO</a>
+  <ul class="collapse">
+  <li><a href="#define-the-objective-function" id="toc-define-the-objective-function" class="nav-link" data-scroll-target="#define-the-objective-function"><span class="header-section-number">12.9.1</span> Define the objective function</a></li>
+  <li><a href="#run-pso" id="toc-run-pso" class="nav-link" data-scroll-target="#run-pso"><span class="header-section-number">12.9.2</span> Run PSO</a></li>
+  </ul></li>
+  <li><a href="#turn-the-optimizations-into-reusable-functions" id="toc-turn-the-optimizations-into-reusable-functions" class="nav-link" data-scroll-target="#turn-the-optimizations-into-reusable-functions"><span class="header-section-number">12.10</span> Turn the optimizations into reusable functions</a>
+  <ul class="collapse">
+  <li><a href="#nls2nls-function" id="toc-nls2nls-function" class="nav-link" data-scroll-target="#nls2nls-function"><span class="header-section-number">12.10.1</span> NLS2/NLS function</a></li>
+  <li><a href="#pso-function" id="toc-pso-function" class="nav-link" data-scroll-target="#pso-function"><span class="header-section-number">12.10.2</span> PSO function</a></li>
+  </ul></li>
+  <li><a href="#compare-with-a-random-forest" id="toc-compare-with-a-random-forest" class="nav-link" data-scroll-target="#compare-with-a-random-forest"><span class="header-section-number">12.11</span> Compare with a Random Forest</a></li>
+  <li><a href="#apply-the-fitting-functions-to-spatial-data" id="toc-apply-the-fitting-functions-to-spatial-data" class="nav-link" data-scroll-target="#apply-the-fitting-functions-to-spatial-data"><span class="header-section-number">12.12</span> Apply the fitting functions to spatial data</a>
+  <ul class="collapse">
+  <li><a href="#read-the-raster-time-series" id="toc-read-the-raster-time-series" class="nav-link" data-scroll-target="#read-the-raster-time-series"><span class="header-section-number">12.12.1</span> Read the raster time series</a></li>
+  <li><a href="#test-one-raster-cell-first" id="toc-test-one-raster-cell-first" class="nav-link" data-scroll-target="#test-one-raster-cell-first"><span class="header-section-number">12.12.2</span> Test one raster cell first</a></li>
+  <li><a href="#prepare-the-raster-input" id="toc-prepare-the-raster-input" class="nav-link" data-scroll-target="#prepare-the-raster-input"><span class="header-section-number">12.12.3</span> Prepare the raster input</a></li>
+  <li><a href="#add-short-safe-spatial-wrappers" id="toc-add-short-safe-spatial-wrappers" class="nav-link" data-scroll-target="#add-short-safe-spatial-wrappers"><span class="header-section-number">12.12.4</span> Add short, safe spatial wrappers</a></li>
+  <li><a href="#create-the-parameter-maps" id="toc-create-the-parameter-maps" class="nav-link" data-scroll-target="#create-the-parameter-maps"><span class="header-section-number">12.12.5</span> Create the parameter maps</a></li>
+  <li><a href="#plot-the-maps" id="toc-plot-the-maps" class="nav-link" data-scroll-target="#plot-the-maps"><span class="header-section-number">12.12.6</span> Plot the maps</a></li>
+  </ul></li>
+  <li><a href="#what-should-we-conclude" id="toc-what-should-we-conclude" class="nav-link" data-scroll-target="#what-should-we-conclude"><span class="header-section-number">12.13</span> What should we conclude?</a></li>
+  <li><a href="#lets-discuss" id="toc-lets-discuss" class="nav-link" data-scroll-target="#lets-discuss"><span class="header-section-number">12.14</span> Let’s discuss</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="what-we-will-explore" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="what-we-will-explore"><span class="header-section-number">12.1</span> What we will explore</h2>
+<p>We will learn how to fit and optimize a physics-based nonlinear response curve in R using <strong>NLS2/NLS</strong> and <strong>Particle Swarm Optimization (PSO)</strong>. We will compare those fitted curves with a <strong>Random Forest</strong> model that learns the relationship directly from the data. Finally, we will turn the optimization steps into reusable functions and apply them to spatial soil-moisture (SM) and evaporative-fraction (EF) data.</p>
+<p>Let’s follow one clear workflow:</p>
+<p><strong>observations → physical equation → parameter bounds → optimization → fitted curve → reusable function → parameter maps</strong></p>
+<div class="callout callout-style-default callout-tip callout-titled" title="The bigger picture">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The bigger picture
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The SM–EF relationship is our case study. The same R workflow can be adapted to other environmental models when you have an equation, unknown parameters, and observations for fitting.</p>
+</div>
+</div>
+</section>
+<section id="the-physical-question" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="the-physical-question"><span class="header-section-number">12.2</span> The physical question</h2>
+<p>Evaporative fraction (EF) describes the fraction of available surface energy used for evapotranspiration. We will model how EF changes as soil moisture (SM) decreases during periods without strong wetting. These periods are called <strong>soil-moisture drydowns</strong>.</p>
+<p>We will represent three soil-moisture regimes:</p>
+<ol type="1">
+<li>a <strong>dry regime</strong>, where water strongly limits EF;</li>
+<li>a <strong>transition regime</strong>, where EF increases with SM; and</li>
+<li>a <strong>wet regime</strong>, where EF reaches a plateau.</li>
+</ol>
+</section>
+<section id="setup" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="setup"><span class="header-section-number">12.3</span> Setup</h2>
+<p>Install the packages once if needed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"readr"</span>, <span class="st">"nls2"</span>, <span class="st">"pso"</span>, <span class="st">"randomForest"</span>, <span class="st">"terra"</span>, <span class="st">"spData"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Load the packages used in this chapter.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nls2)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pso)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Set a few analysis choices in one place.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>min_drydown_steps <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>analysis_seed <span class="ot">&lt;-</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="download-and-read-the-simplified-data" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="download-and-read-the-simplified-data"><span class="header-section-number">12.4</span> Download and read the simplified data</h2>
+<p>The course dataset already contains only the three variables we need:</p>
+<ul>
+<li><code>date</code>: observation date;</li>
+<li><code>SM</code>: vertically averaged soil moisture in volumetric units; and</li>
+<li><code>EF</code>: evaporative fraction.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>csv_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SampleData-master/US-TON_SM-EF.csv"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  csv_url,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">destfile =</span> <span class="st">"US-TON_SM-EF.csv"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">"wb"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>eddy_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"US-TON_SM-EF.csv"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_col_types =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(eddy_data<span class="sc">$</span>date)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>eddy_data <span class="ot">&lt;-</span> eddy_data[<span class="fu">order</span>(eddy_data<span class="sc">$</span>date), ]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(eddy_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  date          SM    EF
+  &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;
+1 0001-01-20 0.335 0.458
+2 0001-01-20 0.381 0.399
+3 0001-01-20 0.402 0.280
+4 0001-01-20 0.410 0.483
+5 0001-01-20 0.397 0.346
+6 0001-01-20 0.257 0.242</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Start with analysis-ready data">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Start with analysis-ready data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The purpose of this chapter is to learn curve fitting and optimization. The soil-depth averaging and other preprocessing have therefore already been completed.</p>
+</div>
+</div>
+</section>
+<section id="identify-simple-drydown-periods" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="identify-simple-drydown-periods"><span class="header-section-number">12.5</span> Identify simple drydown periods</h2>
+<p>Calculate the change in SM from one observation to the next.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>SM_change <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA_real_</span>, <span class="fu">diff</span>(eddy_data<span class="sc">$</span>SM))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A non-increasing step has <code>SM_change &lt;= 0</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>is_drydown <span class="ot">&lt;-</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">is.finite</span>(eddy_data<span class="sc">$</span>SM_change) <span class="sc">&amp;</span> eddy_data<span class="sc">$</span>SM_change <span class="sc">&lt;=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Create an event number and count the drying steps in each event.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>drydown_id <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="sc">!</span>eddy_data<span class="sc">$</span>is_drydown)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>drydown_length <span class="ot">&lt;-</span> <span class="fu">ave</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  eddy_data<span class="sc">$</span>is_drydown,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  eddy_data<span class="sc">$</span>drydown_id,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">FUN =</span> sum</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Keep complete SM–EF observations from events with at least five drying steps.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>drydown_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  eddy_data,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  is_drydown <span class="sc">&amp;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    drydown_length <span class="sc">&gt;=</span> min_drydown_steps <span class="sc">&amp;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.finite</span>(SM) <span class="sc">&amp;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.finite</span>(EF)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Retained observations:"</span>, <span class="fu">nrow</span>(drydown_data), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Retained observations: 2682 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Retained drydown events:"</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">length</span>(<span class="fu">unique</span>(drydown_data<span class="sc">$</span>drydown_id)),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="sc">\n</span><span class="st">"</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Retained drydown events: 245 </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="We are counting observations">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+We are counting observations
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Five observations represent approximately five days only when the records are daily and consecutive. For data with a different time step, change <code>min_drydown_steps</code> accordingly.</p>
+</div>
+</div>
+<p>Let’s view the observations that will be fitted.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  drydown_data<span class="sc">$</span>SM,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  drydown_data<span class="sc">$</span>EF,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">cex =</span> <span class="fl">0.7</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"grey30"</span>, <span class="at">alpha.f =</span> <span class="fl">0.35</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.first =</span> graphics<span class="sc">::</span><span class="fu">grid</span>(),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="fu">expression</span>(<span class="st">"Soil moisture"</span><span class="sc">~</span>(m<span class="sc">^</span><span class="dv">3</span><span class="sc">~</span>m<span class="sc">^</span>{<span class="sc">-</span><span class="dv">3</span>})),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Evaporative fraction"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Observed SM–EF relationship"</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="ch13_files/figure-html/plot-site-data-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="ch13_files/figure-html/plot-site-data-1.png" class="img-fluid figure-img" width="864"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="define-the-physics-based-response-curve" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="define-the-physics-based-response-curve"><span class="header-section-number">12.6</span> Define the physics-based response curve</h2>
+<p>We will use the following piecewise-linear model:</p>
+<p><span class="math display">\[
+EF(SM)=
+\begin{cases}
+0, &amp; SM \leq \theta_d \\
+EF_{max}\dfrac{SM-\theta_d}{\theta_w-\theta_d}, &amp; \theta_d &lt; SM &lt; \theta_w \\
+EF_{max}, &amp; SM \geq \theta_w.
+\end{cases}
+\]</span></p>
+<p>The three parameters are:</p>
+<ul>
+<li><span class="math inline">\(\theta_d\)</span>: dry threshold;</li>
+<li><span class="math inline">\(\theta_w\)</span>: wet threshold; and</li>
+<li><span class="math inline">\(EF_{max}\)</span>: EF at the wet plateau.</li>
+</ul>
+<p>Translate the equation into an R function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>piecewise_EF <span class="ot">&lt;-</span> <span class="cf">function</span>(SM, theta_d, theta_w, EF_max) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    SM <span class="sc">&lt;=</span> theta_d,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ifelse</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      SM <span class="sc">&gt;=</span> theta_w,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>      EF_max,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      EF_max <span class="sc">*</span> (SM <span class="sc">-</span> theta_d) <span class="sc">/</span> (theta_w <span class="sc">-</span> theta_d)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="set-the-optimization-bounds" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="set-the-optimization-bounds"><span class="header-section-number">12.7</span> Set the optimization bounds</h2>
+<p>An optimizer searches only inside the parameter space that we allow. We will use the revised bounds below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lower_bounds <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta_d =</span> <span class="fl">0.02</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta_w =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(drydown_data<span class="sc">$</span>SM, <span class="fl">0.35</span>)),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">EF_max =</span> <span class="fl">0.20</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>upper_bounds <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta_d =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(drydown_data<span class="sc">$</span>SM, <span class="fl">0.30</span>)),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta_w =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(drydown_data<span class="sc">$</span>SM, <span class="fl">0.98</span>)),</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">EF_max =</span> <span class="fl">1.00</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>lower_bounds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  theta_d   theta_w    EF_max 
+0.0200000 0.1323111 0.2000000 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>upper_bounds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  theta_d   theta_w    EF_max 
+0.1272590 0.3855175 1.0000000 </code></pre>
+</div>
+</div>
+<p>Check that every lower bound is smaller than its upper bound.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(lower_bounds <span class="sc">&lt;</span> upper_bounds))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Bounds are part of the model">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Bounds are part of the model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The dry threshold is searched in the lower part of the observed SM distribution, while the wet threshold is searched in the upper part. This encourages <span class="math inline">\(\theta_d &lt; \theta_w\)</span> and avoids implausible combinations. If many fitted values reach a bound, inspect the data and reconsider the bound rather than accepting the result automatically.</p>
+</div>
+</div>
+</section>
+<section id="fit-the-model-with-nls2-and-nls" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="fit-the-model-with-nls2-and-nls"><span class="header-section-number">12.8</span> Fit the model with NLS2 and NLS</h2>
+<p>NLS needs useful starting values. We will let <strong>NLS2</strong> search a small grid first and then use bounded <strong>NLS</strong> to refine the best grid result.</p>
+<section id="build-a-starting-value-grid" class="level3" data-number="12.8.1">
+<h3 data-number="12.8.1" class="anchored" data-anchor-id="build-a-starting-value-grid"><span class="header-section-number">12.8.1</span> Build a starting-value grid</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nls_search <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta_d =</span> <span class="fu">seq</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    lower_bounds[<span class="st">"theta_d"</span>],</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    upper_bounds[<span class="st">"theta_d"</span>],</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">length.out =</span> <span class="dv">6</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta_w =</span> <span class="fu">seq</span>(</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    lower_bounds[<span class="st">"theta_w"</span>],</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    upper_bounds[<span class="st">"theta_w"</span>],</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">length.out =</span> <span class="dv">6</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">EF_max =</span> <span class="fu">seq</span>(</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    lower_bounds[<span class="st">"EF_max"</span>],</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    upper_bounds[<span class="st">"EF_max"</span>],</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">length.out =</span> <span class="dv">6</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(nls_search)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     theta_d   theta_w EF_max
+1 0.02000000 0.1323111    0.2
+2 0.04145181 0.1323111    0.2
+3 0.06290361 0.1323111    0.2
+4 0.08435542 0.1323111    0.2
+5 0.10580722 0.1323111    0.2
+6 0.12725903 0.1323111    0.2</code></pre>
+</div>
+</div>
+</section>
+<section id="search-the-grid-with-nls2" class="level3" data-number="12.8.2">
+<h3 data-number="12.8.2" class="anchored" data-anchor-id="search-the-grid-with-nls2"><span class="header-section-number">12.8.2</span> Search the grid with NLS2</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nls_start <span class="ot">&lt;-</span> <span class="fu">nls2</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  EF <span class="sc">~</span> <span class="fu">piecewise_EF</span>(SM, theta_d, theta_w, EF_max),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> drydown_data,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> nls_search,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"brute-force"</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(nls_start)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   theta_d    theta_w     EF_max 
+0.08435542 0.13231111 0.36000000 </code></pre>
+</div>
+</div>
+</section>
+<section id="refine-the-solution-with-bounded-nls" class="level3" data-number="12.8.3">
+<h3 data-number="12.8.3" class="anchored" data-anchor-id="refine-the-solution-with-bounded-nls"><span class="header-section-number">12.8.3</span> Refine the solution with bounded NLS</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>nls_fit <span class="ot">&lt;-</span> <span class="fu">nls</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  EF <span class="sc">~</span> <span class="fu">piecewise_EF</span>(SM, theta_d, theta_w, EF_max),</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> drydown_data,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">as.list</span>(<span class="fu">coef</span>(nls_start)),</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"port"</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> lower_bounds,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> upper_bounds,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">nls.control</span>(<span class="at">maxiter =</span> <span class="dv">200</span>, <span class="at">warnOnly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>nls_parameters <span class="ot">&lt;-</span> <span class="fu">coef</span>(nls_fit)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>nls_parameters</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   theta_d    theta_w     EF_max 
+0.06191859 0.15774229 0.42603887 </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Two steps, one fitted model">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Two steps, one fitted model
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>NLS2 supplies promising starting values. NLS then moves away from the grid points to refine the parameter estimates. Both steps fit the same physical equation.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="fit-the-same-model-with-pso" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="fit-the-same-model-with-pso"><span class="header-section-number">12.9</span> Fit the same model with PSO</h2>
+<p>Particle Swarm Optimization searches with a group of candidate solutions called particles. Each particle moves through the bounded parameter space as the swarm searches for a smaller model error.</p>
+<section id="define-the-objective-function" class="level3" data-number="12.9.1">
+<h3 data-number="12.9.1" class="anchored" data-anchor-id="define-the-objective-function"><span class="header-section-number">12.9.1</span> Define the objective function</h3>
+<p>The objective function returns mean squared error. PSO will try to make this value as small as possible.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>model_error <span class="ot">&lt;-</span> <span class="cf">function</span>(parameters, SM, EF) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  predicted <span class="ot">&lt;-</span> <span class="fu">piecewise_EF</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    SM,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> parameters[<span class="dv">1</span>],</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> parameters[<span class="dv">2</span>],</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> parameters[<span class="dv">3</span>]</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>((EF <span class="sc">-</span> predicted)<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="run-pso" class="level3" data-number="12.9.2">
+<h3 data-number="12.9.2" class="anchored" data-anchor-id="run-pso"><span class="header-section-number">12.9.2</span> Run PSO</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(analysis_seed)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>pso_fit <span class="ot">&lt;-</span> <span class="fu">psoptim</span>(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">par =</span> (lower_bounds <span class="sc">+</span> upper_bounds) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fn =</span> model_error,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">SM =</span> drydown_data<span class="sc">$</span>SM,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">EF =</span> drydown_data<span class="sc">$</span>EF,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> lower_bounds,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper =</span> upper_bounds,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">s =</span> <span class="dv">30</span>,</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxit =</span> <span class="dv">60</span>,</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">trace =</span> <span class="dv">1</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>pso_parameters <span class="ot">&lt;-</span> <span class="fu">setNames</span>(</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  pso_fit<span class="sc">$</span>par,</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"theta_d"</span>, <span class="st">"theta_w"</span>, <span class="st">"EF_max"</span>)</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>pso_parameters</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   theta_d    theta_w     EF_max 
+0.06190792 0.15777929 0.42608770 </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Same equation, different optimization">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Same equation, different optimization
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>NLS2/NLS and PSO estimate the same three parameters in the same piecewise model. Differences in their fitted values come from the search algorithms, not from different physical equations.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="turn-the-optimizations-into-reusable-functions" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="turn-the-optimizations-into-reusable-functions"><span class="header-section-number">12.10</span> Turn the optimizations into reusable functions</h2>
+<p>A reusable fitting function should accept two vectors and return one fixed-length parameter vector:</p>
+<p><code>SM + EF</code> <span class="math inline">\(\rightarrow\)</span> <code>theta_d + theta_w + EF_max</code></p>
+<section id="nls2nls-function" class="level3" data-number="12.10.1">
+<h3 data-number="12.10.1" class="anchored" data-anchor-id="nls2nls-function"><span class="header-section-number">12.10.1</span> NLS2/NLS function</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fit_NLS <span class="ot">&lt;-</span> <span class="cf">function</span>(SM, EF) {</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  keep <span class="ot">&lt;-</span> <span class="fu">is.finite</span>(SM) <span class="sc">&amp;</span> <span class="fu">is.finite</span>(EF)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  SM <span class="ot">&lt;-</span> SM[keep]</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  EF <span class="ot">&lt;-</span> EF[keep]</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  empty_result <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> <span class="cn">NA_real_</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(SM) <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">||</span> <span class="fu">length</span>(<span class="fu">unique</span>(SM)) <span class="sc">&lt;</span> <span class="dv">4</span>) {</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(empty_result)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  lower <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> <span class="fl">0.02</span>,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(SM, <span class="fl">0.35</span>)),</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> <span class="fl">0.20</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>  upper <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(SM, <span class="fl">0.30</span>)),</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(SM, <span class="fl">0.98</span>)),</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> <span class="fl">1.00</span></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="sc">!</span><span class="fu">is.finite</span>(<span class="fu">c</span>(lower, upper))) <span class="sc">||</span> <span class="fu">any</span>(lower <span class="sc">&gt;=</span> upper)) {</span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(empty_result)</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>  model_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">SM =</span> SM, <span class="at">EF =</span> EF)</span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>  search_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> <span class="fu">seq</span>(lower[<span class="st">"theta_d"</span>], upper[<span class="st">"theta_d"</span>], <span class="at">length.out =</span> <span class="dv">6</span>),</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> <span class="fu">seq</span>(lower[<span class="st">"theta_w"</span>], upper[<span class="st">"theta_w"</span>], <span class="at">length.out =</span> <span class="dv">6</span>),</span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> <span class="fu">seq</span>(lower[<span class="st">"EF_max"</span>], upper[<span class="st">"EF_max"</span>], <span class="at">length.out =</span> <span class="dv">6</span>)</span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>  start_fit <span class="ot">&lt;-</span> <span class="fu">nls2</span>(</span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>    EF <span class="sc">~</span> <span class="fu">piecewise_EF</span>(SM, theta_d, theta_w, EF_max),</span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> model_data,</span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">start =</span> search_grid,</span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">algorithm =</span> <span class="st">"brute-force"</span></span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">nls</span>(</span>
+<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a>    EF <span class="sc">~</span> <span class="fu">piecewise_EF</span>(SM, theta_d, theta_w, EF_max),</span>
+<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> model_data,</span>
+<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">start =</span> <span class="fu">as.list</span>(<span class="fu">coef</span>(start_fit)),</span>
+<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">algorithm =</span> <span class="st">"port"</span>,</span>
+<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> lower,</span>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> upper,</span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">nls.control</span>(<span class="at">maxiter =</span> <span class="dv">200</span>, <span class="at">warnOnly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>  parameters <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit)[<span class="fu">c</span>(<span class="st">"theta_d"</span>, <span class="st">"theta_w"</span>, <span class="st">"EF_max"</span>)]</span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">as.numeric</span>(parameters), <span class="fu">names</span>(empty_result))</span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="pso-function" class="level3" data-number="12.10.2">
+<h3 data-number="12.10.2" class="anchored" data-anchor-id="pso-function"><span class="header-section-number">12.10.2</span> PSO function</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fit_PSO <span class="ot">&lt;-</span> <span class="cf">function</span>(SM, EF) {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  keep <span class="ot">&lt;-</span> <span class="fu">is.finite</span>(SM) <span class="sc">&amp;</span> <span class="fu">is.finite</span>(EF)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  SM <span class="ot">&lt;-</span> SM[keep]</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  EF <span class="ot">&lt;-</span> EF[keep]</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  empty_result <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> <span class="cn">NA_real_</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(SM) <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">||</span> <span class="fu">length</span>(<span class="fu">unique</span>(SM)) <span class="sc">&lt;</span> <span class="dv">4</span>) {</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(empty_result)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  lower <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> <span class="fl">0.02</span>,</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(SM, <span class="fl">0.35</span>)),</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> <span class="fl">0.20</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>  upper <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_d =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(SM, <span class="fl">0.30</span>)),</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">theta_w =</span> <span class="fu">unname</span>(<span class="fu">quantile</span>(SM, <span class="fl">0.98</span>)),</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF_max =</span> <span class="fl">1.00</span></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="sc">!</span><span class="fu">is.finite</span>(<span class="fu">c</span>(lower, upper))) <span class="sc">||</span> <span class="fu">any</span>(lower <span class="sc">&gt;=</span> upper)) {</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(empty_result)</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">psoptim</span>(</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">par =</span> (lower <span class="sc">+</span> upper) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">fn =</span> model_error,</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">SM =</span> SM,</span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">EF =</span> EF,</span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> lower,</span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> upper,</span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">list</span>(</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">s =</span> <span class="dv">30</span>,</span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">maxit =</span> <span class="dv">60</span>,</span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">trace =</span> <span class="dv">0</span></span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">as.numeric</span>(fit<span class="sc">$</span>par), <span class="fu">names</span>(empty_result))</span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Check both functions on the site data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fit_NLS</span>(drydown_data<span class="sc">$</span>SM, drydown_data<span class="sc">$</span>EF)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   theta_d    theta_w     EF_max 
+0.06191859 0.15774229 0.42603887 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fit_PSO</span>(drydown_data<span class="sc">$</span>SM, drydown_data<span class="sc">$</span>EF)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   theta_d    theta_w     EF_max 
+0.06192512 0.15776406 0.42611733 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="compare-with-a-random-forest" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="compare-with-a-random-forest"><span class="header-section-number">12.11</span> Compare with a Random Forest</h2>
+<p>A Random Forest learns the SM–EF relationship from many regression trees. It does not assume the three-regime equation and does not directly estimate <span class="math inline">\(\theta_d\)</span>, <span class="math inline">\(\theta_w\)</span>, or <span class="math inline">\(EF_{max}\)</span>. For this reason, it is a useful <strong>black-box prediction benchmark</strong>, but it is less physically interpretable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(analysis_seed)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  EF <span class="sc">~</span> SM,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> drydown_data,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ntree =</span> <span class="dv">500</span>,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> <span class="dv">1</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodesize =</span> <span class="dv">10</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>rf_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+ randomForest(formula = EF ~ SM, data = drydown_data, ntree = 500,      mtry = 1, nodesize = 10) 
+               Type of random forest: regression
+                     Number of trees: 500
+No. of variables tried at each split: 1
+
+          Mean of squared residuals: 0.01411422
+                    % Var explained: 28.71</code></pre>
+</div>
+</div>
+<p>Create one SM sequence and predict all three fitted responses.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>sm_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">min</span>(drydown_data<span class="sc">$</span>SM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max</span>(drydown_data<span class="sc">$</span>SM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">length.out =</span> <span class="dv">200</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>nls_curve <span class="ot">&lt;-</span> <span class="fu">piecewise_EF</span>(</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  sm_grid,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  nls_parameters[<span class="st">"theta_d"</span>],</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  nls_parameters[<span class="st">"theta_w"</span>],</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  nls_parameters[<span class="st">"EF_max"</span>]</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>pso_curve <span class="ot">&lt;-</span> <span class="fu">piecewise_EF</span>(</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  sm_grid,</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  pso_parameters[<span class="st">"theta_d"</span>],</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>  pso_parameters[<span class="st">"theta_w"</span>],</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>  pso_parameters[<span class="st">"EF_max"</span>]</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>rf_curve <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>  rf_fit,</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> <span class="fu">data.frame</span>(<span class="at">SM =</span> sm_grid)</span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Plot the methods side by side.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>curve_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">NLS2 =</span> nls_curve,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">PSO =</span> pso_curve,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Random Forest</span><span class="st">`</span> <span class="ot">=</span> rf_curve</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>curve_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"salmon"</span>, <span class="st">"turquoise3"</span>, <span class="st">"forestgreen"</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>old_par <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(curve_list)) {</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>    drydown_data<span class="sc">$</span>SM,</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>    drydown_data<span class="sc">$</span>EF,</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">pch =</span> <span class="dv">16</span>,</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">cex =</span> <span class="fl">0.65</span>,</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">cex.axis =</span> <span class="fl">1.1</span>,</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">cex.lab =</span> <span class="fl">1.1</span>,</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"grey30"</span>, <span class="at">alpha.f =</span> <span class="fl">0.25</span>),</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.first =</span> graphics<span class="sc">::</span><span class="fu">grid</span>(),</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab =</span> <span class="fu">expression</span>(<span class="st">"Soil moisture"</span><span class="sc">~</span>(m<span class="sc">^</span><span class="dv">3</span><span class="sc">~</span>m<span class="sc">^</span>{<span class="sc">-</span><span class="dv">3</span>})),</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab =</span> <span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">1</span>) <span class="st">"Evaporative fraction"</span> <span class="cf">else</span> <span class="st">""</span>,</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">main =</span> <span class="fu">names</span>(curve_list)[i]</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>    sm_grid,</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>    curve_list[[i]],</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> curve_colors[i],</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">lwd =</span> <span class="dv">3</span></span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="ch13_files/figure-html/compare-fitted-curves-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="ch13_files/figure-html/compare-fitted-curves-1.png" class="img-fluid figure-img" width="1152"></a></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(old_par)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="Random Forest is flexible, not physically constrained">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Random Forest is flexible, not physically constrained
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Random Forest response may be step-like or locally non-monotonic. Interpret it only within the SM range represented in the training data. Unlike the piecewise model, it does not provide physically defined threshold parameters.</p>
+</div>
+</div>
+</section>
+<section id="apply-the-fitting-functions-to-spatial-data" class="level2" data-number="12.12">
+<h2 data-number="12.12" class="anchored" data-anchor-id="apply-the-fitting-functions-to-spatial-data"><span class="header-section-number">12.12</span> Apply the fitting functions to spatial data</h2>
+<p>We fitted one pair of SM and EF vectors at the site. We will now repeat the same calculation for every raster cell. Each cell contains a matched SM time series and EF time series.</p>
+<section id="read-the-raster-time-series" class="level3" data-number="12.12.1">
+<h3 data-number="12.12.1" class="anchored" data-anchor-id="read-the-raster-time-series"><span class="header-section-number">12.12.1</span> Read the raster time series</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spData)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/SampleData-master/SM.nc"</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">destfile =</span> <span class="st">"SM.nc"</span>,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">"wb"</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/SampleData-master/EF.nc"</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">destfile =</span> <span class="st">"EF.nc"</span>,</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">"wb"</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>SM <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"SM.nc"</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>EF <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"EF.nc"</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>SM</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 18, 37, 299  (nrow, ncol, nlyr)
+resolution  : 0.373, 0.282  (x, y)
+extent      : -103.908, -90.107, 30.0545, 35.1305  (xmin, xmax, ymin, ymax)
+coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+source      : SM.nc 
+names       :    SM_1,    SM_2,    SM_3,    SM_4,    SM_5,    SM_6, ... 
+unit        : [m3/m3], [m3/m3], [m3/m3], [m3/m3], [m3/m3], [m3/m3], ... </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>EF</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 18, 37, 299  (nrow, ncol, nlyr)
+resolution  : 0.373, 0.282  (x, y)
+extent      : -103.908, -90.107, 30.0545, 35.1305  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84) 
+source      : EF.nc 
+names       : EF_1, EF_2, EF_3, EF_4, EF_5, EF_6, ... </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Match space and time before fitting">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Match space and time before fitting
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SM and EF must have the same grid, number of layers, temporal order, and time-window definition. A parameter map is not meaningful when the two vectors are misaligned.</p>
+</div>
+</div>
+</section>
+<section id="test-one-raster-cell-first" class="level3" data-number="12.12.2">
+<h3 data-number="12.12.2" class="anchored" data-anchor-id="test-one-raster-cell-first"><span class="header-section-number">12.12.2</span> Test one raster cell first</h3>
+<p>Choose the cell with the largest number of matched observations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>complete_count <span class="ot">&lt;-</span> <span class="fu">xapp</span>(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  SM,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  EF,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun =</span> <span class="cf">function</span>(SM, EF) <span class="fu">sum</span>(<span class="fu">is.finite</span>(SM) <span class="sc">&amp;</span> <span class="fu">is.finite</span>(EF))</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>cell_id <span class="ot">&lt;-</span> <span class="fu">which.max</span>(<span class="fu">values</span>(complete_count, <span class="at">mat =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>cell_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 46</code></pre>
+</div>
+</div>
+<p>Extract and inspect its two time series.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>cell_SM <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">extract</span>(SM, cell_id, <span class="at">raw =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>cell_EF <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">extract</span>(EF, cell_id, <span class="at">raw =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.finite</span>(cell_SM) <span class="sc">&amp;</span> <span class="fu">is.finite</span>(cell_EF))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 298</code></pre>
+</div>
+</div>
+<p>Run both functions <strong>without</strong> <code>tryCatch()</code> while testing. This lets R show the complete error if a function fails.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>cell_nls_parameters <span class="ot">&lt;-</span> <span class="fu">fit_NLS</span>(cell_SM, cell_EF)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>cell_pso_parameters <span class="ot">&lt;-</span> <span class="fu">fit_PSO</span>(cell_SM, cell_EF)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>cell_nls_parameters</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  theta_d   theta_w    EF_max 
+0.0200000 0.1382448 0.2055584 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>cell_pso_parameters</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  theta_d   theta_w    EF_max 
+0.0200000 0.1382448 0.2058745 </code></pre>
+</div>
+</div>
+</section>
+<section id="prepare-the-raster-input" class="level3" data-number="12.12.3">
+<h3 data-number="12.12.3" class="anchored" data-anchor-id="prepare-the-raster-input"><span class="header-section-number">12.12.3</span> Prepare the raster input</h3>
+<p><code>terra::app()</code> will pass one long vector for each cell. The first half contains SM and the second half contains EF.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>n_time <span class="ot">&lt;-</span> <span class="fu">nlyr</span>(SM)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>spatial_data <span class="ot">&lt;-</span> <span class="fu">c</span>(SM, EF)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="add-short-safe-spatial-wrappers" class="level3" data-number="12.12.4">
+<h3 data-number="12.12.4" class="anchored" data-anchor-id="add-short-safe-spatial-wrappers"><span class="header-section-number">12.12.4</span> Add short, safe spatial wrappers</h3>
+<p>Keep <code>tryCatch()</code> in the full raster calculation so that one failed cell does not stop the complete map.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>fit_NLS_spatial <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  SM_cell <span class="ot">&lt;-</span> x[<span class="dv">1</span><span class="sc">:</span>n_time]</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  EF_cell <span class="ot">&lt;-</span> x[(n_time <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(<span class="dv">2</span> <span class="sc">*</span> n_time)]</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit_NLS</span>(SM_cell, EF_cell),</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">error =</span> <span class="cf">function</span>(e) <span class="fu">c</span>(</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">theta_d =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">theta_w =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">EF_max =</span> <span class="cn">NA_real_</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>fit_PSO_spatial <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  SM_cell <span class="ot">&lt;-</span> x[<span class="dv">1</span><span class="sc">:</span>n_time]</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  EF_cell <span class="ot">&lt;-</span> x[(n_time <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(<span class="dv">2</span> <span class="sc">*</span> n_time)]</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit_PSO</span>(SM_cell, EF_cell),</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">error =</span> <span class="cf">function</span>(e) <span class="fu">c</span>(</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">theta_d =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">theta_w =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">EF_max =</span> <span class="cn">NA_real_</span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled" title="Do not let tryCatch hide the cause">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Do not let tryCatch hide the cause
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>tryCatch()</code> is useful when hundreds of cells are fitted, but it can hide why a model failed. Always test selected cells without <code>tryCatch()</code> before running the complete raster.</p>
+</div>
+</div>
+</section>
+<section id="create-the-parameter-maps" class="level3" data-number="12.12.5">
+<h3 data-number="12.12.5" class="anchored" data-anchor-id="create-the-parameter-maps"><span class="header-section-number">12.12.5</span> Create the parameter maps</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>nls_parameter_maps <span class="ot">&lt;-</span> <span class="fu">app</span>(</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  spatial_data,</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  fit_NLS_spatial</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(nls_parameter_maps) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"theta_d"</span>, <span class="st">"theta_w"</span>, <span class="st">"EF_max"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Can we run the spatial optimization in parallel?">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Can we run the spatial optimization in parallel?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Yes. Earlier, we learned that parallel workers run in separate R sessions. When we use multiple cores with <code>terra::app()</code>, objects created in the main R session may not automatically be available to each worker.</p>
+<p>We can create a parallel cluster and send the required objects to each worker using <code>clusterExport()</code>.</p>
+<p>For example, for NLS:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">4</span>)</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterExport</span>(</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  cl,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"n_time"</span>,</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fit_NLS"</span>,</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"piecewise_EF"</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterEvalQ</span>(</span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>  cl,</span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(nls2)</span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "nls2"      "proto"     "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[2]]
+[1] "nls2"      "proto"     "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[3]]
+[1] "nls2"      "proto"     "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[4]]
+[1] "nls2"      "proto"     "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     </code></pre>
+</div>
+</div>
+<p>We can then use this cluster with <code>terra::app()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>nls_parameter_maps <span class="ot">&lt;-</span> <span class="fu">app</span>(</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  spatial_data,</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  fit_NLS_spatial,</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> cl</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For PSO, we would follow the same approach, but export the functions required by the PSO workflow and load the <code>pso</code> package on each worker.</p>
+<p><strong>Remember:</strong> parallel processing is most useful when the calculation for each cell is computationally expensive. For simple raster operations, the overhead of creating and communicating with workers may actually make the calculation slower. Iterative optimization with NLS or PSO is a much better candidate for parallel processing.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(analysis_seed)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>pso_parameter_maps <span class="ot">&lt;-</span> <span class="fu">app</span>(</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  spatial_data,</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  fit_PSO_spatial</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pso_parameter_maps) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"theta_d"</span>, <span class="st">"theta_w"</span>, <span class="st">"EF_max"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="PSO takes longer">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+PSO takes longer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>PSO performs an iterative population search in every cell, so its map usually takes longer to compute than the NLS2/NLS map. Run the NLS map first while checking the workflow.</p>
+</div>
+</div>
+</section>
+<section id="plot-the-maps" class="level3" data-number="12.12.6">
+<h3 data-number="12.12.6" class="anchored" data-anchor-id="plot-the-maps"><span class="header-section-number">12.12.6</span> Plot the maps</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>states <span class="ot">&lt;-</span> <span class="fu">project</span>(<span class="fu">vect</span>(spData<span class="sc">::</span>us_states), <span class="fu">crs</span>(SM))</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>add_states <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(states, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">border =</span> <span class="st">"grey20"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  nls_parameter_maps,</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="fu">c</span>(</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expression</span>(theta[d]),</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expression</span>(theta[w]),</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expression</span>(EF[max])</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun =</span> add_states,</span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">nc =</span> <span class="dv">1</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="ch13_files/figure-html/plot-nls-maps-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="ch13_files/figure-html/plot-nls-maps-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  pso_parameter_maps,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="fu">c</span>(</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expression</span>(theta[d]),</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expression</span>(theta[w]),</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expression</span>(EF[max])</span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">fun =</span> add_states,</span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">nc =</span> <span class="dv">1</span></span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="what-should-we-conclude" class="level2" data-number="12.13">
+<h2 data-number="12.13" class="anchored" data-anchor-id="what-should-we-conclude"><span class="header-section-number">12.13</span> What should we conclude?</h2>
+<ol type="1">
+<li>NLS2/NLS and PSO can optimize the same physics-based model with different search strategies.</li>
+<li>The optimization bounds directly influence which parameter values can be found.</li>
+<li>The piecewise model produces interpretable physical thresholds, while Random Forest provides a flexible black-box comparison.</li>
+<li>A function that accepts SM and EF vectors and returns a fixed-length result can be reused for raster-cell calculations.</li>
+<li><code>tryCatch()</code> keeps the full spatial calculation moving, but selected cells should first be tested without it.</li>
+</ol>
+<p>In the next chapter, we will ask a new question:</p>
+<blockquote class="blockquote">
+<p>If the fitted parameters change when the data change, how much confidence should we place in one fitted curve or one parameter map?</p>
+</blockquote>
+</section>
+<section id="lets-discuss" class="level2" data-number="12.14">
+<h2 data-number="12.14" class="anchored" data-anchor-id="lets-discuss"><span class="header-section-number">12.14</span> Let’s discuss</h2>
+<ol type="1">
+<li>Why do NLS2/NLS and PSO sometimes return slightly different parameter values for the same equation?</li>
+<li>What does it mean when an estimated parameter reaches its lower or upper bound?</li>
+<li>Why can Random Forest predict a flexible curve but not directly provide <span class="math inline">\(\theta_d\)</span> and <span class="math inline">\(\theta_w\)</span>?</li>
+<li>Why must SM and EF raster layers be aligned in both space and time?</li>
+<li>What information could explain EF variation that is not captured by SM alone?</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ch12.html" class="pagination-link" aria-label="Landscape Soil Hydrology Model">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Landscape Soil Hydrology Model</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ch14.html" class="pagination-link" aria-label="Model Fitting, Optimization, and Uncertainty">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Class Notes for AGRO-4092 at <a href="https://www.lsu.edu/">Louisiana State University</a></p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

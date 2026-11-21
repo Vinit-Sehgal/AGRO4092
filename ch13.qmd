@@ -1,0 +1,15 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Curve Fitting, Optimization, and Machine Learning
+
+```{r child="ch13_a.qmd", message = FALSE, warning = FALSE}
+
+
+```
+

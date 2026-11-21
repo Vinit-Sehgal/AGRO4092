@@ -1,0 +1,7 @@
+/* Make Part headings in the sidebar stand out */
+.sidebar-item-section > .sidebar-item-container > .sidebar-item-text {
+  font-weight: 700;
+  color: #461D7C;
+  font-size: 1.05em;
+  margin-top: 0.6em;
+}

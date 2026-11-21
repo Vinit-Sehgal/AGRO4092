@@ -1,0 +1,15 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Model Fitting, Optimization, and Uncertainty
+
+```{r child="ch14_a.qmd", message = FALSE, warning = FALSE}
+
+
+```
+

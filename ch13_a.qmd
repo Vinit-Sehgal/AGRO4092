@@ -1,0 +1,910 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## What we will explore
+
+We will learn how to fit and optimize a physics-based nonlinear response curve in R using **NLS2/NLS** and **Particle Swarm Optimization (PSO)**.
+We will compare those fitted curves with a **Random Forest** model that learns the relationship directly from the data.
+Finally, we will turn the optimization steps into reusable functions and apply them to spatial soil-moisture (SM) and evaporative-fraction (EF) data.
+
+Let's follow one clear workflow:
+
+**observations → physical equation → parameter bounds → optimization → fitted curve → reusable function → parameter maps**
+
+::: {.callout-tip title="The bigger picture"}
+The SM–EF relationship is our case study.
+The same R workflow can be adapted to other environmental models when you have an equation, unknown parameters, and observations for fitting.
+:::
+
+## The physical question
+
+Evaporative fraction (EF) describes the fraction of available surface energy used for evapotranspiration.
+We will model how EF changes as soil moisture (SM) decreases during periods without strong wetting.
+These periods are called **soil-moisture drydowns**.
+
+We will represent three soil-moisture regimes:
+
+1.  a **dry regime**, where water strongly limits EF;
+2.  a **transition regime**, where EF increases with SM; and
+3.  a **wet regime**, where EF reaches a plateau.
+
+## Setup
+
+Install the packages once if needed.
+
+```{r}
+#| eval: false
+install.packages(c("readr", "nls2", "pso", "randomForest", "terra", "spData"))
+```
+
+Load the packages used in this chapter.
+
+```{r}
+library(readr)
+library(nls2)
+library(pso)
+library(randomForest)
+```
+
+Set a few analysis choices in one place.
+
+```{r}
+#| label: settings
+
+min_drydown_steps <- 5
+analysis_seed <- 100
+```
+
+## Download and read the simplified data
+
+The course dataset already contains only the three variables we need:
+
+-   `date`: observation date;
+-   `SM`: vertically averaged soil moisture in volumetric units; and
+-   `EF`: evaporative fraction.
+
+```{r}
+#| label: download-site-data
+
+csv_url <- paste0(
+  "https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/",
+  "SampleData-master/US-TON_SM-EF.csv"
+)
+
+download.file(
+  csv_url,
+  destfile = "US-TON_SM-EF.csv",
+  mode = "wb"
+)
+```
+
+```{r}
+#| label: read-site-data
+#| warning: false
+
+eddy_data <- read_csv(
+  "US-TON_SM-EF.csv",
+  show_col_types = FALSE
+)
+
+eddy_data$date <- as.Date(eddy_data$date)
+eddy_data <- eddy_data[order(eddy_data$date), ]
+
+head(eddy_data)
+```
+
+::: {.callout-important title="Start with analysis-ready data"}
+The purpose of this chapter is to learn curve fitting and optimization.
+The soil-depth averaging and other preprocessing have therefore already been completed.
+:::
+
+## Identify simple drydown periods
+
+Calculate the change in SM from one observation to the next.
+
+```{r}
+#| label: sm-change
+
+eddy_data$SM_change <- c(NA_real_, diff(eddy_data$SM))
+```
+
+A non-increasing step has `SM_change <= 0`.
+
+```{r}
+#| label: drydown-step
+
+eddy_data$is_drydown <-
+  is.finite(eddy_data$SM_change) & eddy_data$SM_change <= 0
+```
+
+Create an event number and count the drying steps in each event.
+
+```{r}
+#| label: drydown-events
+
+eddy_data$drydown_id <- cumsum(!eddy_data$is_drydown)
+
+eddy_data$drydown_length <- ave(
+  eddy_data$is_drydown,
+  eddy_data$drydown_id,
+  FUN = sum
+)
+```
+
+Keep complete SM–EF observations from events with at least five drying steps.
+
+```{r}
+#| label: select-drydowns
+
+drydown_data <- subset(
+  eddy_data,
+  is_drydown &
+    drydown_length >= min_drydown_steps &
+    is.finite(SM) &
+    is.finite(EF)
+)
+
+cat("Retained observations:", nrow(drydown_data), "\n")
+cat(
+  "Retained drydown events:",
+  length(unique(drydown_data$drydown_id)),
+  "\n"
+)
+```
+
+::: {.callout-caution title="We are counting observations"}
+Five observations represent approximately five days only when the records are daily and consecutive.
+For data with a different time step, change `min_drydown_steps` accordingly.
+:::
+
+Let's view the observations that will be fitted.
+
+```{r}
+#| label: plot-site-data
+#| fig-width: 9
+#| fig-height: 4.5
+
+plot(
+  drydown_data$SM,
+  drydown_data$EF,
+  pch = 16,
+  cex = 0.7,
+  col = adjustcolor("grey30", alpha.f = 0.35),
+  panel.first = graphics::grid(),
+  xlab = expression("Soil moisture"~(m^3~m^{-3})),
+  ylab = "Evaporative fraction",
+  main = "Observed SM–EF relationship"
+)
+```
+
+## Define the physics-based response curve
+
+We will use the following piecewise-linear model:
+
+$$
+EF(SM)=
+\begin{cases}
+0, & SM \leq \theta_d \\
+EF_{max}\dfrac{SM-\theta_d}{\theta_w-\theta_d}, & \theta_d < SM < \theta_w \\
+EF_{max}, & SM \geq \theta_w.
+\end{cases}
+$$
+
+The three parameters are:
+
+-   $\theta_d$: dry threshold;
+-   $\theta_w$: wet threshold; and
+-   $EF_{max}$: EF at the wet plateau.
+
+Translate the equation into an R function.
+
+```{r}
+#| label: piecewise-function
+
+piecewise_EF <- function(SM, theta_d, theta_w, EF_max) {
+  ifelse(
+    SM <= theta_d,
+    0,
+    ifelse(
+      SM >= theta_w,
+      EF_max,
+      EF_max * (SM - theta_d) / (theta_w - theta_d)
+    )
+  )
+}
+```
+
+## Set the optimization bounds
+
+An optimizer searches only inside the parameter space that we allow.
+We will use the revised bounds below.
+
+```{r}
+#| label: full-data-bounds
+
+lower_bounds <- c(
+  theta_d = 0.02,
+  theta_w = unname(quantile(drydown_data$SM, 0.35)),
+  EF_max = 0.20
+)
+
+upper_bounds <- c(
+  theta_d = unname(quantile(drydown_data$SM, 0.30)),
+  theta_w = unname(quantile(drydown_data$SM, 0.98)),
+  EF_max = 1.00
+)
+
+lower_bounds
+upper_bounds
+```
+
+Check that every lower bound is smaller than its upper bound.
+
+```{r}
+stopifnot(all(lower_bounds < upper_bounds))
+```
+
+::: {.callout-important title="Bounds are part of the model"}
+The dry threshold is searched in the lower part of the observed SM distribution, while the wet threshold is searched in the upper part.
+This encourages $\theta_d < \theta_w$ and avoids implausible combinations.
+If many fitted values reach a bound, inspect the data and reconsider the bound rather than accepting the result automatically.
+:::
+
+## Fit the model with NLS2 and NLS
+
+NLS needs useful starting values.
+We will let **NLS2** search a small grid first and then use bounded **NLS** to refine the best grid result.
+
+### Build a starting-value grid
+
+```{r}
+#| label: nls-search-grid
+
+nls_search <- expand.grid(
+  theta_d = seq(
+    lower_bounds["theta_d"],
+    upper_bounds["theta_d"],
+    length.out = 6
+  ),
+  theta_w = seq(
+    lower_bounds["theta_w"],
+    upper_bounds["theta_w"],
+    length.out = 6
+  ),
+  EF_max = seq(
+    lower_bounds["EF_max"],
+    upper_bounds["EF_max"],
+    length.out = 6
+  )
+)
+
+head(nls_search)
+```
+
+### Search the grid with NLS2
+
+```{r}
+#| label: nls2-search
+
+nls_start <- nls2(
+  EF ~ piecewise_EF(SM, theta_d, theta_w, EF_max),
+  data = drydown_data,
+  start = nls_search,
+  algorithm = "brute-force"
+)
+
+coef(nls_start)
+```
+
+### Refine the solution with bounded NLS
+
+```{r}
+#| label: nls-refinement
+
+nls_fit <- nls(
+  EF ~ piecewise_EF(SM, theta_d, theta_w, EF_max),
+  data = drydown_data,
+  start = as.list(coef(nls_start)),
+  algorithm = "port",
+  lower = lower_bounds,
+  upper = upper_bounds,
+  control = nls.control(maxiter = 200, warnOnly = TRUE)
+)
+
+nls_parameters <- coef(nls_fit)
+nls_parameters
+```
+
+::: {.callout-tip title="Two steps, one fitted model"}
+NLS2 supplies promising starting values.
+NLS then moves away from the grid points to refine the parameter estimates.
+Both steps fit the same physical equation.
+:::
+
+## Fit the same model with PSO
+
+Particle Swarm Optimization searches with a group of candidate solutions called particles.
+Each particle moves through the bounded parameter space as the swarm searches for a smaller model error.
+
+### Define the objective function
+
+The objective function returns mean squared error.
+PSO will try to make this value as small as possible.
+
+```{r}
+#| label: pso-objective
+
+model_error <- function(parameters, SM, EF) {
+  predicted <- piecewise_EF(
+    SM,
+    theta_d = parameters[1],
+    theta_w = parameters[2],
+    EF_max = parameters[3]
+  )
+
+  mean((EF - predicted)^2, na.rm = TRUE)
+}
+```
+
+### Run PSO
+
+```{r}
+#| label: standalone-pso
+
+set.seed(analysis_seed)
+
+pso_fit <- psoptim(
+  par = (lower_bounds + upper_bounds) / 2,
+  fn = model_error,
+  SM = drydown_data$SM,
+  EF = drydown_data$EF,
+  lower = lower_bounds,
+  upper = upper_bounds,
+  control = list(
+    s = 30,
+    maxit = 60,
+    trace = 1
+  )
+)
+
+pso_parameters <- setNames(
+  pso_fit$par,
+  c("theta_d", "theta_w", "EF_max")
+)
+
+pso_parameters
+```
+
+::: {.callout-important title="Same equation, different optimization"}
+NLS2/NLS and PSO estimate the same three parameters in the same piecewise model.
+Differences in their fitted values come from the search algorithms, not from different physical equations.
+:::
+
+## Turn the optimizations into reusable functions
+
+A reusable fitting function should accept two vectors and return one fixed-length parameter vector:
+
+`SM + EF` $\rightarrow$ `theta_d + theta_w + EF_max`
+
+### NLS2/NLS function
+
+```{r}
+#| label: fit-nls-function
+
+fit_NLS <- function(SM, EF) {
+  keep <- is.finite(SM) & is.finite(EF)
+  SM <- SM[keep]
+  EF <- EF[keep]
+
+  empty_result <- c(
+    theta_d = NA_real_,
+    theta_w = NA_real_,
+    EF_max = NA_real_
+  )
+
+  if (length(SM) < 10 || length(unique(SM)) < 4) {
+    return(empty_result)
+  }
+
+  lower <- c(
+    theta_d = 0.02,
+    theta_w = unname(quantile(SM, 0.35)),
+    EF_max = 0.20
+  )
+
+  upper <- c(
+    theta_d = unname(quantile(SM, 0.30)),
+    theta_w = unname(quantile(SM, 0.98)),
+    EF_max = 1.00
+  )
+
+  if (any(!is.finite(c(lower, upper))) || any(lower >= upper)) {
+    return(empty_result)
+  }
+
+  model_data <- data.frame(SM = SM, EF = EF)
+
+  search_grid <- expand.grid(
+    theta_d = seq(lower["theta_d"], upper["theta_d"], length.out = 6),
+    theta_w = seq(lower["theta_w"], upper["theta_w"], length.out = 6),
+    EF_max = seq(lower["EF_max"], upper["EF_max"], length.out = 6)
+  )
+
+  start_fit <- nls2(
+    EF ~ piecewise_EF(SM, theta_d, theta_w, EF_max),
+    data = model_data,
+    start = search_grid,
+    algorithm = "brute-force"
+  )
+
+  fit <- nls(
+    EF ~ piecewise_EF(SM, theta_d, theta_w, EF_max),
+    data = model_data,
+    start = as.list(coef(start_fit)),
+    algorithm = "port",
+    lower = lower,
+    upper = upper,
+    control = nls.control(maxiter = 200, warnOnly = TRUE)
+  )
+
+  parameters <- coef(fit)[c("theta_d", "theta_w", "EF_max")]
+  setNames(as.numeric(parameters), names(empty_result))
+}
+```
+
+### PSO function
+
+```{r}
+#| label: fit-pso-function
+
+fit_PSO <- function(SM, EF) {
+  keep <- is.finite(SM) & is.finite(EF)
+  SM <- SM[keep]
+  EF <- EF[keep]
+
+  empty_result <- c(
+    theta_d = NA_real_,
+    theta_w = NA_real_,
+    EF_max = NA_real_
+  )
+
+  if (length(SM) < 10 || length(unique(SM)) < 4) {
+    return(empty_result)
+  }
+
+  lower <- c(
+    theta_d = 0.02,
+    theta_w = unname(quantile(SM, 0.35)),
+    EF_max = 0.20
+  )
+
+  upper <- c(
+    theta_d = unname(quantile(SM, 0.30)),
+    theta_w = unname(quantile(SM, 0.98)),
+    EF_max = 1.00
+  )
+
+  if (any(!is.finite(c(lower, upper))) || any(lower >= upper)) {
+    return(empty_result)
+  }
+
+  fit <- psoptim(
+    par = (lower + upper) / 2,
+    fn = model_error,
+    SM = SM,
+    EF = EF,
+    lower = lower,
+    upper = upper,
+    control = list(
+      s = 30,
+      maxit = 60,
+      trace = 0
+    )
+  )
+
+  setNames(as.numeric(fit$par), names(empty_result))
+}
+```
+
+Check both functions on the site data.
+
+```{r}
+fit_NLS(drydown_data$SM, drydown_data$EF)
+fit_PSO(drydown_data$SM, drydown_data$EF)
+```
+
+## Compare with a Random Forest
+
+A Random Forest learns the SM–EF relationship from many regression trees.
+It does not assume the three-regime equation and does not directly estimate $\theta_d$, $\theta_w$, or $EF_{max}$.
+For this reason, it is a useful **black-box prediction benchmark**, but it is less physically interpretable.
+
+```{r}
+#| label: fit-random-forest
+
+set.seed(analysis_seed)
+
+rf_fit <- randomForest(
+  EF ~ SM,
+  data = drydown_data,
+  ntree = 500,
+  mtry = 1,
+  nodesize = 10
+)
+
+rf_fit
+```
+
+Create one SM sequence and predict all three fitted responses.
+
+```{r}
+#| label: fitted-curves
+
+sm_grid <- seq(
+  min(drydown_data$SM, na.rm = TRUE),
+  max(drydown_data$SM, na.rm = TRUE),
+  length.out = 200
+)
+
+nls_curve <- piecewise_EF(
+  sm_grid,
+  nls_parameters["theta_d"],
+  nls_parameters["theta_w"],
+  nls_parameters["EF_max"]
+)
+
+pso_curve <- piecewise_EF(
+  sm_grid,
+  pso_parameters["theta_d"],
+  pso_parameters["theta_w"],
+  pso_parameters["EF_max"]
+)
+
+rf_curve <- predict(
+  rf_fit,
+  newdata = data.frame(SM = sm_grid)
+)
+```
+
+Plot the methods side by side.
+
+```{r}
+#| label: compare-fitted-curves
+#| fig-width: 12
+#| fig-height: 4.5
+
+curve_list <- list(
+  NLS2 = nls_curve,
+  PSO = pso_curve,
+  `Random Forest` = rf_curve
+)
+
+curve_colors <- c("salmon", "turquoise3", "forestgreen")
+old_par <- par(mfrow = c(1, 3), mar = c(4.5, 4.5, 3, 1))
+
+for (i in seq_along(curve_list)) {
+  plot(
+    drydown_data$SM,
+    drydown_data$EF,
+    pch = 16,
+    cex = 0.65,
+    cex.axis = 1.1,
+    cex.lab = 1.1,
+    col = adjustcolor("grey30", alpha.f = 0.25),
+    panel.first = graphics::grid(),
+    xlab = expression("Soil moisture"~(m^3~m^{-3})),
+    ylab = if (i == 1) "Evaporative fraction" else "",
+    main = names(curve_list)[i]
+  )
+
+  lines(
+    sm_grid,
+    curve_list[[i]],
+    col = curve_colors[i],
+    lwd = 3
+  )
+}
+
+par(old_par)
+```
+
+::: {.callout-caution title="Random Forest is flexible, not physically constrained"}
+The Random Forest response may be step-like or locally non-monotonic.
+Interpret it only within the SM range represented in the training data.
+Unlike the piecewise model, it does not provide physically defined threshold parameters.
+:::
+
+## Apply the fitting functions to spatial data
+
+We fitted one pair of SM and EF vectors at the site.
+We will now repeat the same calculation for every raster cell.
+Each cell contains a matched SM time series and EF time series.
+
+### Read the raster time series
+
+```{r}
+#| label: spatial-packages
+
+library(terra)
+library(spData)
+```
+
+```{r}
+#| label: download-spatial-data
+
+download.file(
+  "https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/SampleData-master/SM.nc",
+  destfile = "SM.nc",
+  mode = "wb"
+)
+
+download.file(
+  "https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/SampleData-master/EF.nc",
+  destfile = "EF.nc",
+  mode = "wb"
+)
+```
+
+```{r}
+#| label: read-spatial-data
+
+SM <- rast("SM.nc")
+EF <- rast("EF.nc")
+
+SM
+EF
+```
+
+::: {.callout-important title="Match space and time before fitting"}
+SM and EF must have the same grid, number of layers, temporal order, and time-window definition.
+A parameter map is not meaningful when the two vectors are misaligned.
+:::
+
+### Test one raster cell first
+
+Choose the cell with the largest number of matched observations.
+
+```{r}
+#| label: choose-cell
+
+complete_count <- xapp(
+  SM,
+  EF,
+  fun = function(SM, EF) sum(is.finite(SM) & is.finite(EF))
+)
+
+cell_id <- which.max(values(complete_count, mat = FALSE))
+cell_id
+```
+
+Extract and inspect its two time series.
+
+```{r}
+#| label: extract-cell
+
+cell_SM <- as.numeric(extract(SM, cell_id, raw = TRUE))
+cell_EF <- as.numeric(extract(EF, cell_id, raw = TRUE))
+
+sum(is.finite(cell_SM) & is.finite(cell_EF))
+```
+
+Run both functions **without** `tryCatch()` while testing.
+This lets R show the complete error if a function fails.
+
+```{r}
+#| label: fit-one-cell
+
+cell_nls_parameters <- fit_NLS(cell_SM, cell_EF)
+cell_pso_parameters <- fit_PSO(cell_SM, cell_EF)
+
+cell_nls_parameters
+cell_pso_parameters
+```
+
+### Prepare the raster input
+
+`terra::app()` will pass one long vector for each cell.
+The first half contains SM and the second half contains EF.
+
+```{r}
+#| label: combine-spatial-data
+
+n_time <- nlyr(SM)
+spatial_data <- c(SM, EF)
+```
+
+### Add short, safe spatial wrappers
+
+Keep `tryCatch()` in the full raster calculation so that one failed cell does not stop the complete map.
+
+```{r}
+#| label: nls-spatial-wrapper
+
+fit_NLS_spatial <- function(x) {
+  SM_cell <- x[1:n_time]
+  EF_cell <- x[(n_time + 1):(2 * n_time)]
+
+  tryCatch(
+    fit_NLS(SM_cell, EF_cell),
+    error = function(e) c(
+      theta_d = NA_real_,
+      theta_w = NA_real_,
+      EF_max = NA_real_
+    )
+  )
+}
+```
+
+```{r}
+#| label: pso-spatial-wrapper
+
+fit_PSO_spatial <- function(x) {
+  SM_cell <- x[1:n_time]
+  EF_cell <- x[(n_time + 1):(2 * n_time)]
+
+  tryCatch(
+    fit_PSO(SM_cell, EF_cell),
+    error = function(e) c(
+      theta_d = NA_real_,
+      theta_w = NA_real_,
+      EF_max = NA_real_
+    )
+  )
+}
+```
+
+::: {.callout-caution title="Do not let tryCatch hide the cause"}
+`tryCatch()` is useful when hundreds of cells are fitted, but it can hide why a model failed.
+Always test selected cells without `tryCatch()` before running the complete raster.
+:::
+
+### Create the parameter maps
+
+```{r}
+#| label: nls-parameter-maps
+#| warning: false
+
+nls_parameter_maps <- app(
+  spatial_data,
+  fit_NLS_spatial
+)
+
+names(nls_parameter_maps) <- c("theta_d", "theta_w", "EF_max")
+```
+
+::: {.callout-note title="Can we run the spatial optimization in parallel?"}
+
+Yes. Earlier, we learned that parallel workers run in separate R sessions. When we use multiple cores with `terra::app()`, objects created in the main R session may not automatically be available to each worker.
+
+We can create a parallel cluster and send the required objects to each worker using `clusterExport()`.
+
+For example, for NLS:
+
+```{r}
+library(parallel)
+
+cl <- makeCluster(4)
+
+clusterExport(
+  cl,
+  c(
+    "n_time",
+    "fit_NLS",
+    "piecewise_EF"
+  )
+)
+
+clusterEvalQ(
+  cl,
+  library(nls2)
+)
+```
+
+We can then use this cluster with `terra::app()`:
+
+```{r}
+nls_parameter_maps <- app(
+  spatial_data,
+  fit_NLS_spatial,
+  cores = cl
+)
+
+stopCluster(cl)
+```
+
+For PSO, we would follow the same approach, but export the functions required by the PSO workflow and load the `pso` package on each worker.
+
+**Remember:** parallel processing is most useful when the calculation for each cell is computationally expensive. For simple raster operations, the overhead of creating and communicating with workers may actually make the calculation slower. Iterative optimization with NLS or PSO is a much better candidate for parallel processing.
+
+:::
+
+```{r}
+#| label: pso-parameter-maps
+#| warning: false
+
+set.seed(analysis_seed)
+
+pso_parameter_maps <- app(
+  spatial_data,
+  fit_PSO_spatial
+)
+
+names(pso_parameter_maps) <- c("theta_d", "theta_w", "EF_max")
+```
+
+::: {.callout-note title="PSO takes longer"}
+PSO performs an iterative population search in every cell, so its map usually takes longer to compute than the NLS2/NLS map.
+Run the NLS map first while checking the workflow.
+:::
+
+### Plot the maps
+
+```{r}
+#| label: map-context
+
+states <- project(vect(spData::us_states), crs(SM))
+
+add_states <- function() {
+  plot(states, add = TRUE, border = "grey20", lwd = 0.8)
+}
+```
+
+```{r}
+#| label: plot-nls-maps
+#| fig-width: 7
+#| fig-height: 11
+
+plot(
+  nls_parameter_maps,
+  main = c(
+    expression(theta[d]),
+    expression(theta[w]),
+    expression(EF[max])
+  ),
+  fun = add_states,
+  nc = 1
+)
+```
+
+```{r}
+#| label: plot-pso-maps
+#| eval: false
+#| fig-width: 7
+#| fig-height: 11
+
+plot(
+  pso_parameter_maps,
+  main = c(
+    expression(theta[d]),
+    expression(theta[w]),
+    expression(EF[max])
+  ),
+  fun = add_states,
+  nc = 1
+)
+```
+
+## What should we conclude?
+
+1.  NLS2/NLS and PSO can optimize the same physics-based model with different search strategies.
+2.  The optimization bounds directly influence which parameter values can be found.
+3.  The piecewise model produces interpretable physical thresholds, while Random Forest provides a flexible black-box comparison.
+4.  A function that accepts SM and EF vectors and returns a fixed-length result can be reused for raster-cell calculations.
+5.  `tryCatch()` keeps the full spatial calculation moving, but selected cells should first be tested without it.
+
+In the next chapter, we will ask a new question:
+
+> If the fitted parameters change when the data change, how much confidence should we place in one fitted curve or one parameter map?
+
+## Let's discuss
+
+1.  Why do NLS2/NLS and PSO sometimes return slightly different parameter values for the same equation?
+2.  What does it mean when an estimated parameter reaches its lower or upper bound?
+3.  Why can Random Forest predict a flexible curve but not directly provide $\theta_d$ and $\theta_w$?
+4.  Why must SM and EF raster layers be aligned in both space and time?
+5.  What information could explain EF variation that is not captured by SM alone?

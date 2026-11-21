@@ -1,0 +1,1299 @@
+---
+title-block-banner: true
+bibliography: references.bib
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## What we will explore
+
+In the previous chapter, we fitted one model and obtained one set of optimized parameters. We will now ask:
+
+- Would the parameters change if we fitted a different subset of the observations?
+- How well does each model predict observations that were not used for fitting?
+- Where are the spatial parameter estimates stable, and where are they uncertain?
+
+We will move through the ideas in a simple order:
+
+**one train/test split → k-fold cross-validation → repeated cross-validation → ensembles → parameter and prediction ranges → spatial uncertainty maps**
+
+::: {.callout-tip title="The key change in perspective"}
+The previous chapter asked, **“What is the best fitted model?”**
+This chapter asks, **“How much does the fitted answer change?”**
+:::
+
+## Setup and short recap
+
+Install the packages once if needed.
+
+```{r}
+#| eval: false
+install.packages(c("readr", "nls2", "pso", "randomForest", "terra", "spData"))
+```
+
+Load the packages.
+
+```{r}
+library(readr)
+library(nls2)
+library(pso)
+library(randomForest)
+```
+
+Set the validation choices.
+
+```{r}
+#| label: settings
+
+min_drydown_steps <- 5
+k_folds <- 5
+n_repeats <- 10
+analysis_seed <- 100
+```
+
+### Read the simplified data
+
+```{r}
+#| label: download-site-data
+
+csv_url <- paste0(
+  "https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/",
+  "SampleData-master/US-TON_SM-EF.csv"
+)
+
+download.file(
+  csv_url,
+  destfile = "US-TON_SM-EF.csv",
+  mode = "wb"
+)
+```
+
+```{r}
+#| label: read-site-data
+#| warning: false
+
+eddy_data <- read_csv(
+  "US-TON_SM-EF.csv",
+  show_col_types = FALSE
+)
+
+eddy_data$date <- as.Date(eddy_data$date)
+eddy_data <- eddy_data[order(eddy_data$date), ]
+```
+
+### Recreate the drydown data
+
+```{r}
+#| label: drydown-data
+
+eddy_data$SM_change <- c(NA_real_, diff(eddy_data$SM))
+eddy_data$is_drydown <-
+  is.finite(eddy_data$SM_change) & eddy_data$SM_change <= 0
+
+eddy_data$drydown_id <- cumsum(!eddy_data$is_drydown)
+eddy_data$drydown_length <- ave(
+  eddy_data$is_drydown,
+  eddy_data$drydown_id,
+  FUN = sum
+)
+
+drydown_data <- subset(
+  eddy_data,
+  is_drydown &
+    drydown_length >= min_drydown_steps &
+    is.finite(SM) &
+    is.finite(EF)
+)
+
+drydown_data$observation_id <- seq_len(nrow(drydown_data))
+
+cat("Observations:", nrow(drydown_data), "\n")
+cat("Drydown events:", length(unique(drydown_data$drydown_id)), "\n")
+```
+
+::: {.callout-important title="Keep complete drydowns together"}
+Neighboring observations from one drydown are not independent.
+We will assign whole drydown events—not individual rows—to training or validation groups.
+This reduces information leakage.
+:::
+
+### Reuse the physical model and fitting functions
+
+The chapter is self-contained, so we repeat compact versions of the functions from the previous chapter.
+The revised optimization bounds remain unchanged.
+
+```{r}
+#| label: model-functions
+
+piecewise_EF <- function(SM, theta_d, theta_w, EF_max) {
+  ifelse(
+    SM <= theta_d,
+    0,
+    ifelse(
+      SM >= theta_w,
+      EF_max,
+      EF_max * (SM - theta_d) / (theta_w - theta_d)
+    )
+  )
+}
+
+model_error <- function(parameters, SM, EF) {
+  predicted <- piecewise_EF(
+    SM,
+    parameters[1],
+    parameters[2],
+    parameters[3]
+  )
+
+  mean((EF - predicted)^2, na.rm = TRUE)
+}
+```
+
+```{r}
+#| label: nls-fitting-function
+
+fit_NLS <- function(SM, EF) {
+  keep <- is.finite(SM) & is.finite(EF)
+  SM <- SM[keep]
+  EF <- EF[keep]
+
+  empty_result <- c(
+    theta_d = NA_real_,
+    theta_w = NA_real_,
+    EF_max = NA_real_
+  )
+
+  if (length(SM) < 10 || length(unique(SM)) < 4) {
+    return(empty_result)
+  }
+
+  lower <- c(
+    theta_d = 0.02,
+    theta_w = unname(quantile(SM, 0.35)),
+    EF_max = 0.20
+  )
+
+  upper <- c(
+    theta_d = unname(quantile(SM, 0.30)),
+    theta_w = unname(quantile(SM, 0.98)),
+    EF_max = 1.00
+  )
+
+  if (any(!is.finite(c(lower, upper))) || any(lower >= upper)) {
+    return(empty_result)
+  }
+
+  model_data <- data.frame(SM = SM, EF = EF)
+
+  search_grid <- expand.grid(
+    theta_d = seq(lower["theta_d"], upper["theta_d"], length.out = 6),
+    theta_w = seq(lower["theta_w"], upper["theta_w"], length.out = 6),
+    EF_max = seq(lower["EF_max"], upper["EF_max"], length.out = 6)
+  )
+
+  start_fit <- nls2(
+    EF ~ piecewise_EF(SM, theta_d, theta_w, EF_max),
+    data = model_data,
+    start = search_grid,
+    algorithm = "brute-force"
+  )
+
+  fit <- nls(
+    EF ~ piecewise_EF(SM, theta_d, theta_w, EF_max),
+    data = model_data,
+    start = as.list(coef(start_fit)),
+    algorithm = "port",
+    lower = lower,
+    upper = upper,
+    control = nls.control(maxiter = 200, warnOnly = TRUE)
+  )
+
+  parameters <- coef(fit)[c("theta_d", "theta_w", "EF_max")]
+  setNames(as.numeric(parameters), names(empty_result))
+}
+```
+
+```{r}
+#| label: pso-fitting-function
+
+fit_PSO <- function(SM, EF) {
+  keep <- is.finite(SM) & is.finite(EF)
+  SM <- SM[keep]
+  EF <- EF[keep]
+
+  empty_result <- c(
+    theta_d = NA_real_,
+    theta_w = NA_real_,
+    EF_max = NA_real_
+  )
+
+  if (length(SM) < 10 || length(unique(SM)) < 4) {
+    return(empty_result)
+  }
+
+  lower <- c(
+    theta_d = 0.02,
+    theta_w = unname(quantile(SM, 0.35)),
+    EF_max = 0.20
+  )
+
+  upper <- c(
+    theta_d = unname(quantile(SM, 0.30)),
+    theta_w = unname(quantile(SM, 0.98)),
+    EF_max = 1.00
+  )
+
+  if (any(!is.finite(c(lower, upper))) || any(lower >= upper)) {
+    return(empty_result)
+  }
+
+  fit <- psoptim(
+    par = (lower + upper) / 2,
+    fn = model_error,
+    SM = SM,
+    EF = EF,
+    lower = lower,
+    upper = upper,
+    control = list(
+      s = 30,
+      maxit = 60,
+      trace = 0
+    )
+  )
+
+  setNames(as.numeric(fit$par), names(empty_result))
+}
+```
+
+Define the statistics that we will use.
+
+```{r}
+#| label: validation-statistics
+
+validation_stats <- function(observed, predicted) {
+  keep <- complete.cases(observed, predicted)
+  observed <- observed[keep]
+  predicted <- predicted[keep]
+
+  rmse <- sqrt(mean((observed - predicted)^2))
+  mae <- mean(abs(observed - predicted))
+  bias <- mean(predicted - observed)
+
+  if (length(observed) > 2 &&
+      sd(observed) > 0 &&
+      sd(predicted) > 0) {
+    r2 <- cor(observed, predicted)^2
+  } else {
+    r2 <- NA_real_
+  }
+
+  data.frame(
+    RMSE = rmse,
+    MAE = mae,
+    Bias = bias,
+    R2 = r2
+  )
+}
+```
+
+- **RMSE** gives more weight to large errors.
+- **MAE** is the average absolute error.
+- **Bias** is predicted minus observed EF.
+- **$R^2$** describes association, but it does not measure agreement by itself.
+
+## Begin with one train/test split
+
+A model should be evaluated using observations that were not used to fit it.
+We will use 80% of the drydown events for training and 20% for testing.
+
+```{r}
+#| label: train-test-split
+
+set.seed(analysis_seed)
+
+event_ids <- unique(drydown_data$drydown_id)
+train_ids <- sample(
+  event_ids,
+  size = floor(0.80 * length(event_ids))
+)
+
+train_data <- subset(drydown_data, drydown_id %in% train_ids)
+test_data <- subset(drydown_data, !drydown_id %in% train_ids)
+
+cat("Training events:", length(unique(train_data$drydown_id)), "\n")
+cat("Testing events:", length(unique(test_data$drydown_id)), "\n")
+```
+
+Fit the two physical models to the training events.
+`tryCatch()` prevents one failed fit from ending the comparison.
+
+```{r}
+#| label: train-piecewise-models
+
+empty_parameters <- c(
+  theta_d = NA_real_,
+  theta_w = NA_real_,
+  EF_max = NA_real_
+)
+
+nls_train_parameters <- tryCatch(
+  fit_NLS(train_data$SM, train_data$EF),
+  error = function(e) empty_parameters
+)
+
+set.seed(analysis_seed)
+
+pso_train_parameters <- tryCatch(
+  fit_PSO(train_data$SM, train_data$EF),
+  error = function(e) empty_parameters
+)
+```
+
+Predict the withheld test events.
+
+```{r}
+#| label: predict-test-piecewise
+
+nls_test_prediction <- piecewise_EF(
+  test_data$SM,
+  nls_train_parameters["theta_d"],
+  nls_train_parameters["theta_w"],
+  nls_train_parameters["EF_max"]
+)
+
+pso_test_prediction <- piecewise_EF(
+  test_data$SM,
+  pso_train_parameters["theta_d"],
+  pso_train_parameters["theta_w"],
+  pso_train_parameters["EF_max"]
+)
+```
+
+Fit and predict with Random Forest using the same split.
+
+```{r}
+#| label: train-test-random-forest
+
+set.seed(analysis_seed)
+
+rf_train_fit <- randomForest(
+  EF ~ SM,
+  data = train_data,
+  ntree = 500,
+  mtry = 1,
+  nodesize = 10
+)
+
+rf_test_prediction <- predict(
+  rf_train_fit,
+  newdata = test_data
+)
+```
+
+Compare the test statistics.
+
+```{r}
+#| label: one-split-statistics
+
+one_split_results <- rbind(
+  NLS2 = validation_stats(test_data$EF, nls_test_prediction),
+  PSO = validation_stats(test_data$EF, pso_test_prediction),
+  `Random Forest` = validation_stats(test_data$EF, rf_test_prediction)
+)
+
+one_split_results
+```
+
+::: {.callout-important title="Training error is not validation error"}
+A model can fit its training observations closely and still predict new observations poorly.
+Model comparison should therefore use withheld predictions, not only the data used during fitting.
+:::
+
+## Move from one split to k-fold cross-validation
+
+One split depends on which events happened to enter the test group.
+In **k-fold cross-validation**, we divide the events into $k$ folds, fit on $k-1$ folds, and validate on the remaining fold.
+Every fold takes a turn as validation data.
+
+### Create event-level folds
+
+```{r}
+#| label: make-folds
+
+make_folds <- function(data, k = 5, seed = 100) {
+  set.seed(seed)
+
+  events <- sample(unique(data$drydown_id))
+
+  fold_table <- data.frame(
+    drydown_id = events,
+    fold = rep(seq_len(k), length.out = length(events))
+  )
+
+  merge(
+    data,
+    fold_table,
+    by = "drydown_id",
+    all.x = TRUE,
+    sort = FALSE
+  )
+}
+```
+
+Inspect one assignment.
+
+```{r}
+#| label: inspect-folds
+
+example_folds <- make_folds(
+  drydown_data,
+  k = k_folds,
+  seed = analysis_seed
+)
+
+table(example_folds$fold)
+```
+
+### Repeat the k-fold process
+
+Repeated cross-validation reshuffles the fold assignment and runs the complete k-fold process again.
+With 5 folds and 10 repeats, each method can produce as many as 50 fitted models.
+Those fitted models form an **ensemble**.
+
+## Cross-validate NLS2/NLS and PSO
+
+The shared function below calls either `fit_NLS()` or `fit_PSO()`.
+It stores the fitted parameters, validation statistics, and withheld predictions.
+
+```{r}
+#| label: piecewise-cross-validation
+
+cross_validate_piecewise <- function(
+    data,
+    fit_function,
+    method,
+    k = 5,
+    repeats = 10,
+    seed = 100) {
+
+  parameters <- data.frame()
+  statistics <- data.frame()
+  predictions <- data.frame()
+
+  for (repeat_id in seq_len(repeats)) {
+    cv_data <- make_folds(
+      data,
+      k = k,
+      seed = seed + repeat_id
+    )
+
+    for (fold_id in seq_len(k)) {
+      train <- subset(cv_data, fold != fold_id)
+      test <- subset(cv_data, fold == fold_id)
+
+      set.seed(seed + 1000 * repeat_id + fold_id)
+
+      pars <- tryCatch(
+        fit_function(train$SM, train$EF),
+        error = function(e) c(
+          theta_d = NA_real_,
+          theta_w = NA_real_,
+          EF_max = NA_real_
+        )
+      )
+
+      if (length(pars) != 3 || any(!is.finite(pars))) {
+        next
+      }
+
+      predicted <- piecewise_EF(
+        test$SM,
+        pars["theta_d"],
+        pars["theta_w"],
+        pars["EF_max"]
+      )
+
+      parameters <- rbind(
+        parameters,
+        data.frame(
+          repeat_id = repeat_id,
+          fold_id = fold_id,
+          method = method,
+          theta_d = unname(pars["theta_d"]),
+          theta_w = unname(pars["theta_w"]),
+          EF_max = unname(pars["EF_max"])
+        )
+      )
+
+      fold_stats <- validation_stats(test$EF, predicted)
+      fold_stats$repeat_id <- repeat_id
+      fold_stats$fold_id <- fold_id
+      fold_stats$method <- method
+      statistics <- rbind(statistics, fold_stats)
+
+      predictions <- rbind(
+        predictions,
+        data.frame(
+          repeat_id = repeat_id,
+          fold_id = fold_id,
+          method = method,
+          observation_id = test$observation_id,
+          SM = test$SM,
+          EF_observed = test$EF,
+          EF_predicted = predicted
+        )
+      )
+    }
+  }
+
+  list(
+    parameters = parameters,
+    statistics = statistics,
+    predictions = predictions
+  )
+}
+```
+
+::: {.callout-caution title="Do not let tryCatch hide model problems"}
+`tryCatch()` is appropriate when many folds are fitted, but it can hide why a fit failed.
+While developing the function, run a selected training fold without `tryCatch()` so that R shows the full error.
+:::
+
+Run the two physics-based methods with the same fold seeds.
+
+```{r}
+#| label: run-piecewise-cross-validation
+
+nls_results <- cross_validate_piecewise(
+  drydown_data,
+  fit_function = fit_NLS,
+  method = "NLS2",
+  k = k_folds,
+  repeats = n_repeats,
+  seed = analysis_seed
+)
+
+pso_results <- cross_validate_piecewise(
+  drydown_data,
+  fit_function = fit_PSO,
+  method = "PSO",
+  k = k_folds,
+  repeats = n_repeats,
+  seed = analysis_seed
+)
+```
+
+Extract the three result types.
+
+```{r}
+#| label: extract-piecewise-results
+
+nls_parameters <- nls_results$parameters
+pso_parameters <- pso_results$parameters
+
+piecewise_parameters <- rbind(
+  nls_parameters,
+  pso_parameters
+)
+
+piecewise_statistics <- rbind(
+  nls_results$statistics,
+  pso_results$statistics
+)
+
+piecewise_predictions <- rbind(
+  nls_results$predictions,
+  pso_results$predictions
+)
+```
+
+## Cross-validate Random Forest
+
+Random Forest does not return the three physical parameters.
+We will store its validation statistics, withheld predictions, and fitted forest models.
+
+```{r}
+#| label: random-forest-cross-validation
+
+rf_statistics <- data.frame()
+rf_predictions <- data.frame()
+rf_models <- list()
+
+for (repeat_id in seq_len(n_repeats)) {
+  cv_data <- make_folds(
+    drydown_data,
+    k = k_folds,
+    seed = analysis_seed + repeat_id
+  )
+
+  for (fold_id in seq_len(k_folds)) {
+    train <- subset(cv_data, fold != fold_id)
+    test <- subset(cv_data, fold == fold_id)
+
+    fit <- tryCatch(
+      {
+        set.seed(analysis_seed + 1000 * repeat_id + fold_id)
+        randomForest(
+          EF ~ SM,
+          data = train,
+          ntree = 500,
+          mtry = 1,
+          nodesize = 10
+        )
+      },
+      error = function(e) NULL
+    )
+
+    if (is.null(fit)) {
+      next
+    }
+
+    predicted <- predict(fit, newdata = test)
+
+    fold_stats <- validation_stats(test$EF, predicted)
+    fold_stats$repeat_id <- repeat_id
+    fold_stats$fold_id <- fold_id
+    fold_stats$method <- "Random Forest"
+    rf_statistics <- rbind(rf_statistics, fold_stats)
+
+    rf_predictions <- rbind(
+      rf_predictions,
+      data.frame(
+        repeat_id = repeat_id,
+        fold_id = fold_id,
+        method = "Random Forest",
+        observation_id = test$observation_id,
+        SM = test$SM,
+        EF_observed = test$EF,
+        EF_predicted = as.numeric(predicted)
+      )
+    )
+
+    rf_models[[length(rf_models) + 1]] <- fit
+  }
+}
+```
+
+## Compare out-of-sample performance
+
+Combine the fold statistics and calculate the median for each method.
+
+```{r}
+#| label: compare-validation
+
+all_statistics <- rbind(
+  piecewise_statistics,
+  rf_statistics
+)
+
+validation_summary <- aggregate(
+  cbind(RMSE, MAE, Bias, R2) ~ method,
+  data = all_statistics,
+  FUN = median,
+  na.rm = TRUE
+)
+
+validation_summary
+```
+
+Use lower RMSE and MAE, bias near zero, and larger $R^2$ together.
+No one statistic tells the complete story.
+
+## Examine parameter uncertainty
+
+The repeated fits give many estimates of each physical parameter.
+The spread shows sensitivity to the selected training drydowns.
+
+```{r}
+#| label: parameter-boxplots
+#| fig-width: 10
+#| fig-height: 4
+
+old_par <- par(mfrow = c(1, 3), mar = c(5, 4.5, 3, 1))
+
+boxplot(
+  theta_d ~ method,
+  data = piecewise_parameters,
+  col = c("salmon", "turquoise3"),
+  xlab = "",
+  ylab = expression(theta[d]),
+  main = "Dry threshold"
+)
+
+boxplot(
+  theta_w ~ method,
+  data = piecewise_parameters,
+  col = c("salmon", "turquoise3"),
+  xlab = "",
+  ylab = expression(theta[w]),
+  main = "Wet threshold"
+)
+
+boxplot(
+  EF_max ~ method,
+  data = piecewise_parameters,
+  col = c("salmon", "turquoise3"),
+  xlab = "",
+  ylab = expression(EF[max]),
+  main = "Wet plateau"
+)
+
+par(old_par)
+```
+
+Calculate the median and the 2.5th–97.5th percentile range.
+
+```{r}
+#| label: parameter-ranges
+
+parameter_range <- function(x) {
+  c(
+    median = median(x, na.rm = TRUE),
+    lower = quantile(x, 0.025, na.rm = TRUE, names = FALSE),
+    upper = quantile(x, 0.975, na.rm = TRUE, names = FALSE)
+  )
+}
+
+by(
+  piecewise_parameters[c("theta_d", "theta_w", "EF_max")],
+  piecewise_parameters$method,
+  function(x) sapply(x, parameter_range)
+)
+```
+
+::: {.callout-warning title="Watch for estimates at the bounds"}
+A narrow ensemble is not automatically trustworthy.
+If many estimates collect at a lower or upper bound, the data may not constrain that parameter, or the chosen search space may be too narrow.
+:::
+
+## Examine prediction uncertainty
+
+We will predict EF over the same SM grid with every fitted model.
+At each SM value, we will calculate the median prediction and the 2.5th–97.5th percentile ensemble range.
+
+```{r}
+#| label: prediction-grid
+
+sm_grid <- seq(
+  min(drydown_data$SM, na.rm = TRUE),
+  max(drydown_data$SM, na.rm = TRUE),
+  length.out = 200
+)
+```
+
+Build one prediction matrix for each method.
+Rows represent SM values, and columns represent ensemble members.
+
+```{r}
+#| label: piecewise-prediction-matrices
+
+nls_curve_matrix <- matrix(
+  NA_real_,
+  nrow = length(sm_grid),
+  ncol = nrow(nls_parameters)
+)
+
+for (i in seq_len(nrow(nls_parameters))) {
+  nls_curve_matrix[, i] <- piecewise_EF(
+    sm_grid,
+    nls_parameters$theta_d[i],
+    nls_parameters$theta_w[i],
+    nls_parameters$EF_max[i]
+  )
+}
+
+pso_curve_matrix <- matrix(
+  NA_real_,
+  nrow = length(sm_grid),
+  ncol = nrow(pso_parameters)
+)
+
+for (i in seq_len(nrow(pso_parameters))) {
+  pso_curve_matrix[, i] <- piecewise_EF(
+    sm_grid,
+    pso_parameters$theta_d[i],
+    pso_parameters$theta_w[i],
+    pso_parameters$EF_max[i]
+  )
+}
+```
+
+```{r}
+#| label: random-forest-prediction-matrix
+
+rf_curve_matrix <- matrix(
+  NA_real_,
+  nrow = length(sm_grid),
+  ncol = length(rf_models)
+)
+
+for (i in seq_along(rf_models)) {
+  rf_curve_matrix[, i] <- predict(
+    rf_models[[i]],
+    newdata = data.frame(SM = sm_grid)
+  )
+}
+```
+
+Summarize any ensemble matrix with one small function.
+
+```{r}
+#| label: summarize-prediction-ensemble
+
+summarize_curves <- function(prediction_matrix) {
+  data.frame(
+    SM = sm_grid,
+    EF_median = apply(prediction_matrix, 1, median, na.rm = TRUE),
+    EF_lower = apply(
+      prediction_matrix,
+      1,
+      quantile,
+      probs = 0.025,
+      na.rm = TRUE
+    ),
+    EF_upper = apply(
+      prediction_matrix,
+      1,
+      quantile,
+      probs = 0.975,
+      na.rm = TRUE
+    )
+  )
+}
+
+nls_curve_summary <- summarize_curves(nls_curve_matrix)
+pso_curve_summary <- summarize_curves(pso_curve_matrix)
+rf_curve_summary <- summarize_curves(rf_curve_matrix)
+```
+
+Plot the median curves and their ensemble ranges.
+
+```{r}
+#| label: plot-uncertainty-bands
+#| fig-width: 12
+#| fig-height: 4.5
+
+curve_list <- list(
+  NLS2 = nls_curve_summary,
+  PSO = pso_curve_summary,
+  `Random Forest` = rf_curve_summary
+)
+
+curve_colors <- c("salmon", "turquoise3", "forestgreen")
+old_par <- par(mfrow = c(1, 3), mar = c(4.5, 4.5, 3, 1))
+
+for (i in seq_along(curve_list)) {
+  s <- curve_list[[i]]
+
+  plot(
+    drydown_data$SM,
+    drydown_data$EF,
+    pch = 16,
+    cex = 0.65,
+    cex.axis = 1.1,
+    cex.lab = 1.1,
+    col = adjustcolor("grey30", alpha.f = 0.25),
+    panel.first = graphics::grid(),
+    xlab = expression("Soil moisture"~(m^3~m^{-3})),
+    ylab = if (i == 1) "Evaporative fraction" else "",
+    main = names(curve_list)[i]
+  )
+
+  polygon(
+    c(s$SM, rev(s$SM)),
+    c(s$EF_lower, rev(s$EF_upper)),
+    col = adjustcolor(curve_colors[i], alpha.f = 0.20),
+    border = NA
+  )
+
+  lines(
+    s$SM,
+    s$EF_median,
+    col = curve_colors[i],
+    lwd = 3
+  )
+}
+
+par(old_par)
+```
+
+::: {.callout-note title="The ribbon is an ensemble range"}
+The 2.5th–97.5th percentile ribbon describes variation among repeat-fold model fits.
+It is not a formal confidence interval and does not include every source of measurement, parameter, and model-structure uncertainty.
+:::
+
+## Summarize withheld predictions by observation
+
+Each observation is withheld once per repeat.
+Take the median of its repeated out-of-sample predictions.
+
+```{r}
+#| label: observation-predictions
+
+all_predictions <- rbind(
+  piecewise_predictions,
+  rf_predictions
+)
+
+observation_predictions <- aggregate(
+  EF_predicted ~ observation_id + SM + EF_observed + method,
+  data = all_predictions,
+  FUN = median,
+  na.rm = TRUE
+)
+```
+
+Plot observed and withheld predictions.
+
+```{r}
+#| label: plot-observed-predicted
+#| fig-width: 12
+#| fig-height: 4.5
+
+method_names <- c("NLS2", "PSO", "Random Forest")
+plot_limits <- range(
+  c(
+    observation_predictions$EF_observed,
+    observation_predictions$EF_predicted
+  ),
+  na.rm = TRUE
+)
+
+old_par <- par(mfrow = c(1, 3), mar = c(4.5, 4.5, 3, 1))
+
+for (i in seq_along(method_names)) {
+  plot_data <- subset(
+    observation_predictions,
+    method == method_names[i]
+  )
+
+  plot(
+    plot_data$EF_observed,
+    plot_data$EF_predicted,
+    pch = 16,
+    cex = 0.65,
+    cex.axis = 1.1,
+    cex.lab = 1.1,
+    col = adjustcolor("grey30", alpha.f = 0.30),
+    panel.first = graphics::grid(),
+    xlim = plot_limits,
+    ylim = plot_limits,
+    asp = 1,
+    xlab = "Observed EF",
+    ylab = if (i == 1) "Median predicted EF" else "",
+    main = method_names[i]
+  )
+
+  abline(0, 1, lty = 2, lwd = 2)
+}
+
+par(old_par)
+```
+
+## Map spatial parameter uncertainty
+
+The previous chapter produced one optimized parameter value per raster cell.
+We will now repeatedly fit resampled observations within each cell and summarize the resulting parameter distribution.
+
+To keep the demonstration manageable, we will use **PSO only**.
+The same idea can be applied to NLS2/NLS.
+
+### Read the matched raster time series
+
+```{r}
+#| label: spatial-packages
+
+library(terra)
+library(spData)
+```
+
+```{r}
+#| label: download-spatial-data
+
+download.file(
+  "https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/SampleData-master/SM.nc",
+  destfile = "SM.nc",
+  mode = "wb"
+)
+
+download.file(
+  "https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/SampleData-master/EF.nc",
+  destfile = "EF.nc",
+  mode = "wb"
+)
+
+SM <- rast("SM.nc")
+EF <- rast("EF.nc")
+```
+
+Check that the raster stacks can be paired.
+
+```{r}
+#| label: check-spatial-inputs
+
+stopifnot(compareGeom(SM, EF, stopOnError = FALSE))
+stopifnot(nlyr(SM) == nlyr(EF))
+```
+
+### Test uncertainty for one cell
+
+Choose one well-observed cell.
+
+```{r}
+#| label: choose-spatial-cell
+
+complete_count <- xapp(
+  SM,
+  EF,
+  fun = function(SM, EF) sum(is.finite(SM) & is.finite(EF))
+)
+
+cell_id <- which.max(values(complete_count, mat = FALSE))
+cell_SM <- as.numeric(extract(SM, cell_id, raw = TRUE))
+cell_EF <- as.numeric(extract(EF, cell_id, raw = TRUE))
+```
+
+Fit repeated 80% subsamples.
+
+```{r}
+#| label: one-cell-resampling
+
+n_spatial_samples <- 20
+sample_fraction <- 0.80
+
+keep <- is.finite(cell_SM) & is.finite(cell_EF)
+cell_SM <- cell_SM[keep]
+cell_EF <- cell_EF[keep]
+
+cell_parameters <- matrix(
+  NA_real_,
+  nrow = n_spatial_samples,
+  ncol = 3,
+  dimnames = list(
+    NULL,
+    c("theta_d", "theta_w", "EF_max")
+  )
+)
+
+set.seed(analysis_seed)
+
+for (i in seq_len(n_spatial_samples)) {
+  sample_id <- sample(
+    seq_along(cell_SM),
+    size = floor(sample_fraction * length(cell_SM)),
+    replace = FALSE
+  )
+
+  cell_parameters[i, ] <- tryCatch(
+    fit_PSO(cell_SM[sample_id], cell_EF[sample_id]),
+    error = function(e) c(
+      theta_d = NA_real_,
+      theta_w = NA_real_,
+      EF_max = NA_real_
+    )
+  )
+}
+
+apply(cell_parameters, 2, parameter_range)
+```
+
+::: {.callout-important title="What the spatial range means"}
+The range answers: **How much does the fitted parameter change when the cell is fitted with different 80% subsets of its matched observations?**
+It does not claim that every source of uncertainty has been measured.
+:::
+
+### Write a cell function for uncertainty
+
+First define a small summary function.
+
+```{r}
+#| label: spatial-parameter-summary
+
+spatial_summary <- function(x) {
+  lower <- quantile(x, 0.025, na.rm = TRUE, names = FALSE)
+  upper <- quantile(x, 0.975, na.rm = TRUE, names = FALSE)
+
+  c(
+    median = median(x, na.rm = TRUE),
+    lower = lower,
+    upper = upper,
+    width = upper - lower
+  )
+}
+```
+
+Now create the function passed to `terra::app()`.
+It returns four values for each of the three parameters: median, lower bound, upper bound, and range width.
+
+```{r}
+#| label: spatial-uncertainty-function
+
+n_time <- nlyr(SM)
+spatial_data <- c(SM, EF)
+
+fit_PSO_uncertainty <- function(x) {
+  SM_cell <- x[1:n_time]
+  EF_cell <- x[(n_time + 1):(2 * n_time)]
+
+  keep <- is.finite(SM_cell) & is.finite(EF_cell)
+  SM_cell <- SM_cell[keep]
+  EF_cell <- EF_cell[keep]
+
+  empty_result <- rep(NA_real_, 12)
+
+  if (length(SM_cell) < 20 || length(unique(SM_cell)) < 4) {
+    return(empty_result)
+  }
+
+  fitted_parameters <- matrix(
+    NA_real_,
+    nrow = n_spatial_samples,
+    ncol = 3
+  )
+
+  set.seed(analysis_seed)
+
+  for (i in seq_len(n_spatial_samples)) {
+    sample_id <- sample(
+      seq_along(SM_cell),
+      size = floor(sample_fraction * length(SM_cell)),
+      replace = FALSE
+    )
+
+    fitted_parameters[i, ] <- tryCatch(
+      fit_PSO(SM_cell[sample_id], EF_cell[sample_id]),
+      error = function(e) c(
+        theta_d = NA_real_,
+        theta_w = NA_real_,
+        EF_max = NA_real_
+      )
+    )
+  }
+
+  fitted_parameters <- fitted_parameters[
+    complete.cases(fitted_parameters),
+    ,
+    drop = FALSE
+  ]
+
+  if (nrow(fitted_parameters) < 5) {
+    return(empty_result)
+  }
+
+  c(
+    spatial_summary(fitted_parameters[, 1]),
+    spatial_summary(fitted_parameters[, 2]),
+    spatial_summary(fitted_parameters[, 3])
+  )
+}
+```
+
+::: {.callout-caution title="Keep tryCatch, but test first"}
+The full raster calculation needs `tryCatch()` so that a few failed resamples do not stop every cell.
+Before running the map, use the one-cell code above without the outer spatial wrapper and inspect any errors.
+:::
+
+### Create spatial uncertainty layers
+
+```{r}
+#| label: spatial-uncertainty-layers
+#| warning: false
+
+spatial_uncertainty <- app(
+  spatial_data,
+  fit_PSO_uncertainty
+)
+
+names(spatial_uncertainty) <- c(
+  "theta_d_median", "theta_d_lower", "theta_d_upper", "theta_d_width",
+  "theta_w_median", "theta_w_lower", "theta_w_upper", "theta_w_width",
+  "EF_max_median", "EF_max_lower", "EF_max_upper", "EF_max_width"
+)
+```
+
+::: {.callout-note title="Start small while learning"}
+Twenty resamples keep the course example manageable.
+A research analysis may use more resamples after the function has been checked carefully.
+PSO uncertainty mapping can take several minutes because every cell is fitted repeatedly.
+:::
+
+### Plot median parameters and uncertainty widths
+
+```{r}
+#| label: spatial-map-context
+
+states <- project(vect(spData::us_states), crs(SM))
+
+add_states <- function() {
+  plot(states, add = TRUE, border = "grey20", lwd = 0.8)
+}
+```
+
+```{r}
+#| label: median-parameter-maps
+#| fig-width: 7
+#| fig-height: 11
+
+median_maps <- spatial_uncertainty[[c(
+  "theta_d_median",
+  "theta_w_median",
+  "EF_max_median"
+)]]
+
+plot(
+  median_maps,
+  main = c(
+    expression("Median"~theta[d]),
+    expression("Median"~theta[w]),
+    expression("Median"~EF[max])
+  ),
+  fun = add_states,
+  nc = 1
+)
+```
+
+```{r}
+#| label: uncertainty-width-maps
+#| fig-width: 7
+#| fig-height: 11
+
+width_maps <- spatial_uncertainty[[c(
+  "theta_d_width",
+  "theta_w_width",
+  "EF_max_width"
+)]]
+
+plot(
+  width_maps,
+  main = c(
+    expression("95% ensemble width for"~theta[d]),
+    expression("95% ensemble width for"~theta[w]),
+    expression("95% ensemble width for"~EF[max])
+  ),
+  fun = add_states,
+  nc = 1
+)
+```
+
+The lower and upper layers remain available when you want to map the two ends of each parameter range directly.
+Large width values identify locations where the parameter is especially sensitive to the selected observations.
+
+## What should we conclude?
+
+1. A single train/test split introduces the idea of out-of-sample prediction.
+2. K-fold cross-validation rotates the validation group so every event is tested.
+3. Repeated cross-validation creates an ensemble of parameter sets, predictions, and validation statistics.
+4. Parameter ranges describe sensitivity of the fitted physical thresholds to resampling.
+5. Prediction ribbons show variation among fitted ensemble members.
+6. Spatial uncertainty maps distinguish locations with stable estimates from locations whose fitted parameters change strongly across resamples.
+7. These ensemble ranges are useful diagnostic summaries, not complete confidence intervals.
+
+## Let's discuss
+
+1. Why should complete drydown events remain together in one fold?
+2. How can a model have small training error but large validation error?
+3. What does a wide parameter range tell us about the data at a site or raster cell?
+4. Why is a narrow range suspicious when many parameter estimates reach an optimization bound?
+5. Why can Random Forest have prediction uncertainty but not uncertainty in $\theta_d$ or $\theta_w$?
+6. What additional sources of uncertainty are not represented by these resampling ranges?
