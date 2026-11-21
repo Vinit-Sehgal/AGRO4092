@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Surface-Rootzone Soil Hydrologic Connectivity – R for Spatial Analysis &amp; Visualization</title>
+<title>12&nbsp; Surface-Rootzone Soil Hydrologic Connectivity – R Tools for Mesoscale Soil Hydrology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,16 +65,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./ch12.html" rel="next">
-<link href="./ch9.html" rel="prev">
+<link href="./ch14.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-d5d78c9e45e9a5253a6059031ce5ea1b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -140,6 +140,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating">
@@ -151,7 +152,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch11.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch11.html">Hydrologic Modeling</a></li><li class="breadcrumb-item"><a href="./ch11.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -163,8 +164,8 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></h1>
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch11.html">Hydrologic Modeling</a></li><li class="breadcrumb-item"><a href="./ch11.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></a></li></ol></nav>
+      <h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></h1>
                       </div>
   </div>
     
@@ -182,7 +183,7 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">R for Spatial Analysis &amp; Visualization</a> 
+      <a href="./">R Tools for Mesoscale Soil Hydrology</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/vinit-sehgal/AGRO4092" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
@@ -201,78 +202,145 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">R Fundamentals</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basics of R</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Mapping in R</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Spatial Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch3.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Arithmetic and Statistics</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Spatial Operations on Rasters and Vectors</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch6.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Land and Climate Data</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch7.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Layer–wise Operations</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch8.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Multilayer Rasters: Cell–wise Operations</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch9.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Parallel Geospatial Computing</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Curve Fitting, Optimization, and Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch14.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Hydrologic Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch11.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch12.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Landscape-scale Soil Hydrology Model</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Landscape Soil Hydrology Model</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Practice and Resources</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ch10.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./chN.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Acknowledgement and References</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -283,14 +351,14 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#surface-rootzone-soil-hydrologic-connectivity" id="toc-surface-rootzone-soil-hydrologic-connectivity" class="nav-link active" data-scroll-target="#surface-rootzone-soil-hydrologic-connectivity"><span class="header-section-number">10.1</span> Surface-Rootzone Soil Hydrologic Connectivity</a>
+  <li><a href="#surface-rootzone-soil-hydrologic-connectivity" id="toc-surface-rootzone-soil-hydrologic-connectivity" class="nav-link active" data-scroll-target="#surface-rootzone-soil-hydrologic-connectivity"><span class="header-section-number">12.1</span> Surface-Rootzone Soil Hydrologic Connectivity</a>
   <ul class="collapse">
-  <li><a href="#exploratory-data-analysis-for-the-sample-station" id="toc-exploratory-data-analysis-for-the-sample-station" class="nav-link" data-scroll-target="#exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">10.1.1</span> Exploratory Data Analysis for the Sample Station</a></li>
+  <li><a href="#exploratory-data-analysis-for-the-sample-station" id="toc-exploratory-data-analysis-for-the-sample-station" class="nav-link" data-scroll-target="#exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">12.1.1</span> Exploratory Data Analysis for the Sample Station</a></li>
   </ul></li>
-  <li><a href="#simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" id="toc-simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="nav-link" data-scroll-target="#simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">10.2</span> Simulating Low-pass Filtering of Meteorological Perturbations Through Soil Profile</a>
+  <li><a href="#simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" id="toc-simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="nav-link" data-scroll-target="#simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">12.2</span> Simulating Low-pass Filtering of Meteorological Perturbations Through Soil Profile</a>
   <ul class="collapse">
-  <li><a href="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" id="toc-origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="nav-link" data-scroll-target="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">10.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</a></li>
-  <li><a href="#propagation-of-drying-front-in-the-soil-profile" id="toc-propagation-of-drying-front-in-the-soil-profile" class="nav-link" data-scroll-target="#propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">10.2.2</span> Propagation of Drying Front in the Soil Profile</a></li>
+  <li><a href="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" id="toc-origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="nav-link" data-scroll-target="#origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">12.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</a></li>
+  <li><a href="#propagation-of-drying-front-in-the-soil-profile" id="toc-propagation-of-drying-front-in-the-soil-profile" class="nav-link" data-scroll-target="#propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">12.2.2</span> Propagation of Drying Front in the Soil Profile</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -302,12 +370,12 @@ window.Quarto = {
 
 
 
-<section id="surface-rootzone-soil-hydrologic-connectivity" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="surface-rootzone-soil-hydrologic-connectivity"><span class="header-section-number">10.1</span> Surface-Rootzone Soil Hydrologic Connectivity</h2>
+<section id="surface-rootzone-soil-hydrologic-connectivity" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="surface-rootzone-soil-hydrologic-connectivity"><span class="header-section-number">12.1</span> Surface-Rootzone Soil Hydrologic Connectivity</h2>
 <p>While soil moisture’s centrality in precipitation partitioning into groundwater recharge and surface runoff is widely recognized, often the criticality of the surface and rootzone connectivity is overlooked. You might have read about incessant rainfall after a dry and hot period often generates flash floods. Why? Because the surface profile might get hydrophobic, and hence, hydrologically decoupled from the rootzone under intense heat. So, a larger fraction of the incoming rain contributes to overland runoff instead of infiltrating to the rootzone, and contributing to the groundwater recharge. So, hydrologic connectivity between surface and the rootzone profile directly affects critical ecohydrological processes such as groundwater recharge, surface runoff generation, and the overall water availability for ecosystem sustenance. Needless to say, knowing how moisture moves from the surface to the rootzone can improved water management to ensure sustained and adequate moisture to the crops, while preventing over-irrigation. Accurate data on both surface and rootzone soil moisture also helps in improving weather forecasts and seasonal-scale climate forecasts, thereby helping to predict and manage hydrologic extremes such as droughts and floods.</p>
 <p>In this chapter, we will explore the hydrologic relationship between surface and the rootzone profile, and methods to simulate these processes.</p>
-<section id="exploratory-data-analysis-for-the-sample-station" class="level3" data-number="10.1.1">
-<h3 data-number="10.1.1" class="anchored" data-anchor-id="exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">10.1.1</span> Exploratory Data Analysis for the Sample Station</h3>
+<section id="exploratory-data-analysis-for-the-sample-station" class="level3" data-number="12.1.1">
+<h3 data-number="12.1.1" class="anchored" data-anchor-id="exploratory-data-analysis-for-the-sample-station"><span class="header-section-number">12.1.1</span> Exploratory Data Analysis for the Sample Station</h3>
 <p>We will use in situ (ground) measurements from a sample station to discuss various attributes of moisture dynamics in the field and learn the relationship between moisture and thermal fluxes of surface and deeper profiles. For this purpose, we will use a station from U.S. Climate Reference Network (USCRN) at Stillwater, Oklahoma. USCRN is instrumented to measure meteorological information such as temperature, precipitation, wind speed, along with other relevant hydrologic variables such as soil moisture and temperature at 5-, 10-, 20-, 50- and 100 cm depths at sub-hourly, daily and monthly time scales. For our example, we will use daily dataset for 2021.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download in situ data files for 2021 from GITHUB repositiry </span></span>
@@ -699,7 +767,7 @@ window.Quarto = {
 <div id="fig-density-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-density-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="ch11_files/figure-html/fig-density-1.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;10.1&nbsp;(a): Depth versus soil temperature"><img src="ch11_files/figure-html/fig-density-1.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
+<a href="ch11_files/figure-html/fig-density-1.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;12.1&nbsp;(a): Depth versus soil temperature"><img src="ch11_files/figure-html/fig-density-1.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-density-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (a) Depth versus soil temperature
@@ -711,7 +779,7 @@ window.Quarto = {
 <div id="fig-density-2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-density-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="ch11_files/figure-html/fig-density-2.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;10.1&nbsp;(b): Depth versus soil moisture"><img src="ch11_files/figure-html/fig-density-2.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
+<a href="ch11_files/figure-html/fig-density-2.png" class="lightbox" data-gallery="fig-density" title="Figure&nbsp;12.1&nbsp;(b): Depth versus soil moisture"><img src="ch11_files/figure-html/fig-density-2.png" class="img-fluid figure-img" data-ref-parent="fig-density" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-density-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (b) Depth versus soil moisture
@@ -722,7 +790,7 @@ window.Quarto = {
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10.1: Soil temperature and moisture response with profile depth
+Figure&nbsp;12.1: Soil temperature and moisture response with profile depth
 </figcaption>
 </figure>
 </div>
@@ -741,10 +809,10 @@ Note
 </div>
 </section>
 </section>
-<section id="simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">10.2</span> Simulating Low-pass Filtering of Meteorological Perturbations Through Soil Profile</h2>
+<section id="simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="simulating-low-pass-filtering-of-meteorological-perturbations-through-soil-profile"><span class="header-section-number">12.2</span> Simulating Low-pass Filtering of Meteorological Perturbations Through Soil Profile</h2>
 <p>Under hydrologic equilibrium, the analytical solution of the 1-dimensional vertical water balance (differential) equation can be approximated using the relationship between the temporal changes in the rootzone soil moisture (RZSM) and the difference in SSM vis-à-vis the antecedent rootzone conditions (Wagner et al., 1999, Albergel et al., 2008, Manfreda et al., 2014). A simple recursive exponential low-pass filter to simulate the 1-dimensional first-order infinite-impulse response of RZSM to temporal variability in SSM is given as follows:</p>
-<p><span id="eq-11.1"><span class="math display">\[ RZSM_t^{'}= RZSM_{t-1}^{'}+ D_p(SSM_t-RZSM_{t-1}^{'})  \tag{10.1}\]</span></span></p>
+<p><span id="eq-11.1"><span class="math display">\[ RZSM_t^{'}= RZSM_{t-1}^{'}+ D_p(SSM_t-RZSM_{t-1}^{'})  \tag{12.1}\]</span></span></p>
 <p>where, <span class="math inline">\(t \ge1\)</span>; when <span class="math inline">\(t=1\)</span>, <span class="math inline">\(RZSM_{t=0}^{'}=SSM_{t=0}\)</span>.</p>
 <p><span class="math inline">\(RZSM_{t}^{'}\)</span> is the temporally smoothed (filtered) SSM at time <span class="math inline">\(t\)</span> .</p>
 <p>Parameter <span class="math inline">\(D_p\)</span> is the exponential filter smoothing factor of the soil profile <span class="math inline">\([-]\)</span>, also called the <em>pseudo-diffusivity coefficient</em>; <span class="math inline">\(D_p\)</span> ∈ [0,1]. It represents the effective influence of various bio-geo-physical controls such as vegetation, topography, hydroclimatology and pedological characteristics (soil profile thickness, effective soil hydraulic characteristics, etc.) on vertical fluxes between the soil surface and the rootzone.</p>
@@ -753,32 +821,32 @@ Note
 <li><p>The lateral moisture flux to/from the rootzone is negligible, and,</p></li>
 <li><p>The groundwater table is significantly deeper than the rootzone depth.</p></li>
 </ol>
-<section id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="level3" data-number="10.2.1">
-<h3 data-number="10.2.1" class="anchored" data-anchor-id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">10.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</h3>
+<section id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="origins-of-low-pass-filter-relationship-in-vertical-soil-fluxes"><span class="header-section-number">12.2.1</span> Origins of Low-pass Filter Relationship in Vertical Soil Fluxes</h3>
 <p>The origins of the low-pass filter effect of soil profile on surface variability in soil moisture can be traced to the original equations for vertical flux of water int he unsaturated soil profile. We recall the Diffusivity version of Richard’s equation as follows:</p>
 <p><span id="eq-11.2"><span class="math display">\[
 \frac{\partial\theta} {\partial t}= \frac{\partial}{\partial z}(D(\theta)\frac{\partial\theta}{\partial z})-\frac{\partial K(\theta)}{\partial z}
-\tag{10.2}\]</span></span></p>
+\tag{12.2}\]</span></span></p>
 <p>where, <span class="math inline">\(D\)</span> and <span class="math inline">\(K\)</span> are the hydraulic diffusivity and conductivity of the soil profile, and are a function of the water content of the soil profile, <span class="math inline">\(z\)</span> is the height above the bottom of the soil profile and <span class="math inline">\(\theta\)</span> is the soil moisture content. The right hand side of this equation contains two terms, where <span class="math inline">\(\partial/\partial z (D(\theta)\partial/\partial z)\)</span> accounts for the flux due to the suction gradient in the profile, while <span class="math inline">\(\partial K(\theta)/\partial z\)</span> pertains to the role of gravity in the vertical flow of water. Given the equivalent suction exerted by the atmosphere is several order of magnitude compare to the gravitational head gradient, we can simplify the preceeding equation as:</p>
 <p><span id="eq-11.3"><span class="math display">\[
 \frac{\partial\theta} {\partial t}= \frac{\partial}{\partial z}(D(\theta)\frac{\partial\theta}{\partial z})
-\tag{10.3}\]</span></span></p>
+\tag{12.3}\]</span></span></p>
 <p>First integral of this equation can be written as: <span id="eq-11.4"><span class="math display">\[
 \frac{d\theta}{dt}=D(\theta)\frac{d\theta}{dz}+C
-\tag{10.4}\]</span></span> where, <span class="math inline">\(C\)</span> is the constant of integration. Since there is no flow at the bottom boundary of the soil profile, <span class="math inline">\(d\theta/dz=0\)</span> . Hence, <span class="math inline">\(C=0\)</span>. Writing the preceding equation in discrete form, we get:</p>
+\tag{12.4}\]</span></span> where, <span class="math inline">\(C\)</span> is the constant of integration. Since there is no flow at the bottom boundary of the soil profile, <span class="math inline">\(d\theta/dz=0\)</span> . Hence, <span class="math inline">\(C=0\)</span>. Writing the preceding equation in discrete form, we get:</p>
 <p><span id="eq-11.5"><span class="math display">\[
 \frac{\Delta\theta}{\Delta t}=D(\theta)\frac{\Delta\theta}{\Delta z}
-\tag{10.5}\]</span></span></p>
+\tag{12.5}\]</span></span></p>
 <p>As the soil reaches the second phase of drying, it enters a phase where the rate of soil drydown is slow, and the rate of loss of water from all depths can be assumed to be the same. Simplifying the previous equation for a simple 2-layer representation of soil profile, with <span class="math inline">\(SSM\)</span> and <span class="math inline">\(RZSM\)</span> representing the surface and rootzone soil moisture respectively, we can write Eq. 5 as: <span class="math display">\[
 RZSM_t-RZSM_{t-1}= D(RZSM) \times (SSM_{t}-RZSM_{t-1})
 \]</span> or, <span id="eq-11.7"><span class="math display">\[
 RZSM_t=RZSM_{t-1}+ D(RZSM) \times (SSM_{t}-RZSM_{t-1})
-\tag{10.6}\]</span></span></p>
+\tag{12.6}\]</span></span></p>
 <p>However, such coarse discretization of the soil profile may not account for the different initial values of true surface and rootzone soil moisture, and may lead to a systematic bias in the estimated values of <span class="math inline">\(RZSM\)</span> using the low-pass filter approach compared to the observations. This equation becomes analogous to the exponential infinite impulse response low-pass filter equation provided in Eq. 1 earlier. The filtered surface soil moisture i.e.&nbsp;<span class="math inline">\(RZSM'\)</span> can be related to the true rootzone SM through a linear transformation as: <span class="math inline">\(RZSM= C \times RZSM^{'}+\epsilon\)</span>, where, <span class="math inline">\(C\)</span> is the ratio of the dynamic range of <span class="math inline">\(RZSM\)</span> and <span class="math inline">\(RZSM'\)</span> as follows: <span id="eq-11.8"><span class="math display">\[
 C= \frac {\max(RZSM)-min(RZSM)} {max(RZSM^{'})-min(RZSM^{'})}
-\tag{10.7}\]</span></span> and, <span id="eq-11.9"><span class="math display">\[
+\tag{12.7}\]</span></span> and, <span id="eq-11.9"><span class="math display">\[
 \epsilon=min(RZSM)-C \times min(RZSM^{'})
-\tag{10.8}\]</span></span></p>
+\tag{12.8}\]</span></span></p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -793,8 +861,8 @@ Note
 </div>
 </div>
 </section>
-<section id="propagation-of-drying-front-in-the-soil-profile" class="level3" data-number="10.2.2">
-<h3 data-number="10.2.2" class="anchored" data-anchor-id="propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">10.2.2</span> Propagation of Drying Front in the Soil Profile</h3>
+<section id="propagation-of-drying-front-in-the-soil-profile" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="propagation-of-drying-front-in-the-soil-profile"><span class="header-section-number">12.2.2</span> Propagation of Drying Front in the Soil Profile</h3>
 <p>We will demonstrate the application of the low-pass filter discussed above to capture the propagation of drying front from the surface to the deeper profiles at the test site.The function <code>lp_filt</code> takes the SSM as input, apply a low-pass infinite impulse response filter on the time series for the user-specified <span class="math inline">\(Dp\)</span>, and returns the filtered SSM (SSMf). In contrast, the wetting front propagation is represented as a pulse which is passed down to the filtered soil moisture in the preceding time step.This assumption is reasonably valid at the daily time scale at which this example is applied.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function for implementing LP filter on surface soil moisture</span></span>
@@ -1013,8 +1081,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1125,7 +1191,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
@@ -1353,13 +1418,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ch9.html" class="pagination-link" aria-label="Parallel Geospatial Computing">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Parallel Geospatial Computing</span></span>
+      <a href="./ch14.html" class="pagination-link" aria-label="Model Fitting, Optimization, and Uncertainty">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ch12.html" class="pagination-link" aria-label="Landscape-scale Soil Hydrology Model">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Landscape-scale Soil Hydrology Model</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch12.html" class="pagination-link" aria-label="Landscape Soil Hydrology Model">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Landscape Soil Hydrology Model</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1377,7 +1442,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
