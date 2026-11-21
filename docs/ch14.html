@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>13&nbsp; Model Fitting, Optimization, and Uncertainty – R Tools for Mesoscale Soil Hydrology</title>
+<title>11&nbsp; Model Fitting, Optimization, and Uncertainty – R Tools for Mesoscale Soil Hydrology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./ch10.html" rel="next">
+<link href="./ch11.html" rel="next">
 <link href="./ch13.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -136,6 +136,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating">
@@ -147,7 +148,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch13.html">Curve Fitting, Optimization, and Machine Learning</a></li><li class="breadcrumb-item"><a href="./ch14.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch13.html">Curve Fitting, Optimization, and Machine Learning</a></li><li class="breadcrumb-item"><a href="./ch14.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -159,8 +160,8 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch13.html">Curve Fitting, Optimization, and Machine Learning</a></li><li class="breadcrumb-item"><a href="./ch14.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></a></li></ol></nav>
-      <h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></h1>
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch13.html">Curve Fitting, Optimization, and Machine Learning</a></li><li class="breadcrumb-item"><a href="./ch14.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></a></li></ol></nav>
+      <h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></h1>
                       </div>
   </div>
     
@@ -270,7 +271,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Hydrologic Modeling</span></a>
+ <span class="menu-text">Curve Fitting, Optimization, and Machine Learning</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -278,14 +279,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch11.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span></a>
+  <a href="./ch13.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch12.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Landscape Soil Hydrology Model</span></span></a>
+  <a href="./ch14.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></span></a>
   </div>
 </li>
       </ul>
@@ -293,7 +294,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Curve Fitting, Optimization, and Machine Learning</span></a>
+ <span class="menu-text">Hydrologic Modeling</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -301,14 +302,14 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch13.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></span></a>
+  <a href="./ch11.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch14.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Model Fitting, Optimization, and Uncertainty</span></span></a>
+  <a href="./ch12.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Landscape Soil Hydrology Model</span></span></a>
   </div>
 </li>
       </ul>
@@ -346,35 +347,35 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-we-will-explore" id="toc-what-we-will-explore" class="nav-link active" data-scroll-target="#what-we-will-explore"><span class="header-section-number">13.1</span> What we will explore</a></li>
-  <li><a href="#setup-and-short-recap" id="toc-setup-and-short-recap" class="nav-link" data-scroll-target="#setup-and-short-recap"><span class="header-section-number">13.2</span> Setup and short recap</a>
+  <li><a href="#what-we-will-explore" id="toc-what-we-will-explore" class="nav-link active" data-scroll-target="#what-we-will-explore"><span class="header-section-number">11.1</span> What we will explore</a></li>
+  <li><a href="#setup-and-short-recap" id="toc-setup-and-short-recap" class="nav-link" data-scroll-target="#setup-and-short-recap"><span class="header-section-number">11.2</span> Setup and short recap</a>
   <ul class="collapse">
-  <li><a href="#read-the-simplified-data" id="toc-read-the-simplified-data" class="nav-link" data-scroll-target="#read-the-simplified-data"><span class="header-section-number">13.2.1</span> Read the simplified data</a></li>
-  <li><a href="#recreate-the-drydown-data" id="toc-recreate-the-drydown-data" class="nav-link" data-scroll-target="#recreate-the-drydown-data"><span class="header-section-number">13.2.2</span> Recreate the drydown data</a></li>
-  <li><a href="#reuse-the-physical-model-and-fitting-functions" id="toc-reuse-the-physical-model-and-fitting-functions" class="nav-link" data-scroll-target="#reuse-the-physical-model-and-fitting-functions"><span class="header-section-number">13.2.3</span> Reuse the physical model and fitting functions</a></li>
+  <li><a href="#read-the-simplified-data" id="toc-read-the-simplified-data" class="nav-link" data-scroll-target="#read-the-simplified-data"><span class="header-section-number">11.2.1</span> Read the simplified data</a></li>
+  <li><a href="#recreate-the-drydown-data" id="toc-recreate-the-drydown-data" class="nav-link" data-scroll-target="#recreate-the-drydown-data"><span class="header-section-number">11.2.2</span> Recreate the drydown data</a></li>
+  <li><a href="#reuse-the-physical-model-and-fitting-functions" id="toc-reuse-the-physical-model-and-fitting-functions" class="nav-link" data-scroll-target="#reuse-the-physical-model-and-fitting-functions"><span class="header-section-number">11.2.3</span> Reuse the physical model and fitting functions</a></li>
   </ul></li>
-  <li><a href="#begin-with-one-traintest-split" id="toc-begin-with-one-traintest-split" class="nav-link" data-scroll-target="#begin-with-one-traintest-split"><span class="header-section-number">13.3</span> Begin with one train/test split</a></li>
-  <li><a href="#move-from-one-split-to-k-fold-cross-validation" id="toc-move-from-one-split-to-k-fold-cross-validation" class="nav-link" data-scroll-target="#move-from-one-split-to-k-fold-cross-validation"><span class="header-section-number">13.4</span> Move from one split to k-fold cross-validation</a>
+  <li><a href="#begin-with-one-traintest-split" id="toc-begin-with-one-traintest-split" class="nav-link" data-scroll-target="#begin-with-one-traintest-split"><span class="header-section-number">11.3</span> Begin with one train/test split</a></li>
+  <li><a href="#move-from-one-split-to-k-fold-cross-validation" id="toc-move-from-one-split-to-k-fold-cross-validation" class="nav-link" data-scroll-target="#move-from-one-split-to-k-fold-cross-validation"><span class="header-section-number">11.4</span> Move from one split to k-fold cross-validation</a>
   <ul class="collapse">
-  <li><a href="#create-event-level-folds" id="toc-create-event-level-folds" class="nav-link" data-scroll-target="#create-event-level-folds"><span class="header-section-number">13.4.1</span> Create event-level folds</a></li>
-  <li><a href="#repeat-the-k-fold-process" id="toc-repeat-the-k-fold-process" class="nav-link" data-scroll-target="#repeat-the-k-fold-process"><span class="header-section-number">13.4.2</span> Repeat the k-fold process</a></li>
+  <li><a href="#create-event-level-folds" id="toc-create-event-level-folds" class="nav-link" data-scroll-target="#create-event-level-folds"><span class="header-section-number">11.4.1</span> Create event-level folds</a></li>
+  <li><a href="#repeat-the-k-fold-process" id="toc-repeat-the-k-fold-process" class="nav-link" data-scroll-target="#repeat-the-k-fold-process"><span class="header-section-number">11.4.2</span> Repeat the k-fold process</a></li>
   </ul></li>
-  <li><a href="#cross-validate-nls2nls-and-pso" id="toc-cross-validate-nls2nls-and-pso" class="nav-link" data-scroll-target="#cross-validate-nls2nls-and-pso"><span class="header-section-number">13.5</span> Cross-validate NLS2/NLS and PSO</a></li>
-  <li><a href="#cross-validate-random-forest" id="toc-cross-validate-random-forest" class="nav-link" data-scroll-target="#cross-validate-random-forest"><span class="header-section-number">13.6</span> Cross-validate Random Forest</a></li>
-  <li><a href="#compare-out-of-sample-performance" id="toc-compare-out-of-sample-performance" class="nav-link" data-scroll-target="#compare-out-of-sample-performance"><span class="header-section-number">13.7</span> Compare out-of-sample performance</a></li>
-  <li><a href="#examine-parameter-uncertainty" id="toc-examine-parameter-uncertainty" class="nav-link" data-scroll-target="#examine-parameter-uncertainty"><span class="header-section-number">13.8</span> Examine parameter uncertainty</a></li>
-  <li><a href="#examine-prediction-uncertainty" id="toc-examine-prediction-uncertainty" class="nav-link" data-scroll-target="#examine-prediction-uncertainty"><span class="header-section-number">13.9</span> Examine prediction uncertainty</a></li>
-  <li><a href="#summarize-withheld-predictions-by-observation" id="toc-summarize-withheld-predictions-by-observation" class="nav-link" data-scroll-target="#summarize-withheld-predictions-by-observation"><span class="header-section-number">13.10</span> Summarize withheld predictions by observation</a></li>
-  <li><a href="#map-spatial-parameter-uncertainty" id="toc-map-spatial-parameter-uncertainty" class="nav-link" data-scroll-target="#map-spatial-parameter-uncertainty"><span class="header-section-number">13.11</span> Map spatial parameter uncertainty</a>
+  <li><a href="#cross-validate-nls2nls-and-pso" id="toc-cross-validate-nls2nls-and-pso" class="nav-link" data-scroll-target="#cross-validate-nls2nls-and-pso"><span class="header-section-number">11.5</span> Cross-validate NLS2/NLS and PSO</a></li>
+  <li><a href="#cross-validate-random-forest" id="toc-cross-validate-random-forest" class="nav-link" data-scroll-target="#cross-validate-random-forest"><span class="header-section-number">11.6</span> Cross-validate Random Forest</a></li>
+  <li><a href="#compare-out-of-sample-performance" id="toc-compare-out-of-sample-performance" class="nav-link" data-scroll-target="#compare-out-of-sample-performance"><span class="header-section-number">11.7</span> Compare out-of-sample performance</a></li>
+  <li><a href="#examine-parameter-uncertainty" id="toc-examine-parameter-uncertainty" class="nav-link" data-scroll-target="#examine-parameter-uncertainty"><span class="header-section-number">11.8</span> Examine parameter uncertainty</a></li>
+  <li><a href="#examine-prediction-uncertainty" id="toc-examine-prediction-uncertainty" class="nav-link" data-scroll-target="#examine-prediction-uncertainty"><span class="header-section-number">11.9</span> Examine prediction uncertainty</a></li>
+  <li><a href="#summarize-withheld-predictions-by-observation" id="toc-summarize-withheld-predictions-by-observation" class="nav-link" data-scroll-target="#summarize-withheld-predictions-by-observation"><span class="header-section-number">11.10</span> Summarize withheld predictions by observation</a></li>
+  <li><a href="#map-spatial-parameter-uncertainty" id="toc-map-spatial-parameter-uncertainty" class="nav-link" data-scroll-target="#map-spatial-parameter-uncertainty"><span class="header-section-number">11.11</span> Map spatial parameter uncertainty</a>
   <ul class="collapse">
-  <li><a href="#read-the-matched-raster-time-series" id="toc-read-the-matched-raster-time-series" class="nav-link" data-scroll-target="#read-the-matched-raster-time-series"><span class="header-section-number">13.11.1</span> Read the matched raster time series</a></li>
-  <li><a href="#test-uncertainty-for-one-cell" id="toc-test-uncertainty-for-one-cell" class="nav-link" data-scroll-target="#test-uncertainty-for-one-cell"><span class="header-section-number">13.11.2</span> Test uncertainty for one cell</a></li>
-  <li><a href="#write-a-cell-function-for-uncertainty" id="toc-write-a-cell-function-for-uncertainty" class="nav-link" data-scroll-target="#write-a-cell-function-for-uncertainty"><span class="header-section-number">13.11.3</span> Write a cell function for uncertainty</a></li>
-  <li><a href="#create-spatial-uncertainty-layers" id="toc-create-spatial-uncertainty-layers" class="nav-link" data-scroll-target="#create-spatial-uncertainty-layers"><span class="header-section-number">13.11.4</span> Create spatial uncertainty layers</a></li>
-  <li><a href="#plot-median-parameters-and-uncertainty-widths" id="toc-plot-median-parameters-and-uncertainty-widths" class="nav-link" data-scroll-target="#plot-median-parameters-and-uncertainty-widths"><span class="header-section-number">13.11.5</span> Plot median parameters and uncertainty widths</a></li>
+  <li><a href="#read-the-matched-raster-time-series" id="toc-read-the-matched-raster-time-series" class="nav-link" data-scroll-target="#read-the-matched-raster-time-series"><span class="header-section-number">11.11.1</span> Read the matched raster time series</a></li>
+  <li><a href="#test-uncertainty-for-one-cell" id="toc-test-uncertainty-for-one-cell" class="nav-link" data-scroll-target="#test-uncertainty-for-one-cell"><span class="header-section-number">11.11.2</span> Test uncertainty for one cell</a></li>
+  <li><a href="#write-a-cell-function-for-uncertainty" id="toc-write-a-cell-function-for-uncertainty" class="nav-link" data-scroll-target="#write-a-cell-function-for-uncertainty"><span class="header-section-number">11.11.3</span> Write a cell function for uncertainty</a></li>
+  <li><a href="#create-spatial-uncertainty-layers" id="toc-create-spatial-uncertainty-layers" class="nav-link" data-scroll-target="#create-spatial-uncertainty-layers"><span class="header-section-number">11.11.4</span> Create spatial uncertainty layers</a></li>
+  <li><a href="#plot-median-parameters-and-uncertainty-widths" id="toc-plot-median-parameters-and-uncertainty-widths" class="nav-link" data-scroll-target="#plot-median-parameters-and-uncertainty-widths"><span class="header-section-number">11.11.5</span> Plot median parameters and uncertainty widths</a></li>
   </ul></li>
-  <li><a href="#what-should-we-conclude" id="toc-what-should-we-conclude" class="nav-link" data-scroll-target="#what-should-we-conclude"><span class="header-section-number">13.12</span> What should we conclude?</a></li>
-  <li><a href="#lets-discuss" id="toc-lets-discuss" class="nav-link" data-scroll-target="#lets-discuss"><span class="header-section-number">13.13</span> Let’s discuss</a></li>
+  <li><a href="#what-should-we-conclude" id="toc-what-should-we-conclude" class="nav-link" data-scroll-target="#what-should-we-conclude"><span class="header-section-number">11.12</span> What should we conclude?</a></li>
+  <li><a href="#lets-discuss" id="toc-lets-discuss" class="nav-link" data-scroll-target="#lets-discuss"><span class="header-section-number">11.13</span> Let’s discuss</a></li>
   </ul>
 </nav>
     </div>
@@ -385,8 +386,8 @@ window.Quarto = {
 
 
 
-<section id="what-we-will-explore" class="level2" data-number="13.1">
-<h2 data-number="13.1" class="anchored" data-anchor-id="what-we-will-explore"><span class="header-section-number">13.1</span> What we will explore</h2>
+<section id="what-we-will-explore" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="what-we-will-explore"><span class="header-section-number">11.1</span> What we will explore</h2>
 <p>In the previous chapter, we fitted one model and obtained one set of optimized parameters. We will now ask:</p>
 <ul>
 <li>Would the parameters change if we fitted a different subset of the observations?</li>
@@ -409,8 +410,8 @@ The key change in perspective
 </div>
 </div>
 </section>
-<section id="setup-and-short-recap" class="level2" data-number="13.2">
-<h2 data-number="13.2" class="anchored" data-anchor-id="setup-and-short-recap"><span class="header-section-number">13.2</span> Setup and short recap</h2>
+<section id="setup-and-short-recap" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="setup-and-short-recap"><span class="header-section-number">11.2</span> Setup and short recap</h2>
 <p>Install the packages once if needed.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"readr"</span>, <span class="st">"nls2"</span>, <span class="st">"pso"</span>, <span class="st">"randomForest"</span>, <span class="st">"terra"</span>, <span class="st">"spData"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -429,8 +430,8 @@ The key change in perspective
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>n_repeats <span class="ot">&lt;-</span> <span class="dv">10</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>analysis_seed <span class="ot">&lt;-</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="read-the-simplified-data" class="level3" data-number="13.2.1">
-<h3 data-number="13.2.1" class="anchored" data-anchor-id="read-the-simplified-data"><span class="header-section-number">13.2.1</span> Read the simplified data</h3>
+<section id="read-the-simplified-data" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="read-the-simplified-data"><span class="header-section-number">11.2.1</span> Read the simplified data</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>csv_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://github.com/Vinit-Sehgal/AGRO4092/raw/refs/heads/main/"</span>,</span>
@@ -453,8 +454,8 @@ The key change in perspective
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>eddy_data <span class="ot">&lt;-</span> eddy_data[<span class="fu">order</span>(eddy_data<span class="sc">$</span>date), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="recreate-the-drydown-data" class="level3" data-number="13.2.2">
-<h3 data-number="13.2.2" class="anchored" data-anchor-id="recreate-the-drydown-data"><span class="header-section-number">13.2.2</span> Recreate the drydown data</h3>
+<section id="recreate-the-drydown-data" class="level3" data-number="11.2.2">
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="recreate-the-drydown-data"><span class="header-section-number">11.2.2</span> Recreate the drydown data</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>SM_change <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA_real_</span>, <span class="fu">diff</span>(eddy_data<span class="sc">$</span>SM))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>is_drydown <span class="ot">&lt;-</span></span>
@@ -500,8 +501,8 @@ Keep complete drydowns together
 </div>
 </div>
 </section>
-<section id="reuse-the-physical-model-and-fitting-functions" class="level3" data-number="13.2.3">
-<h3 data-number="13.2.3" class="anchored" data-anchor-id="reuse-the-physical-model-and-fitting-functions"><span class="header-section-number">13.2.3</span> Reuse the physical model and fitting functions</h3>
+<section id="reuse-the-physical-model-and-fitting-functions" class="level3" data-number="11.2.3">
+<h3 data-number="11.2.3" class="anchored" data-anchor-id="reuse-the-physical-model-and-fitting-functions"><span class="header-section-number">11.2.3</span> Reuse the physical model and fitting functions</h3>
 <p>The chapter is self-contained, so we repeat compact versions of the functions from the previous chapter. The revised optimization bounds remain unchanged.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>piecewise_EF <span class="ot">&lt;-</span> <span class="cf">function</span>(SM, theta_d, theta_w, EF_max) {</span>
@@ -672,8 +673,8 @@ Keep complete drydowns together
 </ul>
 </section>
 </section>
-<section id="begin-with-one-traintest-split" class="level2" data-number="13.3">
-<h2 data-number="13.3" class="anchored" data-anchor-id="begin-with-one-traintest-split"><span class="header-section-number">13.3</span> Begin with one train/test split</h2>
+<section id="begin-with-one-traintest-split" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="begin-with-one-traintest-split"><span class="header-section-number">11.3</span> Begin with one train/test split</h2>
 <p>A model should be evaluated using observations that were not used to fit it. We will use 80% of the drydown events for training and 20% for testing.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(analysis_seed)</span>
@@ -779,11 +780,11 @@ Training error is not validation error
 </div>
 </div>
 </section>
-<section id="move-from-one-split-to-k-fold-cross-validation" class="level2" data-number="13.4">
-<h2 data-number="13.4" class="anchored" data-anchor-id="move-from-one-split-to-k-fold-cross-validation"><span class="header-section-number">13.4</span> Move from one split to k-fold cross-validation</h2>
+<section id="move-from-one-split-to-k-fold-cross-validation" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="move-from-one-split-to-k-fold-cross-validation"><span class="header-section-number">11.4</span> Move from one split to k-fold cross-validation</h2>
 <p>One split depends on which events happened to enter the test group. In <strong>k-fold cross-validation</strong>, we divide the events into <span class="math inline">\(k\)</span> folds, fit on <span class="math inline">\(k-1\)</span> folds, and validate on the remaining fold. Every fold takes a turn as validation data.</p>
-<section id="create-event-level-folds" class="level3" data-number="13.4.1">
-<h3 data-number="13.4.1" class="anchored" data-anchor-id="create-event-level-folds"><span class="header-section-number">13.4.1</span> Create event-level folds</h3>
+<section id="create-event-level-folds" class="level3" data-number="11.4.1">
+<h3 data-number="11.4.1" class="anchored" data-anchor-id="create-event-level-folds"><span class="header-section-number">11.4.1</span> Create event-level folds</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>make_folds <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">k =</span> <span class="dv">5</span>, <span class="at">seed =</span> <span class="dv">100</span>) {</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed)</span>
@@ -820,13 +821,13 @@ Training error is not validation error
 </div>
 </div>
 </section>
-<section id="repeat-the-k-fold-process" class="level3" data-number="13.4.2">
-<h3 data-number="13.4.2" class="anchored" data-anchor-id="repeat-the-k-fold-process"><span class="header-section-number">13.4.2</span> Repeat the k-fold process</h3>
+<section id="repeat-the-k-fold-process" class="level3" data-number="11.4.2">
+<h3 data-number="11.4.2" class="anchored" data-anchor-id="repeat-the-k-fold-process"><span class="header-section-number">11.4.2</span> Repeat the k-fold process</h3>
 <p>Repeated cross-validation reshuffles the fold assignment and runs the complete k-fold process again. With 5 folds and 10 repeats, each method can produce as many as 50 fitted models. Those fitted models form an <strong>ensemble</strong>.</p>
 </section>
 </section>
-<section id="cross-validate-nls2nls-and-pso" class="level2" data-number="13.5">
-<h2 data-number="13.5" class="anchored" data-anchor-id="cross-validate-nls2nls-and-pso"><span class="header-section-number">13.5</span> Cross-validate NLS2/NLS and PSO</h2>
+<section id="cross-validate-nls2nls-and-pso" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="cross-validate-nls2nls-and-pso"><span class="header-section-number">11.5</span> Cross-validate NLS2/NLS and PSO</h2>
 <p>The shared function below calls either <code>fit_NLS()</code> or <code>fit_PSO()</code>. It stores the fitted parameters, validation statistics, and withheld predictions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>cross_validate_piecewise <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
@@ -968,8 +969,8 @@ Do not let tryCatch hide model problems
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="cross-validate-random-forest" class="level2" data-number="13.6">
-<h2 data-number="13.6" class="anchored" data-anchor-id="cross-validate-random-forest"><span class="header-section-number">13.6</span> Cross-validate Random Forest</h2>
+<section id="cross-validate-random-forest" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="cross-validate-random-forest"><span class="header-section-number">11.6</span> Cross-validate Random Forest</h2>
 <p>Random Forest does not return the three physical parameters. We will store its validation statistics, withheld predictions, and fitted forest models.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>rf_statistics <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
@@ -1031,8 +1032,8 @@ Do not let tryCatch hide model problems
 <span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="compare-out-of-sample-performance" class="level2" data-number="13.7">
-<h2 data-number="13.7" class="anchored" data-anchor-id="compare-out-of-sample-performance"><span class="header-section-number">13.7</span> Compare out-of-sample performance</h2>
+<section id="compare-out-of-sample-performance" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="compare-out-of-sample-performance"><span class="header-section-number">11.7</span> Compare out-of-sample performance</h2>
 <p>Combine the fold statistics and calculate the median for each method.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>all_statistics <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
@@ -1057,8 +1058,8 @@ Do not let tryCatch hide model problems
 </div>
 <p>Use lower RMSE and MAE, bias near zero, and larger <span class="math inline">\(R^2\)</span> together. No one statistic tells the complete story.</p>
 </section>
-<section id="examine-parameter-uncertainty" class="level2" data-number="13.8">
-<h2 data-number="13.8" class="anchored" data-anchor-id="examine-parameter-uncertainty"><span class="header-section-number">13.8</span> Examine parameter uncertainty</h2>
+<section id="examine-parameter-uncertainty" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="examine-parameter-uncertainty"><span class="header-section-number">11.8</span> Examine parameter uncertainty</h2>
 <p>The repeated fits give many estimates of each physical parameter. The spread shows sensitivity to the selected training drydowns.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>old_par <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="fl">4.5</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
@@ -1141,8 +1142,8 @@ Watch for estimates at the bounds
 </div>
 </div>
 </section>
-<section id="examine-prediction-uncertainty" class="level2" data-number="13.9">
-<h2 data-number="13.9" class="anchored" data-anchor-id="examine-prediction-uncertainty"><span class="header-section-number">13.9</span> Examine prediction uncertainty</h2>
+<section id="examine-prediction-uncertainty" class="level2" data-number="11.9">
+<h2 data-number="11.9" class="anchored" data-anchor-id="examine-prediction-uncertainty"><span class="header-section-number">11.9</span> Examine prediction uncertainty</h2>
 <p>We will predict EF over the same SM grid with every fitted model. At each SM value, we will calculate the median prediction and the 2.5th–97.5th percentile ensemble range.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>sm_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(</span>
@@ -1289,8 +1290,8 @@ The ribbon is an ensemble range
 </div>
 </div>
 </section>
-<section id="summarize-withheld-predictions-by-observation" class="level2" data-number="13.10">
-<h2 data-number="13.10" class="anchored" data-anchor-id="summarize-withheld-predictions-by-observation"><span class="header-section-number">13.10</span> Summarize withheld predictions by observation</h2>
+<section id="summarize-withheld-predictions-by-observation" class="level2" data-number="11.10">
+<h2 data-number="11.10" class="anchored" data-anchor-id="summarize-withheld-predictions-by-observation"><span class="header-section-number">11.10</span> Summarize withheld predictions by observation</h2>
 <p>Each observation is withheld once per repeat. Take the median of its repeated out-of-sample predictions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>all_predictions <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
@@ -1353,12 +1354,12 @@ The ribbon is an ensemble range
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(old_par)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="map-spatial-parameter-uncertainty" class="level2" data-number="13.11">
-<h2 data-number="13.11" class="anchored" data-anchor-id="map-spatial-parameter-uncertainty"><span class="header-section-number">13.11</span> Map spatial parameter uncertainty</h2>
+<section id="map-spatial-parameter-uncertainty" class="level2" data-number="11.11">
+<h2 data-number="11.11" class="anchored" data-anchor-id="map-spatial-parameter-uncertainty"><span class="header-section-number">11.11</span> Map spatial parameter uncertainty</h2>
 <p>The previous chapter produced one optimized parameter value per raster cell. We will now repeatedly fit resampled observations within each cell and summarize the resulting parameter distribution.</p>
 <p>To keep the demonstration manageable, we will use <strong>PSO only</strong>. The same idea can be applied to NLS2/NLS.</p>
-<section id="read-the-matched-raster-time-series" class="level3" data-number="13.11.1">
-<h3 data-number="13.11.1" class="anchored" data-anchor-id="read-the-matched-raster-time-series"><span class="header-section-number">13.11.1</span> Read the matched raster time series</h3>
+<section id="read-the-matched-raster-time-series" class="level3" data-number="11.11.1">
+<h3 data-number="11.11.1" class="anchored" data-anchor-id="read-the-matched-raster-time-series"><span class="header-section-number">11.11.1</span> Read the matched raster time series</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spData)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1385,8 +1386,8 @@ The ribbon is an ensemble range
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nlyr</span>(SM) <span class="sc">==</span> <span class="fu">nlyr</span>(EF))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="test-uncertainty-for-one-cell" class="level3" data-number="13.11.2">
-<h3 data-number="13.11.2" class="anchored" data-anchor-id="test-uncertainty-for-one-cell"><span class="header-section-number">13.11.2</span> Test uncertainty for one cell</h3>
+<section id="test-uncertainty-for-one-cell" class="level3" data-number="11.11.2">
+<h3 data-number="11.11.2" class="anchored" data-anchor-id="test-uncertainty-for-one-cell"><span class="header-section-number">11.11.2</span> Test uncertainty for one cell</h3>
 <p>Choose one well-observed cell.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>complete_count <span class="ot">&lt;-</span> <span class="fu">xapp</span>(</span>
@@ -1459,8 +1460,8 @@ What the spatial range means
 </div>
 </div>
 </section>
-<section id="write-a-cell-function-for-uncertainty" class="level3" data-number="13.11.3">
-<h3 data-number="13.11.3" class="anchored" data-anchor-id="write-a-cell-function-for-uncertainty"><span class="header-section-number">13.11.3</span> Write a cell function for uncertainty</h3>
+<section id="write-a-cell-function-for-uncertainty" class="level3" data-number="11.11.3">
+<h3 data-number="11.11.3" class="anchored" data-anchor-id="write-a-cell-function-for-uncertainty"><span class="header-section-number">11.11.3</span> Write a cell function for uncertainty</h3>
 <p>First define a small summary function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>spatial_summary <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
@@ -1550,8 +1551,8 @@ Keep tryCatch, but test first
 </div>
 </div>
 </section>
-<section id="create-spatial-uncertainty-layers" class="level3" data-number="13.11.4">
-<h3 data-number="13.11.4" class="anchored" data-anchor-id="create-spatial-uncertainty-layers"><span class="header-section-number">13.11.4</span> Create spatial uncertainty layers</h3>
+<section id="create-spatial-uncertainty-layers" class="level3" data-number="11.11.4">
+<h3 data-number="11.11.4" class="anchored" data-anchor-id="create-spatial-uncertainty-layers"><span class="header-section-number">11.11.4</span> Create spatial uncertainty layers</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>spatial_uncertainty <span class="ot">&lt;-</span> <span class="fu">app</span>(</span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  spatial_data,</span>
@@ -1578,8 +1579,8 @@ Start small while learning
 </div>
 </div>
 </section>
-<section id="plot-median-parameters-and-uncertainty-widths" class="level3" data-number="13.11.5">
-<h3 data-number="13.11.5" class="anchored" data-anchor-id="plot-median-parameters-and-uncertainty-widths"><span class="header-section-number">13.11.5</span> Plot median parameters and uncertainty widths</h3>
+<section id="plot-median-parameters-and-uncertainty-widths" class="level3" data-number="11.11.5">
+<h3 data-number="11.11.5" class="anchored" data-anchor-id="plot-median-parameters-and-uncertainty-widths"><span class="header-section-number">11.11.5</span> Plot median parameters and uncertainty widths</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>states <span class="ot">&lt;-</span> <span class="fu">project</span>(<span class="fu">vect</span>(spData<span class="sc">::</span>us_states), <span class="fu">crs</span>(SM))</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1640,8 +1641,8 @@ Start small while learning
 <p>The lower and upper layers remain available when you want to map the two ends of each parameter range directly. Large width values identify locations where the parameter is especially sensitive to the selected observations.</p>
 </section>
 </section>
-<section id="what-should-we-conclude" class="level2" data-number="13.12">
-<h2 data-number="13.12" class="anchored" data-anchor-id="what-should-we-conclude"><span class="header-section-number">13.12</span> What should we conclude?</h2>
+<section id="what-should-we-conclude" class="level2" data-number="11.12">
+<h2 data-number="11.12" class="anchored" data-anchor-id="what-should-we-conclude"><span class="header-section-number">11.12</span> What should we conclude?</h2>
 <ol type="1">
 <li>A single train/test split introduces the idea of out-of-sample prediction.</li>
 <li>K-fold cross-validation rotates the validation group so every event is tested.</li>
@@ -1652,8 +1653,8 @@ Start small while learning
 <li>These ensemble ranges are useful diagnostic summaries, not complete confidence intervals.</li>
 </ol>
 </section>
-<section id="lets-discuss" class="level2" data-number="13.13">
-<h2 data-number="13.13" class="anchored" data-anchor-id="lets-discuss"><span class="header-section-number">13.13</span> Let’s discuss</h2>
+<section id="lets-discuss" class="level2" data-number="11.13">
+<h2 data-number="11.13" class="anchored" data-anchor-id="lets-discuss"><span class="header-section-number">11.13</span> Let’s discuss</h2>
 <ol type="1">
 <li>Why should complete drydown events remain together in one fold?</li>
 <li>How can a model have small training error but large validation error?</li>
@@ -2087,12 +2088,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./ch13.html" class="pagination-link" aria-label="Curve Fitting, Optimization, and Machine Learning">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Curve Fitting, Optimization, and Machine Learning</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ch10.html" class="pagination-link" aria-label="Practice Exercises">
-        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Practice Exercises</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch11.html" class="pagination-link" aria-label="Surface-Rootzone Soil Hydrologic Connectivity">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Surface-Rootzone Soil Hydrologic Connectivity</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
