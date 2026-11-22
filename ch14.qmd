@@ -8,7 +8,7 @@ editor:
 
 # Model Fitting, Optimization, and Uncertainty
 
-```{r child="ch14_a.qmd", message = FALSE, warning = FALSE}
+```{r child="ch14_b.qmd", message = FALSE, warning = FALSE}
 
 
 ```
