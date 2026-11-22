@@ -378,8 +378,8 @@ window.Quarto = {
 
 <section id="what-we-will-learn" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="what-we-will-learn"><span class="header-section-number">10.1</span> What we will learn?</h2>
-<p>We will fit and optimize a physics-based nonlinear response curve with bounded *nonlinear least squares (NLS)<strong> using <code>minpack.lm::nlsLM()</code>. We will compare that interpretable curve with a </strong>Random Forest** model that learns the relationship directly from the data. Particle Swarm Optimization (PSO) is introduced later as an optional replacement for the optimizer, not as a second physical model. Finally, we will turn the optimization steps into reusable functions and apply them to spatial soil-moisture (SM) and evaporative-fraction (EF) data.</p>
-<p>Let’s follow one clear workflow: <strong>observations → physical equation → parameter bounds → optimization → fitted curve → reusable function → parameter maps</strong></p>
+<p>We will fit and optimize a physics-based nonlinear response curve with bounded <strong>nonlinear least squares (NLS)</strong> using <code>minpack.lm::nlsLM()</code>. We will compare that interpretable curve with a <strong>Random Forest</strong> model that learns the relationship directly from the data. Particle Swarm Optimization (PSO) is introduced later as an optional replacement for the optimizer, not as a second physical model. Finally, we will turn the optimization steps into reusable functions and apply them to spatial soil-moisture (SM) and evaporative-fraction (EF) data.</p>
+<p>Let’s follow one clear workflow: Observations → physical equation → parameter bounds → optimization → fitted curve → reusable function → parameter maps</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="The bigger picture">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -397,7 +397,12 @@ The bigger picture
 <section id="the-physical-question" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="the-physical-question"><span class="header-section-number">10.2</span> The physical question!</h2>
 <p>Evaporative fraction (EF) describes the fraction of available surface energy used for evapotranspiration. We will model how EF changes as soil moisture (SM) decreases. These periods when SM decreases continuously for several consecutive observations are called <strong>soil-moisture drydowns</strong>.</p>
-<p>We will represent three soil-moisture regimes: 1. a dry regime, where water strongly limits EF; 2. a transition regime, where EF increases with SM; and 3. a wet regime, where EF reaches a plateau.</p>
+<p>We will represent three soil-moisture regimes:</p>
+<ol type="1">
+<li><p>Dry regime, where water strongly limits EF;</p></li>
+<li><p>Transition regime, where EF increases with SM; and</p></li>
+<li><p>Wet regime, where EF reaches a plateau.</p></li>
+</ol>
 <p>We are interested in how evaporative fraction (EF, i.e.&nbsp;the ratio of actual and potential ET) responds as the soil progressively loses water. Wetting events such as rainfall interrupt this process by suddenly increasing soil moisture and resetting the soil-water conditions. For this reason, we focus on <strong>drydown periods</strong>.</p>
 <div class="callout callout-style-default callout-important callout-titled" title="Why not fit every observation?">
 <div class="callout-header d-flex align-content-center">
@@ -426,10 +431,11 @@ Why not fit every observation?
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(minpack.lm)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Set a few analysis choices in one place. ::: {.cell}</p>
+<p>Set a few analysis choices in one place.</p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>min_drydown_steps <span class="ot">&lt;-</span> <span class="dv">5</span>   <span class="co"># Minimum length of drying period</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>analysis_seed <span class="ot">&lt;-</span> <span class="dv">100</span>     <span class="co"># Ensures repeatability</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>:::</p>
+</div>
 </section>
 <section id="download-and-read-the-simplified-data" class="level2" data-number="10.4">
 <h2 data-number="10.4" class="anchored" data-anchor-id="download-and-read-the-simplified-data"><span class="header-section-number">10.4</span> Download and read the simplified data</h2>
@@ -490,11 +496,13 @@ Why not fit every observation?
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Identify simple drydown periods</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>SM_change <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">NA_real_</span>, <span class="fu">diff</span>(eddy_data<span class="sc">$</span>SM))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>A non-increasing step has <code>SM_change &lt;= 0</code>. ::: {.cell}</p>
+<p>A non-increasing step has <code>SM_change &lt;= 0</code>.</p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>is_drydown <span class="ot">&lt;-</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">is.finite</span>(eddy_data<span class="sc">$</span>SM_change)) <span class="sc">&amp;</span>    (eddy_data<span class="sc">$</span>SM_change <span class="sc">&lt;=</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>:::</p>
-<p>Create an event number and count the drying steps in each event. ::: {.cell}</p>
+</div>
+<p>Create an event number and count the drying steps in each event.</p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start a new event whenever the sequence is not drying.</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>eddy_data<span class="sc">$</span>drydown_id <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="sc">!</span>eddy_data<span class="sc">$</span>is_drydown)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -503,8 +511,9 @@ Why not fit every observation?
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  eddy_data<span class="sc">$</span>drydown_id,</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">FUN =</span> sum</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>:::</p>
-<p>Keep complete SM–EF observations from events with at least five drying steps. ::: {.cell}</p>
+</div>
+<p>Keep complete SM–EF observations from events with at least five drying steps.</p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep sufficiently long events with complete SM and EF values.</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>drydown_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  eddy_data,</span>
@@ -526,7 +535,8 @@ Why not fit every observation?
 <div class="cell-output cell-output-stdout">
 <pre><code>Retained drydown events: 371 </code></pre>
 </div>
-<p>::: Before fitting the SM–EF relationship, let’s look at where the selected drydown observations occur in the original soil-moisture time series. The grey line shows the complete SM record. Red points identify observations that belong to drydown events lasting at least <code>min_drydown_steps</code> consecutive drying steps.</p>
+</div>
+<p>Before fitting the SM–EF relationship, let’s look at where the selected drydown observations occur in the original soil-moisture time series. The grey line shows the complete SM record. Red points identify observations that belong to drydown events lasting at least <code>min_drydown_steps</code> consecutive drying steps.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  eddy_data<span class="sc">$</span>date,</span>
@@ -537,9 +547,9 @@ Why not fit every observation?
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Date"</span>,</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="fu">expression</span>(<span class="st">"Soil moisture"</span><span class="sc">~</span>(m<span class="sc">^</span><span class="dv">3</span><span class="sc">~</span>m<span class="sc">^</span>{<span class="sc">-</span><span class="dv">3</span>})),</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Soil-moisture drydown periods"</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cex.axis =</span> <span class="fl">1.2</span>,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">cex.lab =</span> <span class="fl">1.3</span>,</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">cex.main =</span> <span class="fl">1.3</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cex.axis =</span> <span class="fl">1.0</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">cex.lab =</span> <span class="fl">1.0</span>,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">cex.main =</span> <span class="fl">1.0</span></span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight observations retained as part of drydown events</span></span>
@@ -567,7 +577,7 @@ Why not fit every observation?
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="ch13_files/figure-html/plot-drydown-timeseries-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="ch13_files/figure-html/plot-drydown-timeseries-1.png" class="img-fluid figure-img" width="864"></a></p>
+<p><a href="ch13_files/figure-html/plot-drydown-timeseries-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="ch13_files/figure-html/plot-drydown-timeseries-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
@@ -585,7 +595,8 @@ We are counting observations
 <p>Five observations represent approximately five days only when the records are daily and consecutive. For data with a different time step, change <code>min_drydown_steps</code> accordingly.</p>
 </div>
 </div>
-<p>Let’s view the observations that will be fitted. ::: {.cell}</p>
+<p>Let’s view the observations that will be fitted.</p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  drydown_data<span class="sc">$</span>SM,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  drydown_data<span class="sc">$</span>EF,</span>
@@ -604,7 +615,7 @@ We are counting observations
 </figure>
 </div>
 </div>
-<p>:::</p>
+</div>
 </section>
 </section>
 <section id="define-the-physics-based-response-curve" class="level2" data-number="10.5">

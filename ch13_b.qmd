@@ -7,10 +7,13 @@ editor:
 ---
 
 ## What we will learn?
-We will fit and optimize a physics-based nonlinear response curve with bounded *nonlinear least squares (NLS)** using `minpack.lm::nlsLM()`. We will compare that interpretable curve with a **Random Forest** model that learns the relationship directly from the data. Particle Swarm Optimization (PSO) is introduced later as an optional replacement for the optimizer, not as a second physical model. Finally, we will turn the optimization steps into reusable functions and apply them to spatial soil-moisture (SM) and evaporative-fraction (EF) data.
 
-Let's follow one clear workflow:
-**observations → physical equation → parameter bounds → optimization → fitted curve → reusable function → parameter maps**
+We will fit and optimize a physics-based nonlinear response curve with bounded **nonlinear least squares (NLS)** using `minpack.lm::nlsLM()`.
+We will compare that interpretable curve with a **Random Forest** model that learns the relationship directly from the data.
+Particle Swarm Optimization (PSO) is introduced later as an optional replacement for the optimizer, not as a second physical model.
+Finally, we will turn the optimization steps into reusable functions and apply them to spatial soil-moisture (SM) and evaporative-fraction (EF) data.
+
+Let's follow one clear workflow: Observations → physical equation → parameter bounds → optimization → fitted curve → reusable function → parameter maps
 
 ::: {.callout-tip title="The bigger picture"}
 The SM–EF relationship is our case study.
@@ -18,24 +21,33 @@ The same R workflow can be adapted to other environmental models when you have a
 :::
 
 ## The physical question!
-Evaporative fraction (EF) describes the fraction of available surface energy used for evapotranspiration. We will model how EF changes as soil moisture (SM) decreases. These periods when SM decreases continuously for several consecutive observations are called **soil-moisture drydowns**.
+
+Evaporative fraction (EF) describes the fraction of available surface energy used for evapotranspiration.
+We will model how EF changes as soil moisture (SM) decreases.
+These periods when SM decreases continuously for several consecutive observations are called **soil-moisture drydowns**.
 
 We will represent three soil-moisture regimes:
-1.  a dry regime, where water strongly limits EF;
-2.  a transition regime, where EF increases with SM; and
-3.  a wet regime, where EF reaches a plateau.
 
-We are interested in how evaporative fraction (EF, i.e. the ratio of actual and potential ET) responds as the soil progressively loses water. Wetting events such as rainfall interrupt this process by suddenly increasing soil moisture and resetting the soil-water conditions. For this reason, we focus on **drydown periods**. 
+1.  Dry regime, where water strongly limits EF;
+
+2.  Transition regime, where EF increases with SM; and
+
+3.  Wet regime, where EF reaches a plateau.
+
+We are interested in how evaporative fraction (EF, i.e. the ratio of actual and potential ET) responds as the soil progressively loses water.
+Wetting events such as rainfall interrupt this process by suddenly increasing soil moisture and resetting the soil-water conditions.
+For this reason, we focus on **drydown periods**.
 
 ::: {.callout-important title="Why not fit every observation?"}
-
-If we mix wetting and drying periods together, observations with similar SM may represent very different conditions. One observation may be part of a gradual drydown, while another may occur immediately after rainfall. By focusing on drydowns, we isolate periods when changing soil-water availability is more directly connected to the evolution of EF.
-
+If we mix wetting and drying periods together, observations with similar SM may represent very different conditions.
+One observation may be part of a gradual drydown, while another may occur immediately after rainfall.
+By focusing on drydowns, we isolate periods when changing soil-water availability is more directly connected to the evolution of EF.
 :::
 
 We will therefore first identify periods of consecutive soil-moisture decline and use these observations for model fitting.
 
 ## Setup
+
 Install the packages once if needed.
 
 ```{r}
@@ -52,6 +64,7 @@ library(randomForest)
 ```
 
 Set a few analysis choices in one place.
+
 ```{r}
 #| label: settings
 
@@ -60,6 +73,7 @@ analysis_seed <- 100     # Ensures repeatability
 ```
 
 ## Download and read the simplified data
+
 We will download sample dataset from AmeriFlux's Tonzi Ranch site and contains only the three variables we need:
 
 -   `date`: observation date;
@@ -102,9 +116,11 @@ eddy_data <- eddy_data[order(eddy_data$date), ]
 head(eddy_data)
 ```
 
-The purpose of this chapter is to learn curve fitting and optimization. The soil-depth averaging and other preprocessing have therefore already been completed.
+The purpose of this chapter is to learn curve fitting and optimization.
+The soil-depth averaging and other preprocessing have therefore already been completed.
 
 #### Calculate the change in SM from one observation to the next
+
 A negative change means that the soil became drier than it was during the previous observation.
 
 ```{r}
@@ -116,6 +132,7 @@ eddy_data$SM_change <- c(NA_real_, diff(eddy_data$SM))
 ```
 
 A non-increasing step has `SM_change <= 0`.
+
 ```{r}
 #| label: drydown-step
 
@@ -125,6 +142,7 @@ eddy_data$is_drydown <-
 ```
 
 Create an event number and count the drying steps in each event.
+
 ```{r}
 #| label: drydown-events
 
@@ -139,6 +157,7 @@ eddy_data$drydown_length <- ave(
 ```
 
 Keep complete SM–EF observations from events with at least five drying steps.
+
 ```{r}
 #| label: select-drydowns
 
@@ -159,11 +178,14 @@ cat(
 )
 
 ```
-Before fitting the SM–EF relationship, let's look at where the selected drydown observations occur in the original soil-moisture time series. The grey line shows the complete SM record. Red points identify observations that belong to drydown events lasting at least `min_drydown_steps` consecutive drying steps.
+
+Before fitting the SM–EF relationship, let's look at where the selected drydown observations occur in the original soil-moisture time series.
+The grey line shows the complete SM record.
+Red points identify observations that belong to drydown events lasting at least `min_drydown_steps` consecutive drying steps.
 
 ```{r}
 #| label: plot-drydown-timeseries
-#| fig-width: 9
+#| fig-width: 7
 #| fig-height: 3.5
 
 plot(
@@ -175,9 +197,9 @@ plot(
   xlab = "Date",
   ylab = expression("Soil moisture"~(m^3~m^{-3})),
   main = "Soil-moisture drydown periods",
-  cex.axis = 1.2,
-  cex.lab = 1.3,
-  cex.main = 1.3
+  cex.axis = 1.0,
+  cex.lab = 1.0,
+  cex.main = 1.0
 )
 
 # Highlight observations retained as part of drydown events
@@ -206,10 +228,12 @@ legend(
 ```
 
 ::: {.callout-caution title="We are counting observations"}
-Five observations represent approximately five days only when the records are daily and consecutive. For data with a different time step, change `min_drydown_steps` accordingly.
+Five observations represent approximately five days only when the records are daily and consecutive.
+For data with a different time step, change `min_drydown_steps` accordingly.
 :::
 
 Let's view the observations that will be fitted.
+
 ```{r}
 #| label: plot-site-data
 #| fig-width: 9
@@ -230,6 +254,7 @@ plot(
 ```
 
 ## Define the physics-based response curve
+
 We will use the following piecewise-linear model:
 
 $$
@@ -728,20 +753,20 @@ terra::plot(
 
 ## What should we conclude?
 
-1. `minpack.lm::nlsLM()` estimates interpretable parameters for the piecewise physical model.
-2. The bounds and starting values are part of the optimization workflow and should be checked explicitly.
-3. PSO is an alternative search algorithm for the same physical model, not a different scientific equation.
-4. Random Forest is a flexible black-box comparison and does not return the physical thresholds.
-5. A function that returns a fixed-length vector can be reused for raster-cell calculations.
-6. `tryCatch()` keeps a large calculation moving, but selected fits should first be tested directly.
-7. `terra::plot(..., fun = add_states)` keeps the spatial plotting code and legends simple.
+1.  `minpack.lm::nlsLM()` estimates interpretable parameters for the piecewise physical model.
+2.  The bounds and starting values are part of the optimization workflow and should be checked explicitly.
+3.  PSO is an alternative search algorithm for the same physical model, not a different scientific equation.
+4.  Random Forest is a flexible black-box comparison and does not return the physical thresholds.
+5.  A function that returns a fixed-length vector can be reused for raster-cell calculations.
+6.  `tryCatch()` keeps a large calculation moving, but selected fits should first be tested directly.
+7.  `terra::plot(..., fun = add_states)` keeps the spatial plotting code and legends simple.
 
 In the next chapter, we ask how much the fitted parameters and predictions change when the training observations change.
 
 ## Let's discuss
 
-1. Why can starting values and bounds influence a nonlinear fit?
-2. How does PSO differ from the `nlsLM()` search even though both use the same physical equation?
-3. Why can Random Forest predict EF without directly estimating $\theta_d$ and $\theta_w$?
-4. Why must SM and EF raster layers align in both space and time?
-5. Why should a failed cell be investigated before `tryCatch()` is used for the full map?
+1.  Why can starting values and bounds influence a nonlinear fit?
+2.  How does PSO differ from the `nlsLM()` search even though both use the same physical equation?
+3.  Why can Random Forest predict EF without directly estimating $\theta_d$ and $\theta_w$?
+4.  Why must SM and EF raster layers align in both space and time?
+5.  Why should a failed cell be investigated before `tryCatch()` is used for the full map?
