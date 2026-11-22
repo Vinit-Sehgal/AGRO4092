@@ -10,7 +10,6 @@ editor:
 We will fit and optimize a physics-based nonlinear response curve with bounded *nonlinear least squares (NLS)** using `minpack.lm::nlsLM()`. We will compare that interpretable curve with a **Random Forest** model that learns the relationship directly from the data. Particle Swarm Optimization (PSO) is introduced later as an optional replacement for the optimizer, not as a second physical model. Finally, we will turn the optimization steps into reusable functions and apply them to spatial soil-moisture (SM) and evaporative-fraction (EF) data.
 
 Let's follow one clear workflow:
-
 **observations → physical equation → parameter bounds → optimization → fitted curve → reusable function → parameter maps**
 
 ::: {.callout-tip title="The bigger picture"}
@@ -18,8 +17,7 @@ The SM–EF relationship is our case study.
 The same R workflow can be adapted to other environmental models when you have an equation, unknown parameters, and observations for fitting.
 :::
 
-## The physical question
-
+## The physical question!
 Evaporative fraction (EF) describes the fraction of available surface energy used for evapotranspiration. We will model how EF changes as soil moisture (SM) decreases. These periods when SM decreases continuously for several consecutive observations are called **soil-moisture drydowns**.
 
 We will represent three soil-moisture regimes:
@@ -54,17 +52,15 @@ library(randomForest)
 ```
 
 Set a few analysis choices in one place.
-
 ```{r}
 #| label: settings
 
-min_drydown_steps <- 5
-analysis_seed <- 100
+min_drydown_steps <- 5   # Minimum length of drying period
+analysis_seed <- 100     # Ensures repeatability
 ```
 
 ## Download and read the simplified data
-
-The course dataset already contains only the three variables we need:
+We will download sample dataset from AmeriFlux's Tonzi Ranch site and contains only the three variables we need:
 
 -   `date`: observation date;
 -   `SM`: vertically averaged soil moisture in volumetric units; and
@@ -108,34 +104,27 @@ head(eddy_data)
 
 The purpose of this chapter is to learn curve fitting and optimization. The soil-depth averaging and other preprocessing have therefore already been completed.
 
-
 #### Calculate the change in SM from one observation to the next
-
 A negative change means that the soil became drier than it was during the previous observation.
 
 ```{r}
-# Calculate the change in soil moisture between consecutive observations
-eddy_data$SM_change <- c(
-  NA,
-  diff(eddy_data$SM)
-)
-# A negative or zero change marks a drying step.
+# Calculate the change in soil moisture between consecutive observations. A negative or zero change marks a drying step.
+eddy_data$SM_change <- c(NA, diff(eddy_data$SM))
 
 ## Identify simple drydown periods
 eddy_data$SM_change <- c(NA_real_, diff(eddy_data$SM))
 ```
 
 A non-increasing step has `SM_change <= 0`.
-
 ```{r}
 #| label: drydown-step
 
 eddy_data$is_drydown <-
-  is.finite(eddy_data$SM_change) & eddy_data$SM_change <= 0
+  (is.finite(eddy_data$SM_change)) &    (eddy_data$SM_change <= 0)
+
 ```
 
 Create an event number and count the drying steps in each event.
-
 ```{r}
 #| label: drydown-events
 
@@ -150,7 +139,6 @@ eddy_data$drydown_length <- ave(
 ```
 
 Keep complete SM–EF observations from events with at least five drying steps.
-
 ```{r}
 #| label: select-drydowns
 
@@ -169,13 +157,14 @@ cat(
   length(unique(drydown_data$drydown_id)),
   "\n"
 )
+
 ```
 Before fitting the SM–EF relationship, let's look at where the selected drydown observations occur in the original soil-moisture time series. The grey line shows the complete SM record. Red points identify observations that belong to drydown events lasting at least `min_drydown_steps` consecutive drying steps.
 
 ```{r}
 #| label: plot-drydown-timeseries
-#| fig-width: 10
-#| fig-height: 4.5
+#| fig-width: 9
+#| fig-height: 3.5
 
 plot(
   eddy_data$date,
@@ -213,6 +202,7 @@ legend(
   cex = 1.0,
   bty = "n"
 )
+
 ```
 
 ::: {.callout-caution title="We are counting observations"}
@@ -220,7 +210,6 @@ Five observations represent approximately five days only when the records are da
 :::
 
 Let's view the observations that will be fitted.
-
 ```{r}
 #| label: plot-site-data
 #| fig-width: 9
@@ -237,10 +226,10 @@ plot(
   ylab = "Evaporative fraction",
   main = "Observed SM–EF relationship"
 )
+
 ```
 
 ## Define the physics-based response curve
-
 We will use the following piecewise-linear model:
 
 $$

@@ -8,7 +8,7 @@ editor:
 
 # Curve Fitting, Optimization, and Machine Learning
 
-```{r child="ch13_a.qmd", message = FALSE, warning = FALSE}
+```{r child="ch13_b.qmd", message = FALSE, warning = FALSE}
 
 
 ```
